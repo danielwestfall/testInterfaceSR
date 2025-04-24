@@ -922,10 +922,21 @@
         <i class="fas fa-trash-alt" aria-hidden="true"></i> Delete
       </button>
     </div>
-    <script>
-      // ... existing JS (Tabs, Treeview, etc.) ...
-      // Add Context Menu JS below
-    </script>
+    <div
+      class="visually-hidden"
+      id="status-live-region"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <div
+      class="visually-hidden"
+      id="alert-live-region"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    ></div>
 
     <script>
       // Basic toggle button functionality (example)
@@ -1388,8 +1399,37 @@
       }); // End DOMContentLoaded
 
       document.addEventListener("DOMContentLoaded", () => {
-        // ... existing Tabs JS ...
-        // ... existing Treeview JS ...
+        const statusLiveRegion = document.getElementById("status-live-region");
+        const alertLiveRegion = document.getElementById("alert-live-region");
+
+        // --- Helper Function to Announce Status (Polite) ---
+        function announceStatus(message) {
+          if (statusLiveRegion) {
+            // Clear previous message briefly then set new one
+            // Some screen readers need a change to re-announce same message
+            statusLiveRegion.textContent = "";
+            // Set new message after a tiny delay
+            setTimeout(() => {
+              statusLiveRegion.textContent = message;
+              console.log("Announce Status:", message); // For debugging
+            }, 50); // Small delay helps ensure announcement
+          } else {
+            console.warn("Status live region not found.");
+          }
+        }
+
+        // --- Helper Function to Announce Alert (Assertive) ---
+        function announceAlert(message) {
+          if (alertLiveRegion) {
+            alertLiveRegion.textContent = ""; // Clear previous
+            setTimeout(() => {
+              alertLiveRegion.textContent = message;
+              console.warn("Announce Alert:", message); // For debugging
+            }, 50);
+          } else {
+            console.warn("Alert live region not found.");
+          }
+        }
 
         // --- Custom Context Menu Implementation ---
         const contextMenu = document.getElementById("customContextMenu");
@@ -1600,19 +1640,93 @@
         });
 
         // --- Event Listener: Activating Menu Items ---
+        // --- Event Listener: Activating Menu Items (WITH RANDOM SUCCESS/FAILURE) ---
         menuItems.forEach((item) => {
           item.addEventListener("click", (e) => {
-            // --- PERFORM ACTION BASED ON THE CLICKED ITEM ---
-            // Example: Identify item and log action
+            // Get details before closing potentially clears currentTrigger
             const action = item.textContent.trim();
-            const triggerId =
-              currentTrigger?.id ||
-              currentTrigger?.textContent.trim().substring(0, 20); // Get some identifier
-            console.log(`Action "${action}" triggered for element:`, triggerId);
-            alert(`Action: ${action}`); // Replace with actual functionality
-            // --- End Action ---
+            const triggerElement = currentTrigger;
+            const triggerDesc =
+              triggerElement?.textContent?.trim().substring(0, 30) ||
+              "the selected item"; // Get description
 
-            closeContextMenu(); // Close menu after action
+            console.log(
+              `Action "${action}" clicked for element: "${triggerDesc}"`
+            );
+
+            // --- Simulate Random Success/Failure ---
+            const successProbability = 0.75; // 75% chance of success
+            const isSuccess = Math.random() < successProbability;
+            // --- End Simulation ---
+
+            let announcement = "";
+
+            // Generate message based on outcome and action
+            if (isSuccess) {
+              // *** SUCCESS MESSAGES ***
+              switch (action) {
+                case "Preview":
+                  announcement = `Previewing "${triggerDesc}".`;
+                  break;
+                case "Rename":
+                  // Simulate rename success - maybe just confirm readiness
+                  announcement = `"${triggerDesc}" is ready for renaming.`;
+                  break;
+                case "Duplicate":
+                  announcement = `Successfully duplicated "${triggerDesc}".`;
+                  break;
+                case "Add to Folder...":
+                  announcement = `Successfully added "${triggerDesc}" to folder.`; // Placeholder folder
+                  break;
+                case "Share":
+                  announcement = `Sharing options opened for "${triggerDesc}".`; // Simulate opening something
+                  break;
+                case "Delete":
+                  // Simulate actual deletion in a real app before announcing
+                  announcement = `"${triggerDesc}" was successfully deleted.`;
+                  break;
+                default:
+                  // Generic success
+                  announcement = `Action "${action}" completed for "${triggerDesc}".`;
+              }
+              console.log("Simulated Success:", announcement);
+              announceStatus(announcement); // Announce politely using helper
+            } else {
+              // *** FAILURE MESSAGES ***
+              switch (action) {
+                case "Preview":
+                  announcement = `Error: Could not load preview for "${triggerDesc}".`;
+                  break;
+                case "Rename":
+                  announcement = `Error: Failed to initiate rename for "${triggerDesc}".`;
+                  break;
+                case "Duplicate":
+                  announcement = `Error: Could not duplicate "${triggerDesc}". Insufficient space?`; // Example specific error
+                  break;
+                case "Add to Folder...":
+                  announcement = `Error: Failed to add "${triggerDesc}" to folder.`;
+                  break;
+                case "Share":
+                  announcement = `Error: Cannot share "${triggerDesc}" at this time.`;
+                  break;
+                case "Delete":
+                  announcement = `Error: Deletion of "${triggerDesc}" failed. Item might be in use.`; // Example specific error
+                  break;
+                default:
+                  // Generic failure
+                  announcement = `Error: Action "${action}" failed for "${triggerDesc}". Please try again.`;
+              }
+              console.warn("Simulated Failure:", announcement);
+              //announceAlert(announcement); // Announce assertively using helper
+            }
+
+            // Close menu AFTER processing the action/announcement logic
+            // Make sure closeContextMenu is defined correctly and accessible
+            if (typeof closeContextMenu === "function") {
+              closeContextMenu();
+            } else {
+              console.error("closeContextMenu function not found!");
+            }
           });
         });
 

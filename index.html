@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RM Screen Reader Playground</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="top-row">
+      <h1>Screen Reader RM Tester (Shift + F10 for context menu)</h1>
+      <div class="header-buttons">
+        <button>Refresh</button>
+        <button>Exit</button>
+      </div>
+    </header>
+
+    <section class="toolbar-row">
+      <div class="toolbar-col pagination-col">
+        <button aria-label="Previous Page">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button aria-label="Go to Home Page">
+          <i class="fas fa-home"></i>
+        </button>
+        <button aria-label="Next Page">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div class="toolbar-col controls-col">
+        <label for="number-select" class="visually-hidden">Select Number</label>
+        <select id="number-select" name="number">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+        <div class="search-container">
+          <i class="fas fa-search search-icon" aria-hidden="true"></i>
+          <input
+            type="search"
+            id="search-field"
+            placeholder="Search..."
+            aria-label="Search Resources"
+          />
+        </div>
+
+        <div
+          role="radiogroup"
+          aria-label="View Options"
+          class="button-radio-group toolbar-radio-group"
+        >
+          <button role="radio" aria-checked="true" class="radio-button">
+            List View
+          </button>
+          <button role="radio" aria-checked="false" class="radio-button">
+            Icon View
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-col actions-col">
+        <button>Menu</button>
+        <button>Help</button>
+      </div>
+    </section>
+
+    <main class="main-content-area">
+      <div class="app-row">
+        <aside class="app-col left-col">
+          <div
+            class="left-col-fixed"
+            role="radiogroup"
+            aria-label="Navigation Mode"
+          >
+            <button
+              role="radio"
+              aria-checked="true"
+              class="radio-button full-width"
+            >
+              Topic Index
+            </button>
+            <button
+              role="radio"
+              aria-checked="false"
+              class="radio-button full-width"
+            >
+              Resource Sets
+            </button>
+          </div>
+          <div class="left-col-scrollable">
+            <div class="accordion-container">
+              <details class="accordion-item">
+                <summary>Tempo</summary>
+                <div>
+                  <button class="accordion-content-button">Largo</button>
+                  <button class="accordion-content-button">Adagio</button>
+                  <button class="accordion-content-button">Andante</button>
+                  <button class="accordion-content-button">Moderato</button>
+                  <button class="accordion-content-button">Allegro</button>
+                  <button class="accordion-content-button">Presto</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Dynamics</summary>
+                <div>
+                  <button class="accordion-content-button">
+                    Pianissimo (pp)
+                  </button>
+                  <button class="accordion-content-button">Piano (p)</button>
+                  <button class="accordion-content-button">
+                    Mezzo-forte (mf)
+                  </button>
+                  <button class="accordion-content-button">Forte (f)</button>
+                  <button class="accordion-content-button">
+                    Fortissimo (ff)
+                  </button>
+                  <button class="accordion-content-button">Crescendo</button>
+                  <button class="accordion-content-button">Diminuendo</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Articulation</summary>
+                <div>
+                  <button class="accordion-content-button">Staccato</button>
+                  <button class="accordion-content-button">Legato</button>
+                  <button class="accordion-content-button">Accent</button>
+                  <button class="accordion-content-button">Marcato</button>
+                  <button class="accordion-content-button">Tenuto</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Melody & Harmony</summary>
+                <div>
+                  <button class="accordion-content-button">Scale</button>
+                  <button class="accordion-content-button">Chord</button>
+                  <button class="accordion-content-button">Arpeggio</button>
+                  <button class="accordion-content-button">Interval</button>
+                  <button class="accordion-content-button">Cadence</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Rhythm</summary>
+                <div>
+                  <button class="accordion-content-button">Quarter Note</button>
+                  <button class="accordion-content-button">Half Note</button>
+                  <button class="accordion-content-button">Eighth Note</button>
+                  <button class="accordion-content-button">Syncopation</button>
+                  <button class="accordion-content-button">
+                    Time Signature
+                  </button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Form</summary>
+                <div>
+                  <button class="accordion-content-button">Verse</button>
+                  <button class="accordion-content-button">Chorus</button>
+                  <button class="accordion-content-button">Bridge</button>
+                  <button class="accordion-content-button">Coda</button>
+                  <button class="accordion-content-button">Rondo</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Texture</summary>
+                <div>
+                  <button class="accordion-content-button">Monophonic</button>
+                  <button class="accordion-content-button">Homophonic</button>
+                  <button class="accordion-content-button">Polyphonic</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Timbre</summary>
+                <div>
+                  <button class="accordion-content-button">Bright</button>
+                  <button class="accordion-content-button">Dark</button>
+                  <button class="accordion-content-button">Mellow</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Tonality</summary>
+                <div>
+                  <button class="accordion-content-button">Major</button>
+                  <button class="accordion-content-button">Minor</button>
+                  <button class="accordion-content-button">Atonal</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Instrumentation</summary>
+                <div>
+                  <button class="accordion-content-button">Strings</button>
+                  <button class="accordion-content-button">Brass</button>
+                  <button class="accordion-content-button">Woodwinds</button>
+                  <button class="accordion-content-button">Percussion</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Intervals</summary>
+                <div>
+                  <button class="accordion-content-button">
+                    Perfect Fifth
+                  </button>
+                  <button class="accordion-content-button">Major Third</button>
+                  <button class="accordion-content-button">
+                    Minor Seventh
+                  </button>
+                  <button class="accordion-content-button">Octave</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Techniques</summary>
+                <div>
+                  <button class="accordion-content-button">Vibrato</button>
+                  <button class="accordion-content-button">Pizzicato</button>
+                  <button class="accordion-content-button">Glissando</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Ornaments</summary>
+                <div>
+                  <button class="accordion-content-button">Trill</button>
+                  <button class="accordion-content-button">Mordent</button>
+                  <button class="accordion-content-button">Turn</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>General Terms</summary>
+                <div>
+                  <button class="accordion-content-button">Phrase</button>
+                  <button class="accordion-content-button">Motif</button>
+                  <button class="accordion-content-button">Ostinato</button>
+                  <button class="accordion-content-button">Sequence</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Clefs</summary>
+                <div>
+                  <button class="accordion-content-button">Treble Clef</button>
+                  <button class="accordion-content-button">Bass Clef</button>
+                  <button class="accordion-content-button">Alto Clef</button>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary>Improvisation</summary>
+                <div>
+                  <button class="accordion-content-button">Solo</button>
+                  <button class="accordion-content-button">
+                    Call and Response
+                  </button>
+                </div>
+              </details>
+            </div>
+          </div>
+        </aside>
+
+        <section class="app-col center-col">
+          <div class="center-col-fixed">
+            <div
+              role="tablist"
+              aria-label="Resource Type Filters"
+              aria-orientation="horizontal"
+            >
+              <button
+                role="tab"
+                id="tab-all"
+                aria-controls="panel-all"
+                aria-selected="true"
+                tabindex="0"
+              >
+                All (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-interactives"
+                aria-controls="panel-interactives"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Interactives (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-songs"
+                aria-controls="panel-songs"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Songs (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-lessons"
+                aria-controls="panel-lessons"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Lessons (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-assessments"
+                aria-controls="panel-assessments"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Assessments (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-video"
+                aria-controls="panel-video"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Video (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-audio"
+                aria-controls="panel-audio"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Audio (XXX)
+              </button>
+              <button
+                role="tab"
+                id="tab-printables"
+                aria-controls="panel-printables"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                Printables (XXX)
+              </button>
+            </div>
+          </div>
+          <div class="center-col-scrollable">
+            <div
+              role="tabpanel"
+              id="panel-all"
+              aria-labelledby="tab-all"
+              tabindex="0"
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Label 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 99</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-interactives"
+              aria-labelledby="tab-interactives"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Interactive 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 42</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-songs"
+              aria-labelledby="tab-songs"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Song 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 4</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-lessons"
+              aria-labelledby="tab-lessons"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Lesson 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Lesson 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Lesson 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Lesson 4</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 1</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-assessments"
+              aria-labelledby="tab-assessments"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Assessment 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 5</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-video"
+              aria-labelledby="tab-video"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Video 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 8</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-audio"
+              aria-labelledby="tab-audio"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Audio 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 5</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-printables"
+              aria-labelledby="tab-printables"
+              tabindex="0"
+              hidden
+            >
+              <div class="thumbnail-grid">
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 1</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 2</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 3</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 4</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 5</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 6</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 7</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 8</span>
+                </button>
+                <button class="thumbnail-button">
+                  <div class="thumb-placeholder"></div>
+                  <span>Printable 9</span>
+                </button>
+              </div>
+              <nav class="content-pagination" aria-label="Resource Pagination">
+                <button aria-label="Previous Results Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span>1 of 10</span>
+                <button aria-label="Next Results Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </section>
+
+        <aside class="app-col right-col">
+          <div class="right-col-fixed">
+            <h2 id="resource-folders-heading">Resource Folders</h2>
+          </div>
+          <div class="right-col-scrollable">
+            <ul
+              role="tree"
+              id="resource-tree"
+              aria-labelledby="resource-folders-heading"
+            >
+              <li role="treeitem" aria-expanded="false" data-depth="1">
+                <button tabindex="0">
+                  <i class="fas fa-folder" aria-hidden="true"></i> Lessons
+                </button>
+                <ul role="group" hidden>
+                  <li role="treeitem" data-depth="2">
+                    <a href="#lesson1" tabindex="-1">
+                      <i class="fas fa-music" aria-hidden="true"></i> Lesson 1
+                    </a>
+                  </li>
+                  <li role="treeitem" data-depth="2">
+                    <a href="#lesson2" tabindex="-1">
+                      <i class="fas fa-music" aria-hidden="true"></i> Lesson 2
+                    </a>
+                  </li>
+                  <li role="treeitem" aria-expanded="false" data-depth="2">
+                    <button tabindex="-1">
+                      <i class="fas fa-folder" aria-hidden="true"></i> Grade 3
+                      Lessons
+                    </button>
+                    <ul role="group" hidden>
+                      <li role="treeitem" data-depth="3">
+                        <a href="#g3u1" tabindex="-1"
+                          ><i class="fas fa-file-alt" aria-hidden="true"></i>
+                          Unit 1 Overview</a
+                        >
+                      </li>
+                      <li role="treeitem" data-depth="3">
+                        <a href="#g3u2" tabindex="-1"
+                          ><i class="fas fa-file-alt" aria-hidden="true"></i>
+                          Unit 2 Resources</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li role="treeitem" aria-expanded="true" data-depth="1">
+                <button tabindex="-1">
+                  <i class="fas fa-folder-open" aria-hidden="true"></i> My
+                  Lessons
+                </button>
+                <ul role="group">
+                  <li role="treeitem" data-depth="2">
+                    <a href="#customA" tabindex="-1">
+                      <i class="fas fa-file-alt" aria-hidden="true"></i> Custom
+                      Item A
+                    </a>
+                  </li>
+                  <li role="treeitem" aria-expanded="false" data-depth="2">
+                    <button tabindex="-1">
+                      <i class="fas fa-folder" aria-hidden="true"></i> Subfolder
+                      1
+                    </button>
+                    <ul role="group" hidden>
+                      <li role="treeitem" data-depth="3">
+                        <a href="#audio1" tabindex="-1">
+                          <i class="fas fa-file-audio" aria-hidden="true"></i>
+                          Arrangement MP3
+                        </a>
+                      </li>
+                      <li role="treeitem" data-depth="3">
+                        <a href="#sheet1" tabindex="-1">
+                          <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                          Sheet Music PDF
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li role="treeitem" data-depth="2">
+                    <a href="#customB" tabindex="-1">
+                      <i class="fas fa-file-video" aria-hidden="true"></i>
+                      Custom Video B
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li role="treeitem" data-depth="1">
+                <a href="#screens" tabindex="-1">
+                  <i class="fas fa-desktop" aria-hidden="true"></i> My Screens
+                </a>
+              </li>
+              <li role="treeitem" aria-expanded="false" data-depth="1">
+                <button tabindex="-1">
+                  <i class="fas fa-folder" aria-hidden="true"></i> My Resources
+                </button>
+                <ul role="group" hidden>
+                  <li role="treeitem" data-depth="2">
+                    <a href="#resource1" tabindex="-1">
+                      <i class="fas fa-image" aria-hidden="true"></i> Image 1
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li role="treeitem" data-depth="1">
+                <a href="#practice" tabindex="-1">
+                  <i class="fas fa-folder" aria-hidden="true"></i> Practice
+                  Folder
+                </a>
+              </li>
+              <li role="treeitem" data-depth="1">
+                <a href="#favorites" tabindex="-1">
+                  <i class="fas fa-star" aria-hidden="true"></i> Favorites
+                </a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <div
+      id="customContextMenu"
+      role="menu"
+      aria-label="Item Actions"
+      class="custom-context-menu"
+      hidden
+    >
+      <button role="menuitem" tabindex="-1">
+        <i class="fas fa-play" aria-hidden="true"></i> Preview
+      </button>
+      <button role="menuitem" tabindex="-1">
+        <i class="fas fa-pencil-alt" aria-hidden="true"></i> Rename
+      </button>
+      <button role="menuitem" tabindex="-1">
+        <i class="fas fa-copy" aria-hidden="true"></i> Duplicate
+      </button>
+      <div role="separator" class="menu-separator"></div>
+      <button role="menuitem" tabindex="-1">
+        <i class="fas fa-folder-plus" aria-hidden="true"></i> Add to Folder...
+      </button>
+      <button role="menuitem" tabindex="-1">
+        <i class="fas fa-share-alt" aria-hidden="true"></i> Share
+      </button>
+      <div role="separator" class="menu-separator"></div>
+      <button role="menuitem" class="menuitem-danger" tabindex="-1">
+        <i class="fas fa-trash-alt" aria-hidden="true"></i> Delete
+      </button>
+    </div>
+    <script>
+      // ... existing JS (Tabs, Treeview, etc.) ...
+      // Add Context Menu JS below
+    </script>
+
+    <script>
+      // Basic toggle button functionality (example)
+      const toggleButtons = document.querySelectorAll(".toggle-button");
+      toggleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const isPressed = button.getAttribute("aria-pressed") === "true";
+          button.setAttribute("aria-pressed", !isPressed);
+          // Add visual styling changes based on state if needed via CSS or JS
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const tablist = document.querySelector('[role="tablist"]');
+        const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+        const panels = Array.from(
+          document.querySelectorAll('[role="tabpanel"]')
+        ); // Assuming panels are direct siblings or queryable
+
+        // --- Event Listener for Clicks ---
+        tablist.addEventListener("click", (e) => {
+          const clickedTab = e.target.closest('[role="tab"]');
+          if (!clickedTab) return; // Ignore clicks outside tabs
+
+          activateTab(clickedTab);
+        });
+
+        // --- Event Listener for Keyboard Navigation ---
+        tablist.addEventListener("keydown", (e) => {
+          const currentTab = e.target;
+          if (currentTab.getAttribute("role") !== "tab") return; // Ensure event target is a tab
+
+          let newIndex;
+          const currentIndex = tabs.indexOf(currentTab);
+          const tabCount = tabs.length;
+
+          switch (e.key) {
+            case "ArrowRight":
+            case "ArrowDown": // Often used interchangeably for horizontal tabs
+              e.preventDefault(); // Prevent page scroll
+              newIndex = (currentIndex + 1) % tabCount;
+              break;
+
+            case "ArrowLeft":
+            case "ArrowUp": // Often used interchangeably for horizontal tabs
+              e.preventDefault(); // Prevent page scroll
+              newIndex = (currentIndex - 1 + tabCount) % tabCount;
+              break;
+
+            case "Home":
+              e.preventDefault();
+              newIndex = 0;
+              break;
+
+            case "End":
+              e.preventDefault();
+              newIndex = tabCount - 1;
+              break;
+
+            default:
+              // Ignore other keys
+              return;
+          }
+
+          // Move focus and activate the new tab (Automatic Activation)
+          if (newIndex !== undefined) {
+            tabs[newIndex].focus();
+            // If not using automatic activation, you would only move focus here
+            // and activation would happen on Enter/Space separately.
+            // For Automatic Activation:
+            activateTab(tabs[newIndex]);
+          }
+        });
+
+        // --- Function to Activate a Tab ---
+        function activateTab(selectedTab) {
+          tabs.forEach((tab) => {
+            const isSelected = tab === selectedTab;
+            const panelId = tab.getAttribute("aria-controls");
+            const panel = document.getElementById(panelId);
+
+            tab.setAttribute("aria-selected", isSelected);
+            tab.setAttribute("tabindex", isSelected ? "0" : "-1"); // Roving tabindex
+
+            if (panel) {
+              panel.hidden = !isSelected;
+              // Optionally manage tabindex on panels too if needed for focus flow
+              // panel.setAttribute('tabindex', isSelected ? '0' : '-1');
+            } else {
+              console.error(
+                `Panel with ID ${panelId} not found for tab ${tab.id}`
+              );
+            }
+          });
+        }
+
+        // --- Initial Setup (Optional but good practice) ---
+        // Ensure initial state matches HTML attributes (useful if JS loads late)
+        const initiallyActiveTab = tabs.find(
+          (tab) => tab.getAttribute("aria-selected") === "true"
+        );
+        if (initiallyActiveTab) {
+          activateTab(initiallyActiveTab); // Run once to ensure panels match tabs
+        } else if (tabs.length > 0) {
+          // Fallback if no tab is marked as selected initially
+          tabs[0].setAttribute("aria-selected", "true");
+          tabs[0].setAttribute("tabindex", "0");
+          activateTab(tabs[0]);
+        }
+        // --- Radio Button Group Implementation ---
+
+        function setupRadioButtonGroup(groupElement) {
+          if (!groupElement) return;
+
+          const buttons = Array.from(
+            groupElement.querySelectorAll('[role="radio"]')
+          );
+          if (buttons.length === 0) return;
+
+          buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+              // If already checked, do nothing
+              if (button.getAttribute("aria-checked") === "true") {
+                return;
+              }
+
+              // Uncheck all buttons in this specific group
+              buttons.forEach((btn) => {
+                btn.setAttribute("aria-checked", "false");
+              });
+
+              // Check the clicked button
+              button.setAttribute("aria-checked", "true");
+
+              // Optional: Perform action based on selection
+              console.log(
+                `Radio group "${groupElement.getAttribute(
+                  "aria-label"
+                )}": Selected "${button.textContent.trim()}"`
+              );
+              // Add specific actions here if needed, e.g., change view, filter list
+            });
+          });
+          console.log(
+            `Radio group initialized: ${groupElement.getAttribute(
+              "aria-label"
+            )}`
+          );
+        }
+
+        // Initialize the Toolbar radio group
+        const toolbarRadioGroup = document.querySelector(
+          ".toolbar-radio-group"
+        );
+        setupRadioButtonGroup(toolbarRadioGroup);
+
+        // Initialize the Left Navigation radio group
+        const leftNavRadioGroup = document.querySelector(
+          '.left-col-fixed[role="radiogroup"]'
+        );
+        setupRadioButtonGroup(leftNavRadioGroup);
+
+        // --- End Radio Button Group Implementation ---
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Keep existing Tabs JS ...
+
+        // --- ARIA Treeview Implementation ---
+        const tree = document.getElementById("resource-tree");
+        if (tree) {
+          const focusableTreeNodes = Array.from(
+            tree.querySelectorAll(
+              '[role="treeitem"] > button, [role="treeitem"] > a'
+            )
+          );
+          let typeaheadBuffer = "";
+          let typeaheadTimeout = null;
+
+          // --- Helper: Get all VISIBLE focusable nodes ---
+          function getVisibleFocusableNodes() {
+            return focusableTreeNodes.filter((node) => {
+              let parent = node.parentElement;
+              while (parent && parent !== tree) {
+                if (parent.getAttribute("role") === "group" && parent.hidden) {
+                  return false;
+                }
+                // Check if ancestor treeitem is collapsed
+                if (parent.getAttribute("role") === "treeitem") {
+                  const expanderButton = parent.querySelector(
+                    ":scope > button[aria-expanded]"
+                  );
+                  if (
+                    expanderButton &&
+                    expanderButton.getAttribute("aria-expanded") === "false"
+                  ) {
+                    // If the direct parent treeitem button indicates collapsed, this node isn't visible
+                    // This check might need refinement based on exact structure
+                  }
+                }
+                // More robust check: traverse up looking for hidden groups
+                const groupParent = parent.closest('[role="group"]');
+                if (groupParent && groupParent.hidden) {
+                  return false;
+                }
+
+                parent = parent.parentElement;
+              }
+              return true;
+            });
+          }
+
+          // --- Helper: Set the focusable item (roving tabindex) ---
+          // Inside Treeview's setFocusableNode function:
+          function setFocusableNode(nodeToFocus) {
+            // ... (existing code)
+            console.log(
+              "Treeview: Setting focusable node (tabindex=0) to:",
+              nodeToFocus
+            ); // LOG
+            focusableTreeNodes.forEach((node) => {
+              node.setAttribute("tabindex", node === nodeToFocus ? "0" : "-1");
+            });
+          }
+
+          // --- Custom Context Menu Implementation ---
+          // ... (contextMenu, menuItems, triggerSelectors, etc.) ...
+
+          // --- Event Listener: Keyboard Trigger (Shift+F10, ContextMenu key) ---
+          document.body.addEventListener("keydown", (e) => {
+            if (e.key === "ContextMenu" || (e.key === "F10" && e.shiftKey)) {
+              // LOG 1: Check active element *before* processing
+              console.log(
+                `Context Key/Shift+F10 Down. Active Element:`,
+                document.activeElement
+              );
+
+              const trigger = document.activeElement?.closest(triggerSelectors);
+
+              // LOG 2: Check identified trigger
+              console.log(
+                `Context Key/Shift+F10: Identified Trigger:`,
+                trigger
+              );
+
+              if (trigger) {
+                e.preventDefault(); // Prevent default context menu
+                const rect = trigger.getBoundingClientRect();
+                openContextMenu(trigger, rect.left, rect.bottom + 2);
+              }
+            }
+          });
+
+          // --- Helper: Toggle Expansion ---
+          function toggleExpansion(buttonNode) {
+            const item = buttonNode.closest('[role="treeitem"]');
+            const group = item?.querySelector(':scope > [role="group"]');
+            const icon = buttonNode.querySelector("i");
+
+            if (item && group) {
+              const isExpanded = item.getAttribute("aria-expanded") === "true";
+              item.setAttribute("aria-expanded", !isExpanded);
+              group.hidden = isExpanded;
+
+              // Toggle folder icon (example)
+              if (icon) {
+                icon.classList.toggle("fa-folder", isExpanded);
+                icon.classList.toggle("fa-folder-open", !isExpanded);
+              }
+            }
+          }
+
+          // --- Event Listener: Keydown on the Tree ---
+          tree.addEventListener("keydown", (e) => {
+            const currentFocusedNode = e.target.closest(
+              '[role="treeitem"] > button, [role="treeitem"] > a'
+            );
+            if (
+              !currentFocusedNode ||
+              !focusableTreeNodes.includes(currentFocusedNode)
+            )
+              return; // Ensure focus is on a known node
+
+            const visibleNodes = getVisibleFocusableNodes();
+            const currentIndex = visibleNodes.indexOf(currentFocusedNode);
+            let nextNode = null;
+
+            switch (e.key) {
+              case "ArrowDown":
+                e.preventDefault();
+                if (currentIndex < visibleNodes.length - 1) {
+                  nextNode = visibleNodes[currentIndex + 1];
+                }
+                break;
+
+              case "ArrowUp":
+                e.preventDefault();
+                if (currentIndex > 0) {
+                  nextNode = visibleNodes[currentIndex - 1];
+                }
+                break;
+
+              case "ArrowRight":
+                e.preventDefault();
+                const parentItemRight =
+                  currentFocusedNode.closest('[role="treeitem"]');
+                if (
+                  currentFocusedNode.tagName === "BUTTON" &&
+                  parentItemRight?.getAttribute("aria-expanded") === "false"
+                ) {
+                  // Expand closed node
+                  toggleExpansion(currentFocusedNode);
+                } else if (
+                  currentFocusedNode.tagName === "BUTTON" &&
+                  parentItemRight?.getAttribute("aria-expanded") === "true"
+                ) {
+                  // Move to first child if node is open
+                  const firstChildNode = parentItemRight.querySelector(
+                    ':scope > [role="group"] > [role="treeitem"] > button, :scope > [role="group"] > [role="treeitem"] > a'
+                  );
+                  if (firstChildNode) {
+                    nextNode = firstChildNode;
+                  }
+                }
+                break;
+
+              case "ArrowLeft":
+                e.preventDefault();
+                const parentItemLeft =
+                  currentFocusedNode.closest('[role="treeitem"]');
+                if (
+                  currentFocusedNode.tagName === "BUTTON" &&
+                  parentItemLeft?.getAttribute("aria-expanded") === "true"
+                ) {
+                  // Collapse open node
+                  toggleExpansion(currentFocusedNode);
+                } else {
+                  // Move to parent node if not at root level
+                  const groupParent = parentItemLeft?.parentElement;
+                  if (
+                    groupParent &&
+                    groupParent.getAttribute("role") === "group"
+                  ) {
+                    const grandParentItem =
+                      groupParent.closest('[role="treeitem"]');
+                    nextNode = grandParentItem?.querySelector(
+                      ":scope > button, :scope > a"
+                    );
+                  }
+                }
+                break;
+
+              case "Home":
+                e.preventDefault();
+                nextNode = visibleNodes[0];
+                break;
+
+              case "End":
+                e.preventDefault();
+                nextNode = visibleNodes[visibleNodes.length - 1];
+                break;
+
+              case "Enter":
+              case " ": // Space
+                e.preventDefault();
+                if (currentFocusedNode.tagName === "BUTTON") {
+                  toggleExpansion(currentFocusedNode);
+                } else if (currentFocusedNode.tagName === "A") {
+                  currentFocusedNode.click(); // Activate the link
+                }
+                break;
+
+              default:
+                // Basic Typeahead
+                if (e.key.length === 1 && e.key.match(/\S/)) {
+                  // Check for single non-whitespace character
+                  e.preventDefault();
+
+                  clearTimeout(typeaheadTimeout);
+                  typeaheadBuffer += e.key.toLowerCase();
+                  typeaheadTimeout = setTimeout(() => {
+                    typeaheadBuffer = "";
+                  }, 750); // Reset buffer after delay
+
+                  let currentNodeIndex =
+                    visibleNodes.indexOf(currentFocusedNode);
+                  let searchIndex =
+                    (currentNodeIndex + 1) % visibleNodes.length; // Start searching from next node
+
+                  for (let i = 0; i < visibleNodes.length; i++) {
+                    const nodeToCheck = visibleNodes[searchIndex];
+                    const nodeText = nodeToCheck.textContent
+                      .trim()
+                      .toLowerCase();
+                    if (nodeText.startsWith(typeaheadBuffer)) {
+                      nextNode = nodeToCheck;
+                      break; // Found match
+                    }
+                    searchIndex = (searchIndex + 1) % visibleNodes.length; // Wrap around search
+                    if (
+                      searchIndex ===
+                      (currentNodeIndex + 1) % visibleNodes.length
+                    )
+                      break; // Searched all nodes
+                  }
+                }
+                break; // Allow other keys if not handled
+            }
+
+            // If a next node was determined, move focus and update tabindex
+            if (nextNode) {
+              setFocusableNode(nextNode);
+              nextNode.focus();
+            }
+          });
+
+          // --- Event Listener: Click on the Tree ---
+          tree.addEventListener("click", (e) => {
+            const clickedNode = e.target.closest(
+              '[role="treeitem"] > button, [role="treeitem"] > a'
+            );
+            if (!clickedNode || !focusableTreeNodes.includes(clickedNode))
+              return;
+
+            // Update focusable item
+            setFocusableNode(clickedNode);
+
+            // Toggle expansion if it's a button
+            if (clickedNode.tagName === "BUTTON") {
+              toggleExpansion(clickedNode);
+            }
+            // Link clicks are handled natively by the browser
+          });
+
+          // --- Event Listener: Focus moving into the tree ---
+          tree.addEventListener("focusin", (e) => {
+            // If focus moves TO the tree container itself (e.g., tabbing into it)
+            // redirect focus to the currently designated focusable node.
+            if (e.target === tree) {
+              const focusableNode = tree.querySelector('[tabindex="0"]');
+              if (focusableNode) {
+                focusableNode.focus();
+              } else if (focusableTreeNodes.length > 0) {
+                // Fallback if none has tabindex="0" somehow
+                setFocusableNode(focusableTreeNodes[0]);
+                focusableTreeNodes[0].focus();
+              }
+            }
+          });
+
+          // Initial setup: ensure the first node is focusable
+          if (focusableTreeNodes.length > 0) {
+            setFocusableNode(focusableTreeNodes[0]);
+          }
+
+          console.log("Treeview initialized");
+        } else {
+          console.log("Treeview container not found");
+        }
+      }); // End DOMContentLoaded
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // ... existing Tabs JS ...
+        // ... existing Treeview JS ...
+
+        // --- Custom Context Menu Implementation ---
+        const contextMenu = document.getElementById("customContextMenu");
+        const menuItems = Array.from(
+          contextMenu.querySelectorAll('[role="menuitem"]')
+        );
+        const triggerSelectors =
+          '.thumbnail-button, [role="treeitem"] > button, [role="treeitem"] > a'; // Targets for the menu
+        let currentTrigger = null; // Element that triggered the menu
+        let currentFocusedItemIndex = -1;
+
+        // --- Helper: Open the Menu ---
+        function openContextMenu(triggerElement, x, y) {
+          console.log(`Opening context menu for trigger:`, triggerElement);
+          currentTrigger = triggerElement; // Store the trigger
+          contextMenu.hidden = false; // Make menu visible
+
+          // Position the menu
+          const menuWidth = contextMenu.offsetWidth;
+          const menuHeight = contextMenu.offsetHeight;
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+
+          // Adjust position if menu would go off-screen
+          let finalX = x;
+          let finalY = y;
+          if (x + menuWidth > viewportWidth) {
+            finalX = viewportWidth - menuWidth - 5; // Add some margin
+          }
+          if (y + menuHeight > viewportHeight) {
+            finalY = viewportHeight - menuHeight - 5;
+          }
+          finalX = Math.max(5, finalX); // Ensure min margin left
+          finalY = Math.max(5, finalY); // Ensure min margin top
+
+          contextMenu.style.left = `${finalX}px`;
+          contextMenu.style.top = `${finalY}px`;
+
+          // Focus the first menu item
+          currentFocusedItemIndex = 0;
+          menuItems[currentFocusedItemIndex]?.focus(); // Use optional chaining
+        }
+
+        // --- Helper: Close the Menu ---
+        function closeContextMenu() {
+          if (!contextMenu.hidden) {
+            const triggerToFocus = currentTrigger; // Store ref before clearing
+            contextMenu.hidden = true;
+            currentTrigger = null; // Clear trigger *after* storing ref
+            currentFocusedItemIndex = -1;
+
+            // LOG 4: Check the trigger we are about to focus
+            console.log(
+              "Closing menu. Attempting to return focus to:",
+              triggerToFocus
+            );
+
+            if (triggerToFocus) {
+              // Use a minimal timeout first
+              setTimeout(() => {
+                // LOG 5: Inside timeout, check trigger again & active element BEFORE focusing
+                console.log(
+                  `Inside Timeout: Trigger to focus:`,
+                  triggerToFocus
+                );
+                console.log(
+                  `Inside Timeout: Active element BEFORE focus():`,
+                  document.activeElement
+                );
+
+                // --- FIX ATTEMPT: Check if trigger is Tree item & ensure it's focusable ---
+                const treeContainer = document.getElementById("resource-tree"); // Get tree ref
+                if (
+                  treeContainer &&
+                  treeContainer.contains(triggerToFocus) &&
+                  typeof setFocusableNode === "function"
+                ) {
+                  console.log(
+                    "Trigger is in treeview, ensuring it is focusable via setFocusableNode."
+                  );
+                  setFocusableNode(triggerToFocus); // Make sure treeview logic sets tabindex="0"
+                  // Add a slight delay AFTER setting tabindex, BEFORE focusing? Maybe not needed.
+                }
+                // --- End Fix Attempt ---
+
+                triggerToFocus.focus({ preventScroll: true }); // Add preventScroll just in case
+
+                // LOG 6: Check active element AFTER focusing attempt
+                console.log(
+                  `Inside Timeout: Active element AFTER focus():`,
+                  document.activeElement
+                );
+
+                // Check if focus actually landed correctly
+                if (document.activeElement !== triggerToFocus) {
+                  console.warn(
+                    "Focus did not land on the trigger element as expected."
+                  );
+                  // As a last resort, maybe focus body? But avoid if possible.
+                  // document.body.focus();
+                } else {
+                  console.log("Focus successfully returned to trigger.");
+                }
+              }, 0); // Minimal timeout
+            } else {
+              console.warn(
+                "closeContextMenu called but triggerToFocus was null."
+              );
+            }
+          }
+        }
+
+        // --- Helper: Focus Next/Previous Item ---
+        function focusMenuItem(index) {
+          // Remove focus style from previous (optional if using :focus-visible)
+          // menuItems[currentFocusedItemIndex]?.classList.remove('focused');
+
+          currentFocusedItemIndex = index;
+          menuItems[currentFocusedItemIndex]?.focus();
+          // menuItems[currentFocusedItemIndex]?.classList.add('focused'); // Optional manual style
+        }
+
+        // --- Event Listener: "contextmenu" (Right Click) ---
+        // Attach to a common ancestor for delegation
+        document.body.addEventListener("contextmenu", (e) => {
+          const trigger = e.target.closest(triggerSelectors);
+          if (trigger) {
+            e.preventDefault(); // Prevent default browser menu
+            openContextMenu(trigger, e.clientX, e.clientY);
+          } else {
+            // If right-clicking outside a valid target, close any open menu
+            closeContextMenu();
+          }
+        });
+
+        // --- Event Listener: Keyboard Trigger (Shift+F10, ContextMenu key) ---
+        document.body.addEventListener("keydown", (e) => {
+          if (e.key === "ContextMenu" || (e.key === "F10" && e.shiftKey)) {
+            const trigger = document.activeElement?.closest(triggerSelectors);
+            if (trigger) {
+              e.preventDefault();
+              // Position menu near the trigger element
+              const rect = trigger.getBoundingClientRect();
+              openContextMenu(trigger, rect.left, rect.bottom + 2); // Position below trigger
+            }
+          }
+        });
+
+        // --- Event Listener: Keyboard Navigation within Menu ---
+        contextMenu.addEventListener("keydown", (e) => {
+          if (contextMenu.hidden) return; // Ignore if hidden
+
+          let newIndex;
+          const totalItems = menuItems.length;
+
+          switch (e.key) {
+            case "ArrowDown":
+              e.preventDefault();
+              newIndex = (currentFocusedItemIndex + 1) % totalItems;
+              focusMenuItem(newIndex);
+              break;
+            case "ArrowUp":
+              e.preventDefault();
+              newIndex =
+                (currentFocusedItemIndex - 1 + totalItems) % totalItems;
+              focusMenuItem(newIndex);
+              break;
+            case "Home":
+              e.preventDefault();
+              focusMenuItem(0);
+              break;
+            case "End":
+              e.preventDefault();
+              focusMenuItem(totalItems - 1);
+              break;
+            case "Enter":
+            case " ": // Space
+              e.preventDefault();
+              const activeItem = menuItems[currentFocusedItemIndex];
+              if (activeItem) {
+                activeItem.click(); // Simulate click to trigger action
+                // Action listener below will handle closing
+              }
+              break;
+            case "Escape":
+              e.preventDefault();
+              closeContextMenu();
+              break;
+            case "Tab":
+              // Allow tabbing out, close menu as focus leaves
+              closeContextMenu();
+              break;
+            default:
+              // Optional: Add typeahead similar to Treeview if desired
+              break;
+          }
+        });
+
+        // --- Event Listener: Clicking Outside to Close ---
+        document.addEventListener("click", (e) => {
+          if (
+            !contextMenu.hidden &&
+            !contextMenu.contains(e.target) &&
+            e.target !== currentTrigger
+          ) {
+            closeContextMenu();
+          }
+        });
+
+        // --- Event Listener: Activating Menu Items ---
+        menuItems.forEach((item) => {
+          item.addEventListener("click", (e) => {
+            // --- PERFORM ACTION BASED ON THE CLICKED ITEM ---
+            // Example: Identify item and log action
+            const action = item.textContent.trim();
+            const triggerId =
+              currentTrigger?.id ||
+              currentTrigger?.textContent.trim().substring(0, 20); // Get some identifier
+            console.log(`Action "${action}" triggered for element:`, triggerId);
+            alert(`Action: ${action}`); // Replace with actual functionality
+            // --- End Action ---
+
+            closeContextMenu(); // Close menu after action
+          });
+        });
+
+        console.log("Context menu initialized");
+      }); // End DOMContentLoaded
+    </script>
+  </body>
+</html>

@@ -783,108 +783,210 @@
               id="resource-tree"
               aria-labelledby="resource-folders-heading"
             >
-              <li role="treeitem" aria-expanded="false" data-depth="1">
-                <button tabindex="0">
+              <li role="none">
+                <button
+                  role="treeitem"
+                  data-depth="1"
+                  aria-level="1"
+                  aria-expanded="false"
+                  tabindex="0"
+                >
                   <i class="fas fa-folder" aria-hidden="true"></i> Lessons
                 </button>
-                <ul role="group" hidden>
-                  <li role="treeitem" data-depth="2">
-                    <a href="#lesson1" tabindex="-1">
+                <ul role="group" aria-label="Lessons" hidden>
+                  <li role="none">
+                    <a
+                      href="#lesson1"
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-music" aria-hidden="true"></i> Lesson 1
                     </a>
                   </li>
-                  <li role="treeitem" data-depth="2">
-                    <a href="#lesson2" tabindex="-1">
+                  <li role="none">
+                    <a
+                      href="#lesson2"
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-music" aria-hidden="true"></i> Lesson 2
                     </a>
                   </li>
-                  <li role="treeitem" aria-expanded="false" data-depth="2">
-                    <button tabindex="-1">
+                  <li role="none">
+                    <button
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      aria-expanded="false"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-folder" aria-hidden="true"></i> Grade 3
                       Lessons
                     </button>
-                    <ul role="group" hidden>
-                      <li role="treeitem" data-depth="3">
-                        <a href="#g3u1" tabindex="-1"
-                          ><i class="fas fa-file-alt" aria-hidden="true"></i>
-                          Unit 1 Overview</a
+                    <ul role="group" aria-label="Grade 3 Lessons" hidden>
+                      <li role="none">
+                        <a
+                          href="#g3u1"
+                          role="treeitem"
+                          data-depth="3"
+                          aria-level="3"
+                          tabindex="-1"
                         >
+                          <i class="fas fa-file-alt" aria-hidden="true"></i>
+                          Unit 1 Overview
+                        </a>
                       </li>
-                      <li role="treeitem" data-depth="3">
-                        <a href="#g3u2" tabindex="-1"
-                          ><i class="fas fa-file-alt" aria-hidden="true"></i>
-                          Unit 2 Resources</a
+                      <li role="none">
+                        <a
+                          href="#g3u2"
+                          role="treeitem"
+                          data-depth="3"
+                          aria-level="3"
+                          tabindex="-1"
                         >
+                          <i class="fas fa-file-alt" aria-hidden="true"></i>
+                          Unit 2 Resources
+                        </a>
                       </li>
                     </ul>
                   </li>
                 </ul>
               </li>
-              <li role="treeitem" aria-expanded="true" data-depth="1">
-                <button tabindex="-1">
+              <li role="none">
+                <button
+                  role="treeitem"
+                  data-depth="1"
+                  aria-level="1"
+                  aria-expanded="true"
+                  tabindex="-1"
+                >
                   <i class="fas fa-folder-open" aria-hidden="true"></i> My
                   Lessons
                 </button>
-                <ul role="group">
-                  <li role="treeitem" data-depth="2">
-                    <a href="#customA" tabindex="-1">
+                <ul role="group" aria-label="My Lessons">
+                  <li role="none">
+                    <a
+                      href="#customA"
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-file-alt" aria-hidden="true"></i> Custom
                       Item A
                     </a>
                   </li>
-                  <li role="treeitem" aria-expanded="false" data-depth="2">
-                    <button tabindex="-1">
+                  <li role="none">
+                    <button
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      aria-expanded="false"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-folder" aria-hidden="true"></i> Subfolder
                       1
                     </button>
-                    <ul role="group" hidden>
-                      <li role="treeitem" data-depth="3">
-                        <a href="#audio1" tabindex="-1">
+                    <ul role="group" aria-label="Subfolder 1" hidden>
+                      <li role="none">
+                        <a
+                          href="#audio1"
+                          role="treeitem"
+                          data-depth="3"
+                          aria-level="3"
+                          tabindex="-1"
+                        >
                           <i class="fas fa-file-audio" aria-hidden="true"></i>
                           Arrangement MP3
                         </a>
                       </li>
-                      <li role="treeitem" data-depth="3">
-                        <a href="#sheet1" tabindex="-1">
+                      <li role="none">
+                        <a
+                          href="#sheet1"
+                          role="treeitem"
+                          data-depth="3"
+                          aria-level="3"
+                          tabindex="-1"
+                        >
                           <i class="fas fa-file-pdf" aria-hidden="true"></i>
                           Sheet Music PDF
                         </a>
                       </li>
                     </ul>
                   </li>
-                  <li role="treeitem" data-depth="2">
-                    <a href="#customB" tabindex="-1">
+                  <li role="none">
+                    <a
+                      href="#customB"
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-file-video" aria-hidden="true"></i>
                       Custom Video B
                     </a>
                   </li>
                 </ul>
               </li>
-              <li role="treeitem" data-depth="1">
-                <a href="#screens" tabindex="-1">
+              <li role="none">
+                <a
+                  href="#screens"
+                  role="treeitem"
+                  data-depth="1"
+                  aria-level="1"
+                  tabindex="-1"
+                >
                   <i class="fas fa-desktop" aria-hidden="true"></i> My Screens
                 </a>
               </li>
-              <li role="treeitem" aria-expanded="false" data-depth="1">
-                <button tabindex="-1">
+              <li role="none">
+                <button
+                  role="treeitem"
+                  data-depth="1"
+                  aria-level="1"
+                  aria-expanded="false"
+                  tabindex="-1"
+                >
                   <i class="fas fa-folder" aria-hidden="true"></i> My Resources
                 </button>
-                <ul role="group" hidden>
-                  <li role="treeitem" data-depth="2">
-                    <a href="#resource1" tabindex="-1">
+                <ul role="group" aria-label="My Resources" hidden>
+                  <li role="none">
+                    <a
+                      href="#resource1"
+                      role="treeitem"
+                      data-depth="2"
+                      aria-level="2"
+                      tabindex="-1"
+                    >
                       <i class="fas fa-image" aria-hidden="true"></i> Image 1
                     </a>
                   </li>
                 </ul>
               </li>
-              <li role="treeitem" data-depth="1">
-                <a href="#practice" tabindex="-1">
+              <li role="none">
+                <a
+                  href="#practice"
+                  role="treeitem"
+                  data-depth="1"
+                  aria-level="1"
+                  tabindex="-1"
+                >
                   <i class="fas fa-folder" aria-hidden="true"></i> Practice
                   Folder
                 </a>
               </li>
-              <li role="treeitem" data-depth="1">
-                <a href="#favorites" tabindex="-1">
+              <li role="none">
+                <a
+                  href="#favorites"
+                  role="treeitem"
+                  data-depth="1"
+                  aria-level="1"
+                  tabindex="-1"
+                >
                   <i class="fas fa-star" aria-hidden="true"></i> Favorites
                 </a>
               </li>
@@ -939,118 +1041,166 @@
     ></div>
 
     <script>
-      // Basic toggle button functionality (example)
-      const toggleButtons = document.querySelectorAll(".toggle-button");
-      toggleButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          const isPressed = button.getAttribute("aria-pressed") === "true";
-          button.setAttribute("aria-pressed", !isPressed);
-          // Add visual styling changes based on state if needed via CSS or JS
-        });
-      });
-
       document.addEventListener("DOMContentLoaded", () => {
-        const tablist = document.querySelector('[role="tablist"]');
-        const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
-        const panels = Array.from(
-          document.querySelectorAll('[role="tabpanel"]')
-        ); // Assuming panels are direct siblings or queryable
+        console.log("DOM fully loaded and parsed. Initializing scripts...");
 
-        // --- Event Listener for Clicks ---
-        tablist.addEventListener("click", (e) => {
-          const clickedTab = e.target.closest('[role="tab"]');
-          if (!clickedTab) return; // Ignore clicks outside tabs
+        // --- Live Region Setup ---
+        const statusLiveRegion = document.getElementById("status-live-region");
+        const alertLiveRegion = document.getElementById("alert-live-region");
 
-          activateTab(clickedTab);
-        });
+        function announceStatus(message) {
+          if (statusLiveRegion) {
+            statusLiveRegion.textContent = "";
+            setTimeout(() => {
+              statusLiveRegion.textContent = message;
+              console.log("Announce Status:", message);
+            }, 50);
+          } else {
+            console.warn("Status live region not found.");
+          }
+        }
 
-        // --- Event Listener for Keyboard Navigation ---
-        tablist.addEventListener("keydown", (e) => {
-          const currentTab = e.target;
-          if (currentTab.getAttribute("role") !== "tab") return; // Ensure event target is a tab
+        function announceAlert(message) {
+          if (alertLiveRegion) {
+            alertLiveRegion.textContent = "";
+            setTimeout(() => {
+              alertLiveRegion.textContent = message;
+              console.warn("Announce Alert:", message);
+            }, 50);
+          } else {
+            console.warn("Alert live region not found.");
+          }
+        }
+        // --- End Live Region Setup ---
 
-          let newIndex;
-          const currentIndex = tabs.indexOf(currentTab);
-          const tabCount = tabs.length;
+        // --- Tabs Implementation ---
+        const tablist = document.querySelector(
+          '[role="tablist"][aria-label="Resource Type Filters"]'
+        ); // More specific selector
+        if (tablist) {
+          const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+          // Assuming panels are within a container sibling to tablist container or globally queryable
+          const panelsContainer = document.querySelector(
+            ".center-col-scrollable"
+          ); // Or appropriate container
+          const panels = panelsContainer
+            ? Array.from(
+                panelsContainer.querySelectorAll(':scope > [role="tabpanel"]')
+              )
+            : [];
 
-          switch (e.key) {
-            case "ArrowRight":
-            case "ArrowDown": // Often used interchangeably for horizontal tabs
-              e.preventDefault(); // Prevent page scroll
-              newIndex = (currentIndex + 1) % tabCount;
-              break;
+          function activateTab(selectedTab) {
+            if (!selectedTab) return;
+            let panelFound = false;
+            tabs.forEach((tab) => {
+              const isSelected = tab === selectedTab;
+              const panelId = tab.getAttribute("aria-controls");
+              // Find panel more robustly if panels aren't direct children/siblings
+              const panel = document.getElementById(panelId); // Rely on ID
 
-            case "ArrowLeft":
-            case "ArrowUp": // Often used interchangeably for horizontal tabs
-              e.preventDefault(); // Prevent page scroll
-              newIndex = (currentIndex - 1 + tabCount) % tabCount;
-              break;
+              tab.setAttribute("aria-selected", String(isSelected)); // Use string true/false
+              tab.setAttribute("tabindex", isSelected ? "0" : "-1");
 
-            case "Home":
-              e.preventDefault();
-              newIndex = 0;
-              break;
-
-            case "End":
-              e.preventDefault();
-              newIndex = tabCount - 1;
-              break;
-
-            default:
-              // Ignore other keys
-              return;
+              if (panel) {
+                panel.hidden = !isSelected;
+                panelFound = panelFound || isSelected; // Track if the selected panel was found
+              } else {
+                console.error(
+                  `Panel with ID ${panelId} not found for tab ${tab.id}`
+                );
+              }
+            });
+            // Announce after state changes
+            const itemCount = panelsContainer
+              ? panelsContainer.querySelector(
+                  `[role="tabpanel"]:not([hidden]) .thumbnail-button`
+                )?.length || 0
+              : 0;
+            const tabName = selectedTab.textContent.trim().split("(")[0].trim();
+            announceStatus(
+              `Showing ${itemCount > 0 ? itemCount : "content"} in ${tabName}.`
+            ); // Adjusted announcement
           }
 
-          // Move focus and activate the new tab (Automatic Activation)
-          if (newIndex !== undefined) {
-            tabs[newIndex].focus();
-            // If not using automatic activation, you would only move focus here
-            // and activation would happen on Enter/Space separately.
-            // For Automatic Activation:
-            activateTab(tabs[newIndex]);
-          }
-        });
+          if (tabs.length > 0 && panels.length > 0) {
+            tablist.addEventListener("click", (e) => {
+              const clickedTab = e.target.closest('[role="tab"]');
+              if (!clickedTab) return;
+              activateTab(clickedTab);
+            });
 
-        // --- Function to Activate a Tab ---
-        function activateTab(selectedTab) {
-          tabs.forEach((tab) => {
-            const isSelected = tab === selectedTab;
-            const panelId = tab.getAttribute("aria-controls");
-            const panel = document.getElementById(panelId);
+            tablist.addEventListener("keydown", (e) => {
+              const currentTab = e.target.closest('[role="tab"]'); // Use closest here too
+              if (!currentTab) return;
 
-            tab.setAttribute("aria-selected", isSelected);
-            tab.setAttribute("tabindex", isSelected ? "0" : "-1"); // Roving tabindex
+              let newIndex;
+              const currentIndex = tabs.indexOf(currentTab);
+              const tabCount = tabs.length;
 
-            if (panel) {
-              panel.hidden = !isSelected;
-              // Optionally manage tabindex on panels too if needed for focus flow
-              // panel.setAttribute('tabindex', isSelected ? '0' : '-1');
-            } else {
-              console.error(
-                `Panel with ID ${panelId} not found for tab ${tab.id}`
+              switch (e.key) {
+                case "ArrowRight":
+                case "ArrowDown":
+                  e.preventDefault();
+                  newIndex = (currentIndex + 1) % tabCount;
+                  break;
+                case "ArrowLeft":
+                case "ArrowUp":
+                  e.preventDefault();
+                  newIndex = (currentIndex - 1 + tabCount) % tabCount;
+                  break;
+                case "Home":
+                  e.preventDefault();
+                  newIndex = 0;
+                  break;
+                case "End":
+                  e.preventDefault();
+                  newIndex = tabCount - 1;
+                  break;
+                default:
+                  return; // Exit if not a navigation key
+              }
+
+              if (newIndex !== undefined) {
+                tabs[newIndex].focus();
+                // Automatic Activation: Activate tab on focus change via keys
+                activateTab(tabs[newIndex]);
+              }
+            });
+
+            // Initial Setup
+            let initiallyActiveTab = tabs.find(
+              (tab) => tab.getAttribute("aria-selected") === "true"
+            );
+            if (!initiallyActiveTab && tabs.length > 0) {
+              // If none are selected by default in HTML, select the first one
+              initiallyActiveTab = tabs[0];
+              initiallyActiveTab.setAttribute("aria-selected", "true");
+              initiallyActiveTab.setAttribute("tabindex", "0");
+            } else if (initiallyActiveTab) {
+              // Ensure only the selected one has tabindex 0 initially
+              tabs.forEach((tab) =>
+                tab.setAttribute(
+                  "tabindex",
+                  tab === initiallyActiveTab ? "0" : "-1"
+                )
               );
             }
-          });
-        }
 
-        // --- Initial Setup (Optional but good practice) ---
-        // Ensure initial state matches HTML attributes (useful if JS loads late)
-        const initiallyActiveTab = tabs.find(
-          (tab) => tab.getAttribute("aria-selected") === "true"
-        );
-        if (initiallyActiveTab) {
-          activateTab(initiallyActiveTab); // Run once to ensure panels match tabs
-        } else if (tabs.length > 0) {
-          // Fallback if no tab is marked as selected initially
-          tabs[0].setAttribute("aria-selected", "true");
-          tabs[0].setAttribute("tabindex", "0");
-          activateTab(tabs[0]);
+            if (initiallyActiveTab) {
+              activateTab(initiallyActiveTab); // Sync panels on load
+            }
+            console.log("Tabs initialized.");
+          } else {
+            console.warn("Tabs or Panels not found for initialization.");
+          }
+        } else {
+          console.warn("Tablist not found.");
         }
+        // --- End Tabs Implementation ---
+
         // --- Radio Button Group Implementation ---
-
         function setupRadioButtonGroup(groupElement) {
           if (!groupElement) return;
-
           const buttons = Array.from(
             groupElement.querySelectorAll('[role="radio"]')
           );
@@ -1058,167 +1208,183 @@
 
           buttons.forEach((button) => {
             button.addEventListener("click", () => {
-              // If already checked, do nothing
-              if (button.getAttribute("aria-checked") === "true") {
-                return;
-              }
-
-              // Uncheck all buttons in this specific group
-              buttons.forEach((btn) => {
-                btn.setAttribute("aria-checked", "false");
-              });
-
-              // Check the clicked button
+              if (button.getAttribute("aria-checked") === "true") return;
+              buttons.forEach((btn) =>
+                btn.setAttribute("aria-checked", "false")
+              );
               button.setAttribute("aria-checked", "true");
-
-              // Optional: Perform action based on selection
               console.log(
                 `Radio group "${groupElement.getAttribute(
                   "aria-label"
                 )}": Selected "${button.textContent.trim()}"`
               );
-              // Add specific actions here if needed, e.g., change view, filter list
+              // announceStatus(`${groupElement.getAttribute('aria-label')} changed to ${button.textContent.trim()}`); // Optional announcement
             });
           });
           console.log(
-            `Radio group initialized: ${groupElement.getAttribute(
-              "aria-label"
-            )}`
+            `Radio group initialized: ${
+              groupElement.getAttribute("aria-label") || "Unnamed"
+            }`
           );
         }
 
-        // Initialize the Toolbar radio group
-        const toolbarRadioGroup = document.querySelector(
-          ".toolbar-radio-group"
+        setupRadioButtonGroup(document.querySelector(".toolbar-radio-group"));
+        setupRadioButtonGroup(
+          document.querySelector('.left-col-fixed[role="radiogroup"]')
         );
-        setupRadioButtonGroup(toolbarRadioGroup);
-
-        // Initialize the Left Navigation radio group
-        const leftNavRadioGroup = document.querySelector(
-          '.left-col-fixed[role="radiogroup"]'
-        );
-        setupRadioButtonGroup(leftNavRadioGroup);
-
         // --- End Radio Button Group Implementation ---
-      });
 
-      document.addEventListener("DOMContentLoaded", () => {
-        // Keep existing Tabs JS ...
-
-        // --- ARIA Treeview Implementation ---
+        // --- ARIA Treeview Implementation (for role="treeitem" on button/a) ---
         const tree = document.getElementById("resource-tree");
+        let setFocusableNode; // Declare function name in advance
+
         if (tree) {
           const focusableTreeNodes = Array.from(
-            tree.querySelectorAll(
-              '[role="treeitem"] > button, [role="treeitem"] > a'
-            )
+            tree.querySelectorAll('[role="treeitem"]')
           );
           let typeaheadBuffer = "";
           let typeaheadTimeout = null;
 
-          // --- Helper: Get all VISIBLE focusable nodes ---
-          function getVisibleFocusableNodes() {
-            return focusableTreeNodes.filter((node) => {
-              let parent = node.parentElement;
-              while (parent && parent !== tree) {
-                if (parent.getAttribute("role") === "group" && parent.hidden) {
-                  return false;
-                }
-                // Check if ancestor treeitem is collapsed
-                if (parent.getAttribute("role") === "treeitem") {
-                  const expanderButton = parent.querySelector(
-                    ":scope > button[aria-expanded]"
-                  );
-                  if (
-                    expanderButton &&
-                    expanderButton.getAttribute("aria-expanded") === "false"
-                  ) {
-                    // If the direct parent treeitem button indicates collapsed, this node isn't visible
-                    // This check might need refinement based on exact structure
-                  }
-                }
-                // More robust check: traverse up looking for hidden groups
-                const groupParent = parent.closest('[role="group"]');
-                if (groupParent && groupParent.hidden) {
-                  return false;
-                }
+          function getChildGroup(treeitemNode) {
+            // treeitemNode is the button[role="treeitem"]
+            if (
+              treeitemNode.tagName !== "BUTTON" ||
+              !treeitemNode.hasAttribute("aria-expanded")
+            ) {
+              // Only expandable buttons have child groups in this pattern
+              return null;
+            }
+            // The group UL should be the next element sibling *of the button*
+            const potentialGroup = treeitemNode.nextElementSibling;
+            if (
+              potentialGroup &&
+              potentialGroup.tagName === "UL" &&
+              potentialGroup.getAttribute("role") === "group"
+            ) {
+              return potentialGroup;
+            }
+            // Add log for debugging if group not found where expected
+            console.error(
+              `getChildGroup: Could not find group UL as the next sibling for button:`,
+              treeitemNode,
+              "Next sibling was:",
+              potentialGroup
+            );
+            return null;
+          }
 
-                parent = parent.parentElement;
+          function getParentTreeitem(treeitemNode) {
+            const parentLi = treeitemNode.parentElement;
+            const parentGroup = parentLi?.parentElement;
+            if (parentGroup && parentGroup.getAttribute("role") === "group") {
+              const grandParentLi = parentGroup.parentElement;
+              const parentTreeitem = grandParentLi?.querySelector(
+                ':scope > [role="treeitem"]'
+              );
+              if (
+                parentTreeitem &&
+                (parentTreeitem.tagName === "BUTTON" ||
+                  parentTreeitem.tagName === "A")
+              ) {
+                return parentTreeitem;
+              }
+            }
+            return null;
+          }
+
+          function getVisibleFocusableNodes() {
+            // Basic visibility check - refine if deeply nested hidden checks are needed
+            return focusableTreeNodes.filter((node) => {
+              let current = node.parentElement; // Start checking from li[role=none] parent
+              while (current && current !== tree) {
+                if (
+                  current.getAttribute("role") === "group" &&
+                  current.hidden
+                ) {
+                  return false;
+                }
+                // Check collapsed state of ancestor buttons
+                const groupParent = current.closest('[role="group"]');
+                if (groupParent) {
+                  const parentLi = groupParent.parentElement;
+                  const parentTreeitemButton = parentLi?.querySelector(
+                    ':scope > button[role="treeitem"][aria-expanded="false"]'
+                  );
+                  if (parentTreeitemButton) {
+                    return false; // Inside a collapsed node
+                  }
+                  current = parentLi?.parentElement; // Move up past the li
+                } else {
+                  current = current.parentElement; // General traverse up
+                }
               }
               return true;
             });
           }
 
-          // --- Helper: Set the focusable item (roving tabindex) ---
-          // Inside Treeview's setFocusableNode function:
-          function setFocusableNode(nodeToFocus) {
-            // ... (existing code)
-            console.log(
-              "Treeview: Setting focusable node (tabindex=0) to:",
-              nodeToFocus
-            ); // LOG
+          // Define setFocusableNode here so it's in scope
+          setFocusableNode = function (nodeToFocus) {
+            // Assign to the outer variable
+            if (!nodeToFocus) return;
+            console.log(`TREEVIEW: Setting tabindex=0 for:`, nodeToFocus);
             focusableTreeNodes.forEach((node) => {
               node.setAttribute("tabindex", node === nodeToFocus ? "0" : "-1");
             });
-          }
+          };
+          // Make it globally accessible ONLY IF context menu absolutely needs it
+          window.setTreeFocusableNode = setFocusableNode;
 
-          // --- Custom Context Menu Implementation ---
-          // ... (contextMenu, menuItems, triggerSelectors, etc.) ...
-
-          // --- Event Listener: Keyboard Trigger (Shift+F10, ContextMenu key) ---
-          document.body.addEventListener("keydown", (e) => {
-            if (e.key === "ContextMenu" || (e.key === "F10" && e.shiftKey)) {
-              // LOG 1: Check active element *before* processing
-              console.log(
-                `Context Key/Shift+F10 Down. Active Element:`,
-                document.activeElement
-              );
-
-              const trigger = document.activeElement?.closest(triggerSelectors);
-
-              // LOG 2: Check identified trigger
-              console.log(
-                `Context Key/Shift+F10: Identified Trigger:`,
-                trigger
-              );
-
-              if (trigger) {
-                e.preventDefault(); // Prevent default context menu
-                const rect = trigger.getBoundingClientRect();
-                openContextMenu(trigger, rect.left, rect.bottom + 2);
-              }
-            }
-          });
-
-          // --- Helper: Toggle Expansion ---
           function toggleExpansion(buttonNode) {
-            const item = buttonNode.closest('[role="treeitem"]');
-            const group = item?.querySelector(':scope > [role="group"]');
+            // buttonNode now IS the treeitem with aria-expanded
+            if (
+              !buttonNode ||
+              buttonNode.tagName !== "BUTTON" ||
+              !buttonNode.hasAttribute("aria-expanded")
+            )
+              return;
+
+            const isExpanded =
+              buttonNode.getAttribute("aria-expanded") === "true";
+            const group = getChildGroup(buttonNode); // Use the corrected helper
             const icon = buttonNode.querySelector("i");
 
-            if (item && group) {
-              const isExpanded = item.getAttribute("aria-expanded") === "true";
-              item.setAttribute("aria-expanded", !isExpanded);
-              group.hidden = isExpanded;
+            if (group) {
+              // Only proceed if the group was found
+              // Toggle button attribute
+              buttonNode.setAttribute("aria-expanded", String(!isExpanded)); // Use string true/false
+              // Toggle group visibility
+              group.hidden = isExpanded; // Correct: Hide if it WAS expanded, show if it WAS collapsed
 
-              // Toggle folder icon (example)
+              // Toggle folder icon
               if (icon) {
-                icon.classList.toggle("fa-folder", isExpanded);
-                icon.classList.toggle("fa-folder-open", !isExpanded);
+                icon.classList.toggle("fa-folder", isExpanded); // Show closed icon if it WAS expanded
+                icon.classList.toggle("fa-folder-open", !isExpanded); // Show open icon if it WAS collapsed
               }
+              console.log(
+                `Toggled expansion for "${buttonNode.textContent.trim()}". New state: ${!isExpanded}`
+              );
+              // Announce state change
+              announceStatus(
+                `${buttonNode.textContent.trim()} ${
+                  !isExpanded ? "expanded" : "collapsed"
+                }.`
+              );
+            } else {
+              // Log error if group wasn't found - helps debugging
+              console.error(
+                `toggleExpansion: Could not find child group for button:`,
+                buttonNode
+              );
             }
           }
 
-          // --- Event Listener: Keydown on the Tree ---
           tree.addEventListener("keydown", (e) => {
-            const currentFocusedNode = e.target.closest(
-              '[role="treeitem"] > button, [role="treeitem"] > a'
-            );
+            const currentFocusedNode = e.target.closest('[role="treeitem"]');
             if (
               !currentFocusedNode ||
               !focusableTreeNodes.includes(currentFocusedNode)
             )
-              return; // Ensure focus is on a known node
+              return;
 
             const visibleNodes = getVisibleFocusableNodes();
             const currentIndex = visibleNodes.indexOf(currentFocusedNode);
@@ -1231,506 +1397,393 @@
                   nextNode = visibleNodes[currentIndex + 1];
                 }
                 break;
-
               case "ArrowUp":
                 e.preventDefault();
                 if (currentIndex > 0) {
                   nextNode = visibleNodes[currentIndex - 1];
                 }
                 break;
-
               case "ArrowRight":
                 e.preventDefault();
-                const parentItemRight =
-                  currentFocusedNode.closest('[role="treeitem"]');
                 if (
                   currentFocusedNode.tagName === "BUTTON" &&
-                  parentItemRight?.getAttribute("aria-expanded") === "false"
+                  currentFocusedNode.getAttribute("aria-expanded") === "false"
                 ) {
-                  // Expand closed node
                   toggleExpansion(currentFocusedNode);
                 } else if (
                   currentFocusedNode.tagName === "BUTTON" &&
-                  parentItemRight?.getAttribute("aria-expanded") === "true"
+                  currentFocusedNode.getAttribute("aria-expanded") === "true"
                 ) {
-                  // Move to first child if node is open
-                  const firstChildNode = parentItemRight.querySelector(
-                    ':scope > [role="group"] > [role="treeitem"] > button, :scope > [role="group"] > [role="treeitem"] > a'
+                  const childGroup = getChildGroup(currentFocusedNode);
+                  const firstChildNode = childGroup?.querySelector(
+                    ':scope > li[role="none"] > [role="treeitem"]'
                   );
-                  if (firstChildNode) {
-                    nextNode = firstChildNode;
-                  }
+                  if (firstChildNode) nextNode = firstChildNode;
                 }
                 break;
-
               case "ArrowLeft":
                 e.preventDefault();
-                const parentItemLeft =
-                  currentFocusedNode.closest('[role="treeitem"]');
                 if (
                   currentFocusedNode.tagName === "BUTTON" &&
-                  parentItemLeft?.getAttribute("aria-expanded") === "true"
+                  currentFocusedNode.getAttribute("aria-expanded") === "true"
                 ) {
-                  // Collapse open node
                   toggleExpansion(currentFocusedNode);
                 } else {
-                  // Move to parent node if not at root level
-                  const groupParent = parentItemLeft?.parentElement;
-                  if (
-                    groupParent &&
-                    groupParent.getAttribute("role") === "group"
-                  ) {
-                    const grandParentItem =
-                      groupParent.closest('[role="treeitem"]');
-                    nextNode = grandParentItem?.querySelector(
-                      ":scope > button, :scope > a"
-                    );
-                  }
+                  const parentNode = getParentTreeitem(currentFocusedNode);
+                  if (parentNode) nextNode = parentNode;
                 }
                 break;
-
               case "Home":
                 e.preventDefault();
-                nextNode = visibleNodes[0];
+                if (visibleNodes.length > 0) nextNode = visibleNodes[0];
                 break;
-
               case "End":
                 e.preventDefault();
-                nextNode = visibleNodes[visibleNodes.length - 1];
+                if (visibleNodes.length > 0)
+                  nextNode = visibleNodes[visibleNodes.length - 1];
                 break;
-
               case "Enter":
-              case " ": // Space
+              case " ":
                 e.preventDefault();
-                if (currentFocusedNode.tagName === "BUTTON") {
+                if (
+                  currentFocusedNode.tagName === "BUTTON" &&
+                  currentFocusedNode.hasAttribute("aria-expanded")
+                ) {
                   toggleExpansion(currentFocusedNode);
                 } else if (currentFocusedNode.tagName === "A") {
-                  currentFocusedNode.click(); // Activate the link
+                  currentFocusedNode.click();
                 }
                 break;
-
               default:
-                // Basic Typeahead
                 if (e.key.length === 1 && e.key.match(/\S/)) {
-                  // Check for single non-whitespace character
+                  // --- Basic Typeahead Logic ---
                   e.preventDefault();
-
                   clearTimeout(typeaheadTimeout);
                   typeaheadBuffer += e.key.toLowerCase();
                   typeaheadTimeout = setTimeout(() => {
                     typeaheadBuffer = "";
-                  }, 750); // Reset buffer after delay
+                  }, 750);
 
+                  let searchNodes = getVisibleFocusableNodes(); // Search only visible nodes
                   let currentNodeIndex =
-                    visibleNodes.indexOf(currentFocusedNode);
-                  let searchIndex =
-                    (currentNodeIndex + 1) % visibleNodes.length; // Start searching from next node
+                    searchNodes.indexOf(currentFocusedNode);
+                  if (currentNodeIndex < 0) currentNodeIndex = 0;
+                  let searchIndex = (currentNodeIndex + 1) % searchNodes.length;
 
-                  for (let i = 0; i < visibleNodes.length; i++) {
-                    const nodeToCheck = visibleNodes[searchIndex];
-                    const nodeText = nodeToCheck.textContent
-                      .trim()
-                      .toLowerCase();
-                    if (nodeText.startsWith(typeaheadBuffer)) {
-                      nextNode = nodeToCheck;
-                      break; // Found match
+                  for (let i = 0; i < searchNodes.length; i++) {
+                    const nodeToCheck = searchNodes[searchIndex];
+                    if (nodeToCheck) {
+                      const nodeText = nodeToCheck.textContent
+                        .trim()
+                        .toLowerCase();
+                      if (nodeText.startsWith(typeaheadBuffer)) {
+                        nextNode = nodeToCheck;
+                        break;
+                      }
                     }
-                    searchIndex = (searchIndex + 1) % visibleNodes.length; // Wrap around search
+                    searchIndex = (searchIndex + 1) % searchNodes.length;
                     if (
                       searchIndex ===
-                      (currentNodeIndex + 1) % visibleNodes.length
+                      (currentNodeIndex + 1) % searchNodes.length
                     )
-                      break; // Searched all nodes
+                      break;
                   }
+                  // --- End Typeahead ---
                 }
-                break; // Allow other keys if not handled
+                break;
             }
 
-            // If a next node was determined, move focus and update tabindex
             if (nextNode) {
               setFocusableNode(nextNode);
-              nextNode.focus();
+              nextNode.focus({ preventScroll: true });
             }
           });
 
-          // --- Event Listener: Click on the Tree ---
           tree.addEventListener("click", (e) => {
-            const clickedNode = e.target.closest(
-              '[role="treeitem"] > button, [role="treeitem"] > a'
-            );
+            const clickedNode = e.target.closest('[role="treeitem"]');
             if (!clickedNode || !focusableTreeNodes.includes(clickedNode))
               return;
-
-            // Update focusable item
             setFocusableNode(clickedNode);
-
-            // Toggle expansion if it's a button
-            if (clickedNode.tagName === "BUTTON") {
+            if (
+              clickedNode.tagName === "BUTTON" &&
+              clickedNode.hasAttribute("aria-expanded")
+            ) {
               toggleExpansion(clickedNode);
             }
-            // Link clicks are handled natively by the browser
           });
 
-          // --- Event Listener: Focus moving into the tree ---
           tree.addEventListener("focusin", (e) => {
-            // If focus moves TO the tree container itself (e.g., tabbing into it)
-            // redirect focus to the currently designated focusable node.
             if (e.target === tree) {
-              const focusableNode = tree.querySelector('[tabindex="0"]');
+              const focusableNode = tree.querySelector(
+                '[role="treeitem"][tabindex="0"]'
+              );
               if (focusableNode) {
                 focusableNode.focus();
               } else if (focusableTreeNodes.length > 0) {
-                // Fallback if none has tabindex="0" somehow
                 setFocusableNode(focusableTreeNodes[0]);
                 focusableTreeNodes[0].focus();
               }
             }
           });
 
-          // Initial setup: ensure the first node is focusable
+          // Initial setup
           if (focusableTreeNodes.length > 0) {
-            setFocusableNode(focusableTreeNodes[0]);
+            const firstNode = focusableTreeNodes[0];
+            setFocusableNode(firstNode);
+            // Ensure initial hidden states match aria-expanded
+            tree
+              .querySelectorAll('button[role="treeitem"]')
+              .forEach((button) => {
+                const group = getChildGroup(button);
+                if (group) {
+                  group.hidden =
+                    button.getAttribute("aria-expanded") !== "true";
+                }
+              });
+          } else {
+            console.warn("Treeview: No focusable treeitem nodes found.");
           }
 
-          console.log("Treeview initialized");
+          console.log(
+            "Treeview initialized (Pattern: treeitem on interactive element)"
+          );
         } else {
           console.log("Treeview container not found");
         }
-      }); // End DOMContentLoaded
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const statusLiveRegion = document.getElementById("status-live-region");
-        const alertLiveRegion = document.getElementById("alert-live-region");
-
-        // --- Helper Function to Announce Status (Polite) ---
-        function announceStatus(message) {
-          if (statusLiveRegion) {
-            // Clear previous message briefly then set new one
-            // Some screen readers need a change to re-announce same message
-            statusLiveRegion.textContent = "";
-            // Set new message after a tiny delay
-            setTimeout(() => {
-              statusLiveRegion.textContent = message;
-              console.log("Announce Status:", message); // For debugging
-            }, 50); // Small delay helps ensure announcement
-          } else {
-            console.warn("Status live region not found.");
-          }
-        }
-
-        // --- Helper Function to Announce Alert (Assertive) ---
-        function announceAlert(message) {
-          if (alertLiveRegion) {
-            alertLiveRegion.textContent = ""; // Clear previous
-            setTimeout(() => {
-              alertLiveRegion.textContent = message;
-              console.warn("Announce Alert:", message); // For debugging
-            }, 50);
-          } else {
-            console.warn("Alert live region not found.");
-          }
-        }
+        // --- End Treeview Implementation ---
 
         // --- Custom Context Menu Implementation ---
         const contextMenu = document.getElementById("customContextMenu");
-        const menuItems = Array.from(
-          contextMenu.querySelectorAll('[role="menuitem"]')
-        );
-        const triggerSelectors =
-          '.thumbnail-button, [role="treeitem"] > button, [role="treeitem"] > a'; // Targets for the menu
-        let currentTrigger = null; // Element that triggered the menu
-        let currentFocusedItemIndex = -1;
+        if (contextMenu) {
+          const menuItems = Array.from(
+            contextMenu.querySelectorAll('[role="menuitem"]')
+          );
+          const triggerSelectors = '.thumbnail-button, [role="treeitem"]'; // Update selector to target treeitem role directly
+          let currentTrigger = null;
+          let currentFocusedItemIndex = -1;
 
-        // --- Helper: Open the Menu ---
-        function openContextMenu(triggerElement, x, y) {
-          console.log(`Opening context menu for trigger:`, triggerElement);
-          currentTrigger = triggerElement; // Store the trigger
-          contextMenu.hidden = false; // Make menu visible
+          function openContextMenu(triggerElement, x, y) {
+            console.log(`Opening context menu for trigger:`, triggerElement);
+            currentTrigger = triggerElement;
+            contextMenu.hidden = false;
+            // Positioning logic... (ensure menu stays in viewport)
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            let finalX = x;
+            let finalY = y;
+            if (x + menuWidth > viewportWidth)
+              finalX = viewportWidth - menuWidth - 5;
+            if (y + menuHeight > viewportHeight)
+              finalY = viewportHeight - menuHeight - 5;
+            finalX = Math.max(5, finalX);
+            finalY = Math.max(5, finalY);
+            contextMenu.style.left = `${finalX}px`;
+            contextMenu.style.top = `${finalY}px`;
 
-          // Position the menu
-          const menuWidth = contextMenu.offsetWidth;
-          const menuHeight = contextMenu.offsetHeight;
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
-
-          // Adjust position if menu would go off-screen
-          let finalX = x;
-          let finalY = y;
-          if (x + menuWidth > viewportWidth) {
-            finalX = viewportWidth - menuWidth - 5; // Add some margin
+            currentFocusedItemIndex = 0;
+            menuItems[currentFocusedItemIndex]?.focus();
           }
-          if (y + menuHeight > viewportHeight) {
-            finalY = viewportHeight - menuHeight - 5;
-          }
-          finalX = Math.max(5, finalX); // Ensure min margin left
-          finalY = Math.max(5, finalY); // Ensure min margin top
 
-          contextMenu.style.left = `${finalX}px`;
-          contextMenu.style.top = `${finalY}px`;
+          function closeContextMenu() {
+            if (contextMenu.hidden) return; // Prevent multiple calls
 
-          // Focus the first menu item
-          currentFocusedItemIndex = 0;
-          menuItems[currentFocusedItemIndex]?.focus(); // Use optional chaining
-        }
-
-        // --- Helper: Close the Menu ---
-        function closeContextMenu() {
-          if (!contextMenu.hidden) {
-            const triggerToFocus = currentTrigger; // Store ref before clearing
+            const triggerToFocus = currentTrigger;
             contextMenu.hidden = true;
-            currentTrigger = null; // Clear trigger *after* storing ref
+            currentTrigger = null;
             currentFocusedItemIndex = -1;
 
-            // LOG 4: Check the trigger we are about to focus
-            console.log(
-              "Closing menu. Attempting to return focus to:",
-              triggerToFocus
-            );
-
             if (triggerToFocus) {
-              // Use a minimal timeout first
+              console.log("Closing menu. Returning focus to:", triggerToFocus);
               setTimeout(() => {
-                // LOG 5: Inside timeout, check trigger again & active element BEFORE focusing
-                console.log(
-                  `Inside Timeout: Trigger to focus:`,
-                  triggerToFocus
-                );
-                console.log(
-                  `Inside Timeout: Active element BEFORE focus():`,
-                  document.activeElement
-                );
-
-                // --- FIX ATTEMPT: Check if trigger is Tree item & ensure it's focusable ---
-                const treeContainer = document.getElementById("resource-tree"); // Get tree ref
+                // Check if trigger is Tree item & ensure it's focusable via Treeview's function
+                const treeContainer = document.getElementById("resource-tree");
+                // Use the globally exposed function if needed
+                const treeFocusSetter = window.setTreeFocusableNode; // Access global function
                 if (
                   treeContainer &&
                   treeContainer.contains(triggerToFocus) &&
-                  typeof setFocusableNode === "function"
+                  typeof treeFocusSetter === "function"
                 ) {
                   console.log(
-                    "Trigger is in treeview, ensuring it is focusable via setFocusableNode."
+                    "Trigger is in treeview, ensuring it is focusable."
                   );
-                  setFocusableNode(triggerToFocus); // Make sure treeview logic sets tabindex="0"
-                  // Add a slight delay AFTER setting tabindex, BEFORE focusing? Maybe not needed.
+                  treeFocusSetter(triggerToFocus);
                 }
-                // --- End Fix Attempt ---
-
-                triggerToFocus.focus({ preventScroll: true }); // Add preventScroll just in case
-
-                // LOG 6: Check active element AFTER focusing attempt
+                triggerToFocus.focus({ preventScroll: true });
                 console.log(
-                  `Inside Timeout: Active element AFTER focus():`,
+                  "Active element after focus attempt:",
                   document.activeElement
                 );
-
-                // Check if focus actually landed correctly
                 if (document.activeElement !== triggerToFocus) {
-                  console.warn(
-                    "Focus did not land on the trigger element as expected."
-                  );
-                  // As a last resort, maybe focus body? But avoid if possible.
-                  // document.body.focus();
+                  console.warn("Focus did not land on the trigger element.");
                 } else {
                   console.log("Focus successfully returned to trigger.");
                 }
-              }, 0); // Minimal timeout
+              }, 0);
             } else {
               console.warn(
                 "closeContextMenu called but triggerToFocus was null."
               );
             }
           }
-        }
 
-        // --- Helper: Focus Next/Previous Item ---
-        function focusMenuItem(index) {
-          // Remove focus style from previous (optional if using :focus-visible)
-          // menuItems[currentFocusedItemIndex]?.classList.remove('focused');
-
-          currentFocusedItemIndex = index;
-          menuItems[currentFocusedItemIndex]?.focus();
-          // menuItems[currentFocusedItemIndex]?.classList.add('focused'); // Optional manual style
-        }
-
-        // --- Event Listener: "contextmenu" (Right Click) ---
-        // Attach to a common ancestor for delegation
-        document.body.addEventListener("contextmenu", (e) => {
-          const trigger = e.target.closest(triggerSelectors);
-          if (trigger) {
-            e.preventDefault(); // Prevent default browser menu
-            openContextMenu(trigger, e.clientX, e.clientY);
-          } else {
-            // If right-clicking outside a valid target, close any open menu
-            closeContextMenu();
+          function focusMenuItem(index) {
+            currentFocusedItemIndex = index;
+            menuItems[currentFocusedItemIndex]?.focus();
           }
-        });
 
-        // --- Event Listener: Keyboard Trigger (Shift+F10, ContextMenu key) ---
-        document.body.addEventListener("keydown", (e) => {
-          if (e.key === "ContextMenu" || (e.key === "F10" && e.shiftKey)) {
-            const trigger = document.activeElement?.closest(triggerSelectors);
+          // Event Listeners for Context Menu (Right Click, Keyboard Trigger, Menu Nav, Outside Click, Item Activation)
+          document.body.addEventListener("contextmenu", (e) => {
+            const trigger = e.target.closest(triggerSelectors); // Use updated selector
             if (trigger) {
               e.preventDefault();
-              // Position menu near the trigger element
-              const rect = trigger.getBoundingClientRect();
-              openContextMenu(trigger, rect.left, rect.bottom + 2); // Position below trigger
-            }
-          }
-        });
-
-        // --- Event Listener: Keyboard Navigation within Menu ---
-        contextMenu.addEventListener("keydown", (e) => {
-          if (contextMenu.hidden) return; // Ignore if hidden
-
-          let newIndex;
-          const totalItems = menuItems.length;
-
-          switch (e.key) {
-            case "ArrowDown":
-              e.preventDefault();
-              newIndex = (currentFocusedItemIndex + 1) % totalItems;
-              focusMenuItem(newIndex);
-              break;
-            case "ArrowUp":
-              e.preventDefault();
-              newIndex =
-                (currentFocusedItemIndex - 1 + totalItems) % totalItems;
-              focusMenuItem(newIndex);
-              break;
-            case "Home":
-              e.preventDefault();
-              focusMenuItem(0);
-              break;
-            case "End":
-              e.preventDefault();
-              focusMenuItem(totalItems - 1);
-              break;
-            case "Enter":
-            case " ": // Space
-              e.preventDefault();
-              const activeItem = menuItems[currentFocusedItemIndex];
-              if (activeItem) {
-                activeItem.click(); // Simulate click to trigger action
-                // Action listener below will handle closing
-              }
-              break;
-            case "Escape":
-              e.preventDefault();
-              closeContextMenu();
-              break;
-            case "Tab":
-              // Allow tabbing out, close menu as focus leaves
-              closeContextMenu();
-              break;
-            default:
-              // Optional: Add typeahead similar to Treeview if desired
-              break;
-          }
-        });
-
-        // --- Event Listener: Clicking Outside to Close ---
-        document.addEventListener("click", (e) => {
-          if (
-            !contextMenu.hidden &&
-            !contextMenu.contains(e.target) &&
-            e.target !== currentTrigger
-          ) {
-            closeContextMenu();
-          }
-        });
-
-        // --- Event Listener: Activating Menu Items ---
-        // --- Event Listener: Activating Menu Items (WITH RANDOM SUCCESS/FAILURE) ---
-        menuItems.forEach((item) => {
-          item.addEventListener("click", (e) => {
-            // Get details before closing potentially clears currentTrigger
-            const action = item.textContent.trim();
-            const triggerElement = currentTrigger;
-            const triggerDesc =
-              triggerElement?.textContent?.trim().substring(0, 30) ||
-              "the selected item"; // Get description
-
-            console.log(
-              `Action "${action}" clicked for element: "${triggerDesc}"`
-            );
-
-            // --- Simulate Random Success/Failure ---
-            const successProbability = 0.75; // 75% chance of success
-            const isSuccess = Math.random() < successProbability;
-            // --- End Simulation ---
-
-            let announcement = "";
-
-            // Generate message based on outcome and action
-            if (isSuccess) {
-              // *** SUCCESS MESSAGES ***
-              switch (action) {
-                case "Preview":
-                  announcement = `Previewing "${triggerDesc}".`;
-                  break;
-                case "Rename":
-                  // Simulate rename success - maybe just confirm readiness
-                  announcement = `"${triggerDesc}" is ready for renaming.`;
-                  break;
-                case "Duplicate":
-                  announcement = `Successfully duplicated "${triggerDesc}".`;
-                  break;
-                case "Add to Folder...":
-                  announcement = `Successfully added "${triggerDesc}" to folder.`; // Placeholder folder
-                  break;
-                case "Share":
-                  announcement = `Sharing options opened for "${triggerDesc}".`; // Simulate opening something
-                  break;
-                case "Delete":
-                  // Simulate actual deletion in a real app before announcing
-                  announcement = `"${triggerDesc}" was successfully deleted.`;
-                  break;
-                default:
-                  // Generic success
-                  announcement = `Action "${action}" completed for "${triggerDesc}".`;
-              }
-              console.log("Simulated Success:", announcement);
-              announceStatus(announcement); // Announce politely using helper
+              openContextMenu(trigger, e.clientX, e.clientY);
             } else {
-              // *** FAILURE MESSAGES ***
-              switch (action) {
-                case "Preview":
-                  announcement = `Error: Could not load preview for "${triggerDesc}".`;
-                  break;
-                case "Rename":
-                  announcement = `Error: Failed to initiate rename for "${triggerDesc}".`;
-                  break;
-                case "Duplicate":
-                  announcement = `Error: Could not duplicate "${triggerDesc}". Insufficient space?`; // Example specific error
-                  break;
-                case "Add to Folder...":
-                  announcement = `Error: Failed to add "${triggerDesc}" to folder.`;
-                  break;
-                case "Share":
-                  announcement = `Error: Cannot share "${triggerDesc}" at this time.`;
-                  break;
-                case "Delete":
-                  announcement = `Error: Deletion of "${triggerDesc}" failed. Item might be in use.`; // Example specific error
-                  break;
-                default:
-                  // Generic failure
-                  announcement = `Error: Action "${action}" failed for "${triggerDesc}". Please try again.`;
-              }
-              console.warn("Simulated Failure:", announcement);
-              //announceAlert(announcement); // Announce assertively using helper
-            }
-
-            // Close menu AFTER processing the action/announcement logic
-            // Make sure closeContextMenu is defined correctly and accessible
-            if (typeof closeContextMenu === "function") {
               closeContextMenu();
-            } else {
-              console.error("closeContextMenu function not found!");
             }
           });
-        });
 
-        console.log("Context menu initialized");
+          document.body.addEventListener("keydown", (e) => {
+            if (e.key === "ContextMenu" || (e.key === "F10" && e.shiftKey)) {
+              const trigger = document.activeElement?.closest(triggerSelectors); // Use updated selector
+              if (trigger) {
+                e.preventDefault();
+                const rect = trigger.getBoundingClientRect();
+                openContextMenu(trigger, rect.left, rect.bottom + 2);
+              }
+            }
+          });
+
+          contextMenu.addEventListener("keydown", (e) => {
+            if (contextMenu.hidden) return;
+            let newIndex;
+            const totalItems = menuItems.length;
+            switch (e.key) {
+              case "ArrowDown":
+                e.preventDefault();
+                newIndex = (currentFocusedItemIndex + 1) % totalItems;
+                focusMenuItem(newIndex);
+                break;
+              case "ArrowUp":
+                e.preventDefault();
+                newIndex =
+                  (currentFocusedItemIndex - 1 + totalItems) % totalItems;
+                focusMenuItem(newIndex);
+                break;
+              case "Home":
+                e.preventDefault();
+                focusMenuItem(0);
+                break;
+              case "End":
+                e.preventDefault();
+                focusMenuItem(totalItems - 1);
+                break;
+              case "Enter":
+              case " ":
+                e.preventDefault();
+                menuItems[currentFocusedItemIndex]?.click();
+                break;
+              case "Escape":
+                e.preventDefault();
+                closeContextMenu();
+                break;
+              case "Tab":
+                closeContextMenu();
+                break; // Close on Tab out
+            }
+          });
+
+          document.addEventListener("click", (e) => {
+            if (
+              !contextMenu.hidden &&
+              !contextMenu.contains(e.target) &&
+              e.target !== currentTrigger
+            ) {
+              closeContextMenu();
+            }
+          });
+
+          // Item Activation (with random success/failure)
+          menuItems.forEach((item) => {
+            item.addEventListener("click", (e) => {
+              const action = item.textContent.trim();
+              const triggerElement = currentTrigger; // Use stored trigger before closeContextMenu clears it
+              const triggerDesc =
+                triggerElement?.textContent?.trim().substring(0, 30) ||
+                "the selected item";
+              console.log(
+                `Action "${action}" clicked for element: "${triggerDesc}"`
+              );
+
+              const successProbability = 0.75;
+              const isSuccess = Math.random() < successProbability;
+              let announcement = "";
+
+              if (isSuccess) {
+                // Generate success message... (use switch statement as before)
+                switch (action) {
+                  case "Preview":
+                    announcement = `Previewing "${triggerDesc}".`;
+                    break;
+                  case "Rename":
+                    announcement = `"${triggerDesc}" is ready for renaming.`;
+                    break;
+                  case "Duplicate":
+                    announcement = `Successfully duplicated "${triggerDesc}".`;
+                    break;
+                  case "Add to Folder...":
+                    announcement = `Successfully added "${triggerDesc}" to folder.`;
+                    break;
+                  case "Share":
+                    announcement = `Sharing options opened for "${triggerDesc}".`;
+                    break;
+                  case "Delete":
+                    announcement = `"${triggerDesc}" was successfully deleted.`;
+                    break;
+                  default:
+                    announcement = `Action "${action}" completed for "${triggerDesc}".`;
+                }
+                console.log("Simulated Success:", announcement);
+                announceStatus(announcement);
+              } else {
+                // Generate failure message... (use switch statement as before)
+                switch (action) {
+                  case "Preview":
+                    announcement = `Error: Could not load preview for "${triggerDesc}".`;
+                    break;
+                  case "Rename":
+                    announcement = `Error: Failed to initiate rename for "${triggerDesc}".`;
+                    break;
+                  case "Duplicate":
+                    announcement = `Error: Could not duplicate "${triggerDesc}".`;
+                    break;
+                  case "Add to Folder...":
+                    announcement = `Error: Failed to add "${triggerDesc}" to folder.`;
+                    break;
+                  case "Share":
+                    announcement = `Error: Cannot share "${triggerDesc}" at this time.`;
+                    break;
+                  case "Delete":
+                    announcement = `Error: Deletion of "${triggerDesc}" failed.`;
+                    break;
+                  default:
+                    announcement = `Error: Action "${action}" failed for "${triggerDesc}".`;
+                }
+                console.warn("Simulated Failure:", announcement);
+                announceAlert(announcement);
+              }
+              closeContextMenu(); // Close menu AFTER action/announcement
+            });
+          });
+          console.log("Context menu initialized.");
+        } else {
+          console.warn("Context menu container not found.");
+        }
+        // --- End Context Menu Implementation ---
+
+        console.log("All scripts initialized.");
       }); // End DOMContentLoaded
     </script>
   </body>

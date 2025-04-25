@@ -1,0 +1,728 @@
+/* Basic Reset & Body */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  line-height: 1.6;
+  background-color: #e0f2f7; /* Light cyan background */
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Layout */
+.top-bar {
+  background-color: #b2ebf2; /* Medium cyan */
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 2px solid #80deea; /* Darker cyan */
+}
+
+.top-bar h1 {
+  color: #006064; /* Dark cyan text */
+  font-size: 1.8em;
+}
+
+.container {
+  display: flex;
+  flex-grow: 1;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.left-column {
+  flex: 1; /* Adjust flex ratio as needed */
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border: 1px solid #80deea;
+  border-radius: 5px;
+}
+
+.right-column {
+  flex: 1; /* Adjust flex ratio as needed */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Controls space between contents-box and static-selection-area */
+}
+
+/* Form Styles */
+#main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  align-items: center; /* Align items vertically */
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+  flex-basis: 100px; /* Give labels a consistent base width */
+  text-align: right;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea,
+.form-group input[type="date"] {
+  flex-grow: 1; /* Allow inputs to take remaining space */
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 150px; /* Minimum width */
+}
+
+.form-group.date-group {
+  gap: 1rem;
+  align-items: baseline; /* Align labels better with date inputs */
+}
+.form-group.date-group label {
+  flex-basis: auto; /* Reset basis for date labels */
+}
+.form-group.date-group input[type="date"] {
+  flex-grow: 0; /* Don't let date inputs grow excessively */
+  padding: 0.4rem;
+}
+
+.form-group textarea {
+  width: 100%; /* Make textarea take full available width */
+  min-height: 100px;
+}
+
+#info-char-count {
+  font-size: 0.8em;
+  color: #666;
+  width: 100%;
+  text-align: right;
+  margin-left: 110px; /* Align roughly under textarea */
+}
+
+/* Checkboxes in the LEFT form (Standard Style) */
+.form-group.checkbox-group {
+  align-items: center;
+  margin-left: 110px; /* Indent checkboxes */
+}
+.form-group.checkbox-group label {
+  font-weight: normal;
+  flex-basis: auto; /* Reset label basis */
+  text-align: left;
+  margin-right: 0.2rem;
+}
+.form-group.checkbox-group input[type="checkbox"] {
+  margin-right: 0.3rem;
+  flex-grow: 0;
+  /* Standard checkbox appearance */
+  appearance: auto; /* Or checkbox */
+  width: auto;
+  height: auto;
+  opacity: 1;
+  position: static;
+}
+
+.required-indicator {
+  font-size: 0.9em;
+  color: #d32f2f; /* Red color for indicator */
+  margin-top: -0.5rem;
+  margin-left: 110px;
+}
+.required-group label::after {
+  /* Alternative visual marker if needed */
+  /* content: '*'; */
+  /* color: #d32f2f; */
+  /* margin-left: 2px; */
+}
+
+/* Buttons */
+button,
+.button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #4dd0e1; /* Light cyan border */
+  border-radius: 4px;
+  background-color: #e0f7fa; /* Very light cyan */
+  color: #00796b; /* Teal */
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover,
+.button:hover {
+  background-color: #b2ebf2; /* Medium cyan */
+}
+
+button:active,
+.button:active {
+  background-color: #80deea; /* Darker cyan */
+}
+
+/* Focus styles */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid #005f56; /* Dark teal outline */
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(77, 208, 225, 0.4); /* Cyan glow */
+}
+/* Remove default outline when custom focus is applied via box-shadow on specific elements */
+.modal-item-list li:focus,
+.item-checkbox-group
+  input[type="checkbox"]:focus-visible
+  + .custom-checkbox-style {
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.save-btn {
+  background-color: #4db6ac; /* Teal */
+  color: white;
+  border-color: #26a69a;
+}
+.save-btn:hover {
+  background-color: #26a69a;
+}
+.save-btn:active {
+  background-color: #00897b;
+}
+
+.cancel-btn {
+  background-color: #eee;
+  color: #555;
+  border-color: #ccc;
+}
+.cancel-btn:hover {
+  background-color: #ddd;
+}
+
+/* Right Column Styles */
+.right-column-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; /* Align items vertically */
+  gap: 0.5rem;
+  /* No margin-bottom needed as gap handles spacing now */
+  position: relative; /* For menu positioning */
+  padding: 0 1rem; /* Add padding to align with content-box children */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.menu-container {
+  position: relative;
+}
+
+.menu-dropdown {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  top: 100%; /* Position below the button */
+  right: 0; /* Align to the right */
+  z-index: 10;
+  min-width: 150px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.menu-dropdown[aria-hidden="true"] {
+  display: none;
+}
+.menu-dropdown a,
+.menu-dropdown button {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.menu-dropdown a:hover,
+.menu-dropdown button:hover,
+.menu-dropdown a:focus,
+.menu-dropdown button:focus {
+  background-color: #f0f0f0;
+}
+
+/* Contents Box Layout */
+.contents-box {
+  background-color: #ffffff;
+  border: 1px solid #80deea;
+  border-radius: 5px;
+  padding: 0; /* Padding applied to children */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px; /* Or adjust as needed */
+  overflow: hidden; /* Contains children */
+}
+
+.contents-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem; /* Padding inside header */
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.contents-header h2 {
+  font-size: 1.2em;
+  margin: 0;
+  margin-right: auto; /* Push items right */
+}
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9em;
+}
+
+.contents-list {
+  list-style: none;
+  padding: 1rem 1rem 0.5rem 1rem; /* Padding around list items */
+  margin: 0;
+  overflow-y: auto; /* Makes the list scrollable */
+  flex-grow: 1; /* Allows list to take up space */
+}
+
+.contents-list li {
+  margin-bottom: 0.3rem;
+}
+
+/* Individual Content List Items */
+.content-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid transparent;
+  background-color: #fff; /* Base background */
+  cursor: pointer;
+  border-radius: 3px; /* Optional: slight rounding */
+}
+/* Highlight selected item */
+.content-item.is-selected {
+  border-color: #00796b;
+  background-color: #e0f2f1;
+  box-shadow: inset 0 0 0 1px #00796b;
+}
+/* Hover effect - ensure it doesn't conflict with selected */
+.content-item:not(.is-selected):hover {
+  background-color: #f0fafa; /* Very light cyan on hover */
+  border-color: #b2ebf2;
+}
+
+.content-item .item-label-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-grow: 1; /* Pushes checkbox right */
+  /* Prevent clicks on icon/text triggering checkbox via label */
+  pointer-events: none;
+}
+.content-item .item-label-group img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Styles for right-aligned custom checkboxes */
+.content-item.has-checkbox {
+  justify-content: space-between; /* Space out label and checkbox group */
+  padding-right: 0.6rem; /* Adjust padding */
+}
+.item-checkbox-group {
+  position: relative; /* Needed for positioning hidden input */
+  display: inline-flex;
+  align-items: center;
+  padding-left: 0.5rem; /* Space from main label */
+  flex-shrink: 0; /* Prevent shrinking */
+  cursor: pointer;
+}
+/* Visually hide the native checkbox */
+.item-checkbox-group input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+/* Custom circular style */
+.custom-checkbox-style {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #888;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  position: relative; /* For inner dot */
+}
+/* Checked state */
+.item-checkbox-group input[type="checkbox"]:checked + .custom-checkbox-style {
+  background-color: #00796b;
+  border-color: #004d40;
+}
+/* Optional inner dot */
+.custom-checkbox-style::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.item-checkbox-group
+  input[type="checkbox"]:checked
+  + .custom-checkbox-style::after {
+  opacity: 1;
+}
+/* Focus state */
+.item-checkbox-group
+  input[type="checkbox"]:focus-visible
+  + .custom-checkbox-style {
+  box-shadow: 0 0 0 3px rgba(77, 208, 225, 0.5); /* Focus ring */
+}
+
+/* Item Preview Pane */
+.content-item-preview {
+  border-top: 2px solid #4dd0e1;
+  padding: 0.8rem 1rem;
+  background-color: #f5fcfd;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+.content-item-preview[hidden] {
+  display: none;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+.preview-header h4 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #006064;
+}
+.close-preview {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 0 0.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.close-preview:hover,
+.close-preview:focus {
+  color: #333;
+}
+
+.preview-body {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+.preview-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  flex-shrink: 0;
+}
+.preview-description {
+  font-size: 0.9em;
+  color: #444;
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* Static Selection Area (Below Contents Box) */
+.static-selection-area {
+  background-color: #ffffff;
+  border: 1px solid #80deea;
+  border-radius: 5px;
+  padding: 1rem;
+  /* margin-top handled by parent gap */
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.selection-box-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.selection-box-container label {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #00796b;
+}
+
+.selection-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  background-color: #f8f8f8;
+}
+
+.selected-value-display {
+  flex-grow: 1;
+  min-height: 1.5em;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.95em;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+}
+
+.selection-box .select-modal-trigger {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.9em;
+  margin-right: 0.3rem;
+  white-space: nowrap;
+}
+
+.selection-box .clear-selection {
+  background-color: #ffcdd2;
+  border-color: #ef9a9a;
+  color: #c62828;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8em;
+  font-weight: bold;
+  line-height: 1;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.selection-box .clear-selection:hover {
+  background-color: #ef9a9a;
+}
+.selection-box .clear-selection[hidden] {
+  display: none;
+}
+
+/* Tooltips */
+.tooltip-trigger {
+  background: none;
+  border: none;
+  color: #1e88e5; /* Blue */
+  font-weight: bold;
+  font-style: italic;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  line-height: 18px; /* Center 'i' */
+  text-align: center;
+  border: 1px solid #90caf9; /* Light blue border */
+  padding: 0;
+  margin-left: 0.2rem;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+.tooltip-trigger:hover,
+.tooltip-trigger:focus {
+  background-color: #e3f2fd; /* Very light blue */
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #333;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  z-index: 20;
+  width: max-content;
+  max-width: 250px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+.tooltip[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  width: 90%;
+  max-width: 500px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+}
+.modal[hidden] {
+  display: none;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+  background-color: #f9f9f9;
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3em;
+  color: #333;
+}
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  line-height: 1;
+}
+.modal-close:hover,
+.modal-close:focus {
+  color: #333;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.modal-item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.modal-item-list li {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.modal-item-list li:last-child {
+  border-bottom: none;
+}
+.modal-item-list li:hover,
+.modal-item-list li:focus {
+  background-color: #e0f7fa;
+  /* Outline handled by global focus style */
+}
+.modal-item-list li[aria-selected="true"] {
+  background-color: #a7ffeb;
+  font-weight: bold;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+  text-align: right;
+}
+
+/* Placeholder images */
+img[src*="placeholder"] {
+  display: inline-block;
+  background-color: #ddd;
+  border: 1px dashed #bbb;
+  text-align: center;
+  line-height: 1;
+  font-size: 0.7em;
+  color: #888;
+  /* Ensure vertical alignment if needed */
+  vertical-align: middle;
+}
+/* Specific placeholder sizes if needed, currently handled by context */
+/* img[src="placeholder-icon.png"] { width: 16px; height: 16px; } */
+/* img.preview-thumbnail { width: 60px; height: 60px; } */
+
+/* Hide elements meant only for screen readers visually */
+.visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+}
+
+/* Utility to hide elements completely */
+[hidden] {
+  display: none !important;
+}

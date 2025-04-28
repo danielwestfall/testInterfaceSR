@@ -1,26 +1,87 @@
-/* Basic reset for body margin */
+/* ============================================ */
+/* === 1. CSS Variables & Base Styles === */
+/* ============================================ */
+
+:root {
+  --header-bg: #eee;
+  --toolbar-bg: #f8f8f8;
+  --left-nav-bg: #f0f0f7;
+  --right-nav-bg: #f8f8f8;
+  --content-bg: #ffffff;
+  --border-color: #ccc;
+  --border-color-light: #eee;
+  --border-color-dark: #a0a0a0;
+  --text-color: #333;
+  --text-color-light: #555;
+  --text-color-white: white;
+  --button-bg: #e0e0e0;
+  --button-hover-bg: #d5d5d5;
+  --primary-color: dodgerblue;
+  --primary-color-dark: #0e6cce;
+  --primary-bg-light: #eaf5ff; /* For selected items */
+  --danger-color: #d9534f;
+  --danger-hover-bg: #d9534f;
+
+  --focus-outline-color: var(--primary-color);
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+  --focus-glow-color: rgba(30, 144, 255, 0.3);
+
+  --base-font-size: 14px;
+  --font-family: sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   height: 100%;
-  overflow: hidden; /* Prevent scrollbars on the html element */
+  overflow: hidden;
 }
 
 body {
-  margin: 0; /* Ensure no default body margin */
-  font-family: sans-serif;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--base-font-size);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Use min-height to allow content growth if needed conceptually */
-  height: 100vh; /* ADD: Fix height to viewport */
-  overflow: hidden; /* Prevent scrollbars on the body element */
+  height: 100vh; /* Fix height to viewport */
+  overflow: hidden; /* Prevent body scrollbars */
 }
 
-/* ADD: Base Image Styling */
 img {
-  max-width: 100%; /* Prevent images from overflowing their containers */
-  height: auto; /* Maintain aspect ratio */
-  display: block; /* Remove extra space below inline images */
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
-/* --- Visually Hidden Class (for Accessibility) --- */
+
+button {
+  /* Basic reset for default button styles if needed */
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border-color-dark);
+  background-color: var(--button-bg);
+  color: var(--text-color);
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: var(--button-hover-bg);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================ */
+/* === 2. Utility Classes === */
+/* ============================================ */
+
 .visually-hidden {
   border: 0;
   clip: rect(0 0 0 0);
@@ -30,213 +91,201 @@ img {
   padding: 0;
   position: absolute;
   width: 1px;
-  white-space: nowrap; /* Prevent line breaks */
+  white-space: nowrap;
 }
 
-/* === Header Row Styles (from previous step) === */
+/* ============================================ */
+/* === 3. Main Layout === */
+/* ============================================ */
+
+/* --- Header --- */
 .top-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   padding: 10px 20px;
-  background-color: #eee;
-  border-bottom: 1px solid #ccc;
-  box-sizing: border-box;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
-
 .top-row h1 {
   margin: 0;
   font-size: 1.8em;
 }
-
 .header-buttons {
   display: flex;
   gap: 10px;
 }
-
 .header-buttons button {
+  /* Override base button style if needed */
   padding: 8px 16px;
   font-size: 1em;
-  cursor: pointer;
 }
 
-/* === Toolbar Row Styles === */
+/* --- Toolbar --- */
 .toolbar-row {
-  display: flex; /* Row uses flexbox for columns */
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 8px 10px; /* Reduced padding for a shorter row */
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #ccc;
-  box-sizing: border-box;
-  flex-shrink: 0; /* Prevent toolbar from shrinking */
-  align-items: center; /* Vertically center content within the row */
-  gap: 10px; /* Optional space between columns */
+  padding: 8px 10px;
+  background-color: var(--toolbar-bg);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  gap: 10px;
 }
-
-/* --- Column Styles --- */
 .toolbar-col {
   display: flex;
-  align-items: center; /* Vertically center items within each column */
-  padding: 0 5px; /* Small padding within columns */
+  align-items: center;
+  padding: 0 5px;
+  gap: 10px; /* Consistent gap for items within columns */
+}
+.pagination-col {
+  flex: 0 0 25%;
+  justify-content: center;
+  gap: 15px;
+}
+.controls-col {
+  flex: 0 0 50%;
+}
+.actions-col {
+  flex: 0 0 25%;
+  justify-content: space-evenly;
 }
 
-/* Column 1: Pagination (1/4) */
-.pagination-col {
-  flex: 0 0 25%; /* Don't grow, don't shrink, basis 25% */
-  justify-content: center; /* Center buttons horizontally */
-  gap: 15px; /* Space between pagination buttons */
+/* --- Main App Area --- */
+.main-content-area {
+  flex-grow: 1;
+  overflow: hidden; /* Prevent this container from scrolling */
+  background-color: var(--content-bg);
+  display: flex;
+  min-height: 0; /* Flexbox shrink fix */
 }
+.app-row {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Prevent this row from scrolling */
+}
+.app-col {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Column itself shouldn't scroll */
+  padding: 10px;
+}
+.app-col > div[class$="-fixed"] {
+  /* Targets .*-col-fixed divs */
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+.app-col > div[class$="-scrollable"] {
+  /* Targets .*-col-scrollable divs */
+  flex-grow: 1;
+  overflow-y: auto; /* Allow VERTICAL scroll in this part */
+  overflow-x: hidden; /* Prevent HORIZONTAL scroll */
+  min-height: 0; /* Flexbox shrink fix */
+}
+
+/* Column Specific Widths & Backgrounds */
+.left-col {
+  flex: 0 0 20%;
+  background-color: var(--left-nav-bg);
+  border-right: 1px solid var(--border-color);
+}
+.center-col {
+  flex: 0 0 60%;
+  padding: 0; /* Inner elements handle padding */
+}
+.right-col {
+  flex: 0 0 20%;
+  background-color: var(--right-nav-bg);
+  border-left: 1px solid var(--border-color);
+}
+
+/* ============================================ */
+/* === 4. Component Styles === */
+/* ============================================ */
+
+/* --- Toolbar Components --- */
 .pagination-col button {
   padding: 5px 8px;
-  font-size: 1.1em; /* Make icons slightly larger */
-  line-height: 1; /* Help align icons */
-  cursor: pointer;
-}
-
-/* Column 2: Controls (1/2) */
-.controls-col {
-  flex: 0 0 50%; /* Don't grow, don't shrink, basis 50% */
-  gap: 10px; /* Space between controls */
+  font-size: 1.1em;
+  line-height: 1;
+  background: none;
+  border: none;
 }
 .controls-col select,
 .controls-col input[type="search"] {
   padding: 6px 8px;
   font-size: 0.9em;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-color-light);
+  z-index: 2;
+  pointer-events: none;
 }
 .controls-col input[type="search"] {
-  flex-grow: 1; /* Allow search field to take available space */
-}
-.controls-col .toggle-button {
-  padding: 6px 12px;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #e0e0e0;
-  border-radius: 4px;
-}
-/* Example style for pressed toggle button */
-.controls-col .toggle-button[aria-pressed="true"] {
-  background-color: #c0c0c0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  padding-left: 30px;
+  width: 100%;
+  flex-grow: 1;
 }
 
-/* Column 3: Actions (1/4) */
-.actions-col {
-  flex: 0 0 25%; /* Don't grow, don't shrink, basis 25% */
-  justify-content: space-evenly; /* Distribute space evenly */
-}
 .actions-col button {
   padding: 6px 12px;
-  cursor: pointer;
 }
 
-/* === Main Content Area === */
-.main-content-area {
-  flex-grow: 1; /* Allow this area to grow and fill remaining vertical space */
-  padding: 20px;
-  overflow-y: auto; /* Add vertical scrollbar ONLY if content overflows */
-  background-color: #ffffff; /* White background */
-}
-
-/* Optional: Add focus styles for accessibility */
-button:focus-visible,
-select:focus-visible,
-input:focus-visible {
-  outline: 2px solid dodgerblue;
-  outline-offset: 2px;
-}
-button:focus,
-select:focus,
-input:focus {
-  outline: none; /* Remove default if using custom */
-}
-
-/* === Main Content Area (Container for App Row) === */
-.main-content-area {
-  flex-grow: 1;
-  /* Remove padding from here if columns handle it */
-  /* padding: 20px; */
-  overflow: hidden; /* Prevent main from scrolling, scrolling happens in columns */
-  background-color: #ffffff;
-  display: flex; /* Make main a flex container for app-row */
-}
-
-/* === App Row (holds the 3 main columns) === */
-.app-row {
+/* --- Radio Buttons --- */
+.button-radio-group {
   display: flex;
-  width: 100%;
-  height: 100%; /* Fill the main content area height */
-  overflow: hidden; /* Should not be needed if columns handle overflow */
+  gap: 5px;
 }
-
-/* === App Column Base Styles === */
-.app-col {
-  height: 100%; /* Make columns fill the row height */
-  display: flex;
-  flex-direction: column; /* Stack fixed and scrollable content vertically */
-  overflow: hidden; /* Hide overflow, manage in scrollable child */
-  padding: 10px; /* Padding around column content */
-  box-sizing: border-box;
+.radio-button {
+  /* Base style shared by both groups */
+  padding: 6px 12px;
 }
-
-.app-col > div[class$="-fixed"] {
-  flex-shrink: 0;
-  margin-bottom: 10px;
-  /* ADD these two lines */
-  display: flex; /* Arrange children side-by-side */
-  gap: 5px; /* Add space between the buttons */
-}
-
-.app-col > div[class$="-scrollable"] {
-  flex-grow: 1; /* Allow scrollable area to take remaining space */
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-}
-
-/* === Column Widths === */
-.left-col {
-  flex: 0 0 20%;
-  background-color: #f0f0f7; /* Light background for left nav */
-  border-right: 1px solid #ccc;
-}
-.center-col {
-  flex: 0 0 60%;
-  padding: 0; /* Remove padding if tabs/content handle it */
-}
-.right-col {
-  flex: 0 0 20%;
-  background-color: #f8f8f8; /* Light background for right */
-  border-left: 1px solid #ccc;
-}
-
-/* === Column 1: Left Navigation === */
-.left-col .toggle-button.full-width {
-  /* display: block; */ /* REMOVE or let flex item behavior take over */
-  /* width: 100%; */ /* REMOVE */
-  flex: 1; /* ADD: Make buttons share the space equally */
+.left-col .radio-button.full-width {
+  flex: 1;
   text-align: center;
   padding: 8px 5px;
-  /* margin-bottom: 5px; */ /* REMOVE: Use gap on parent instead */
-  cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #e9e9ed;
-  white-space: nowrap; /* Optional: Prevent text wrapping if space is tight */
+  white-space: nowrap;
 }
-.left-col .toggle-button.full-width[aria-pressed="true"] {
-  background-color: #d0d0d5;
+.radio-button[aria-checked="true"] {
+  background-color: #c0c0c0;
+  border-color: var(--border-color-dark);
+  color: #000;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
 }
+/* Remove old toggle styles if .toggle-button class is still used elsewhere */
+/* .controls-col .toggle-button { ... } */
+/* .controls-col .toggle-button[aria-pressed="true"] { ... } */
 
+/* --- Accordion (Left Column) --- */
+.left-col-fixed {
+  display: flex;
+  gap: 5px; /* Layout for radio buttons */
+}
 .accordion-container {
-  width: 90%; /* Accordion takes 90% width */
-  margin: 0 auto; /* Center the accordion */
+  width: 90%;
+  margin: 0 auto;
 }
 .accordion-item {
-  border: 1px solid #ccc;
-  margin-bottom: -1px; /* Collapse borders */
+  border: 1px solid var(--border-color);
+  margin-bottom: -1px;
 }
 .accordion-item:first-of-type {
   border-top-left-radius: 4px;
@@ -248,204 +297,138 @@ input:focus {
   margin-bottom: 0;
 }
 .accordion-item summary {
-  /* padding: 10px; */ /* REMOVE Original Padding */
-  padding: 10px 10px 10px 35px; /* INCREASE left padding significantly */
+  padding: 10px 10px 10px 35px;
   cursor: pointer;
   background-color: #fdfdff;
-  list-style: none; /* Remove default marker */
-  position: relative; /* Keep for absolute positioning of ::before */
+  list-style: none;
+  position: relative;
 }
 .accordion-item summary::-webkit-details-marker {
   display: none;
-} /* Hide Chrome/Safari marker */
+}
 .accordion-item summary::before {
   content: "+";
   position: absolute;
-  left: 10px; /* Position from the very left edge */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Fine-tune vertical centering */
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   font-weight: bold;
-  transition: transform 0.2s; /* You can keep or remove this */
-
-  /* ADD Explicit size and alignment for the indicator box */
-  width: 1.5em; /* Give the indicator space */
+  width: 1.5em;
   height: 1.5em;
-  line-height: 1.5em; /* Center '+' or '-' vertically within its box */
-  text-align: center; /* Center '+' or '-' horizontally within its box */
-  /* Optional: Add a subtle background/border for clarity */
-  /* background-color: rgba(0,0,0,0.05); */
-  /* border-radius: 3px; */
+  line-height: 1.5em;
+  text-align: center;
+  transition: transform 0.2s;
 }
 .accordion-item[open] summary::before {
-  content: "-"; /* Or use FontAwesome icons */
-  /* transform: rotate(45deg); */
+  content: "-";
 }
-
-.accordion-item > div {
-  /* Accordion content area */
-  padding: 10px;
-  background-color: white;
-  border-top: 1px solid #ccc;
-}
-.accordion-item > div ul {
-  list-style: none;
-  padding-left: 15px;
-}
-.accordion-item > div li {
-  margin-bottom: 5px;
-}
-/* === Column 1: Left Navigation === */
-/* ... existing accordion styles (.accordion-item, summary, etc.) ... */
-
-/* --- Style for Accordion Content DIV --- */
 .accordion-item > div {
   padding: 10px 15px;
-  background-color: white;
-  border-top: 1px solid #ccc;
-  /* ADD Flex layout for buttons */
+  background-color: var(--content-bg);
+  border-top: 1px solid var(--border-color);
   display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 5px; /* Add space between buttons */
+  flex-direction: column;
+  gap: 5px;
 }
-
-/* REMOVE old list styling if present */
-/*
-.accordion-item > div ul {
-    list-style: none;
-    padding-left: 15px;
-}
-.accordion-item > div li {
-    margin-bottom: 5px;
-}
-*/
-
-/* --- ADD Styling for Buttons inside Accordion --- */
 .accordion-content-button {
-  display: block; /* Make buttons behave like block elements */
-  width: 100%; /* Make buttons take full width of container */
+  display: block;
+  width: 100%;
   padding: 8px 10px;
-  margin: 0; /* Remove default button margin */
-  text-align: left; /* Align button text to the left */
-  font-size: 0.9em; /* Match other font sizes if needed */
-  color: #333;
-  background-color: #f9f9f9; /* Slight background */
-  border: 1px solid #ddd;
+  margin: 0;
+  text-align: left;
+  font-size: 0.9em;
+  color: var(--text-color);
+  background-color: #f9f9f9;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s; /* Smooth hover */
+  transition: background-color 0.2s, border-color 0.2s;
 }
-
 .accordion-content-button:hover {
   background-color: #f0f0f0;
-  border-color: #ccc;
+  border-color: var(--border-color);
 }
 
-/* Ensure focus style is applied (might be covered by global style) */
-.accordion-content-button:focus-visible {
-  /* Uses the global :focus-visible style from previous steps */
-  /* Or uncomment below for a specific style */
-  /*
-    outline: 2px solid dodgerblue;
-    outline-offset: 1px;
-    border-color: dodgerblue;
-    position: relative; /* Helps outline stand out */
-  /* z-index: 1; */
-}
-/* Remove default focus outline if relying on focus-visible */
-.accordion-content-button:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* --- End Accordion Button Styling --- */
-
-/* ... rest of CSS ... */
-/* === Column 2: Center Content === */
+/* --- Tabs (Center Column) --- */
 .center-col-fixed {
-  border-bottom: 1px solid #ccc;
-  background-color: #f8f8f8;
-  padding: 5px 10px 0 10px; /* Padding around tabs */
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--toolbar-bg);
+  padding: 5px 10px 0 10px;
 }
 .center-col-scrollable {
-  background-color: #fff; /* Ensure background for content */
-  padding: 15px; /* Padding for content inside scroll area */
+  background-color: var(--content-bg);
+  padding: 15px;
 }
-
-/* -- Tabs -- */
 [role="tablist"] {
   display: flex;
-  /* Removed border-bottom from previous step, handled by fixed container */
 }
 [role="tab"] {
-  flex-grow: 1; /* Make tabs share width equally */
-  flex-basis: 0; /* Allow flex-grow to work properly */
-  padding: 10px 5px; /* Adjust padding */
-  cursor: pointer;
-  border: 1px solid transparent; /* Use border for spacing/highlight */
+  flex-grow: 1;
+  flex-basis: 0;
+  padding: 10px 5px;
+  border: 1px solid transparent;
   border-bottom: none;
   background-color: transparent;
   margin-right: 2px;
   text-align: center;
-  font-size: 0.85em; /* Smaller font for tabs */
+  font-size: 0.85em;
   border-radius: 4px 4px 0 0;
   position: relative;
-  color: #555;
-  white-space: nowrap; /* Prevent wrapping */
+  color: var(--text-color-light);
+  white-space: nowrap;
 }
 [role="tab"]:hover {
   background-color: #eee;
 }
 [role="tab"][aria-selected="true"] {
-  background-color: #ffffff; /* Match panel background */
-  border-color: #ccc #ccc transparent #ccc;
+  background-color: var(--content-bg);
+  border-color: var(--border-color) var(--border-color) transparent
+    var(--border-color);
   font-weight: bold;
   color: #000;
   z-index: 1;
 }
 [role="tab"][aria-selected="true"]::after {
-  /* Line below selected tab text */
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background-color: blue; /* Highlight color */
+  background-color: var(--primary-color);
 }
-
-/* -- Tab Panels -- */
 [role="tabpanel"] {
-  /* Padding now handled by center-col-scrollable */
+  /* No base styles needed, content padding from parent */
 }
 [role="tabpanel"][hidden] {
   display: none;
 }
 
-/* -- Thumbnail Grid -- */
+/* --- Thumbnails (Center Column) --- */
 .thumbnail-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 15px; /* Space between grid items */
-  margin-bottom: 20px; /* Space before pagination */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(140px, 1fr)
+  ); /* Adjust minmax */
+  gap: 15px;
+  margin-bottom: 20px;
 }
 .thumbnail-button {
   border: 1px solid #ddd;
   background-color: #fdfdfd;
   padding: 0;
-  cursor: pointer;
   text-align: center;
   border-radius: 4px;
-  overflow: hidden; /* Ensure placeholder stays contained */
+  overflow: hidden;
+  position: relative;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 .thumbnail-button:hover {
   border-color: #bbb;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.thumbnail-button:focus-visible {
-  outline: 2px solid dodgerblue;
-  outline-offset: 1px;
-}
 .thumb-placeholder {
-  height: 100px; /* Example fixed height */
+  height: 100px;
   background-color: #e0e0e0;
   display: flex;
   align-items: center;
@@ -455,171 +438,314 @@ input:focus {
 }
 .thumb-placeholder::before {
   content: "IMG";
-} /* Placeholder text */
-
+}
 .thumbnail-button span {
   display: block;
   padding: 8px 5px;
   font-size: 0.9em;
-  color: #333;
+  color: var(--text-color);
+}
+/* Selected state */
+.thumbnail-button[aria-pressed="true"] {
+  border-color: var(--primary-color);
+  background-color: var(--primary-bg-light);
+  box-shadow: inset 0 0 0 2px var(--primary-color),
+    inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+/* Optional checkmark */
+.thumbnail-button[aria-pressed="true"]::after {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 0.9em;
+  color: var(--text-color-white);
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  line-height: 1;
+  padding: 3px;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* -- Content Pagination -- */
+/* --- "Add Selected" Button (Center Column) --- */
+.add-controls {
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid var(--border-color-light);
+}
+#add-selected-to-editor-btn i {
+  margin-right: 6px;
+}
+
+/* --- Content Pagination (Center Column) --- */
 .content-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px; /* Space between pagination items */
+  gap: 20px;
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color-light);
 }
 .content-pagination button {
   padding: 5px 8px;
   line-height: 1;
-  cursor: pointer;
   background: none;
   border: none;
   font-size: 1.1em;
 }
 .content-pagination span {
   font-size: 0.95em;
-  color: #555;
+  color: var(--text-color-light);
 }
 
-/* === Column 3: Right Info/Tree === */
+/* --- Treeview (Right Column) --- */
 .right-col-fixed h2 {
   font-size: 1.1em;
-  margin: 0 0 5px 0; /* Adjust margin */
+  margin: 0 0 5px 0;
   padding-bottom: 5px;
-  border-bottom: 1px solid #ccc;
-  color: #333;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
 }
 .right-col-scrollable {
   padding-right: 5px; /* Prevent scrollbar overlap */
 }
-/* -- File Tree -- */
 ul[role="tree"] {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-ul[role="tree"] li[role="treeitem"] {
-  margin-bottom: 2px;
-}
-/* Style tree item controls (buttons/links) */
-ul[role="tree"] button,
-ul[role="tree"] a {
-  display: flex; /* Use flex for icon alignment */
+/* Base style for treeitem buttons and links */
+[role="treeitem"] {
+  /* Target the role directly now */
+  display: flex;
   align-items: center;
   width: 100%;
   text-align: left;
   padding: 5px;
   background: none;
   border: none;
-  color: #333;
+  color: var(--text-color);
   text-decoration: none;
-  cursor: pointer;
   font-size: 0.9em;
-  border-radius: 3px;
+  border-radius: 3px; /* Remove cursor:pointer; if applying only to button/a */
 }
-ul[role="tree"] button:hover,
-ul[role="tree"] a:hover {
+/* Add pointer only to actual interactive elements */
+button[role="treeitem"],
+a[role="treeitem"] {
+  cursor: pointer;
+}
+button[role="treeitem"]:hover,
+a[role="treeitem"]:hover {
   background-color: rgba(0, 0, 0, 0.05);
   color: #000;
 }
-ul[role="tree"] button:focus-visible,
-ul[role="tree"] a:focus-visible {
-  outline: 1px dotted #333; /* Subtle focus for tree */
-  outline-offset: -1px;
-}
-
 /* Tree Icons */
-ul[role="tree"] i {
+[role="treeitem"] i {
   margin-right: 8px;
-  width: 1em; /* Ensure consistent icon spacing */
+  width: 1em;
   text-align: center;
-  color: #555; /* Icon color */
+  color: var(--text-color-light);
 }
-
 /* Sub-tree group */
 ul[role="group"] {
   list-style: none;
-  padding-left: 20px; /* Indentation */
-  margin-top: 2px;
+  padding-left: 20px;
+  margin: 2px 0 0 0; /* Adjusted margin */
 }
 ul[role="group"][hidden] {
-  /* Hide collapsed subtrees */
   display: none;
 }
+/* Remove old indicator styles targeting li */
+/* li[role="treeitem"][aria-expanded] > button::before { ... } */
 
-/* Adjust expand/collapse indicator for tree buttons */
-li[role="treeitem"][aria-expanded] > button::before {
-  content: "\f07b"; /* Font Awesome folder */
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  display: inline-block;
-  width: 1em;
-  margin-right: 8px;
-  color: #555;
-  /* Remove the '+' text content if using icons */
-  /* content: none; */
+/* --- Editor View (Right Column) --- */
+.editor-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 10px 10px 10px;
 }
-
-li[role="treeitem"][aria-expanded="false"] > button > i.fa-folder-open {
-  /* Ensure correct icon shows when defined in HTML */
+.editor-view-container[hidden] {
   display: none;
 }
-li[role="treeitem"][aria-expanded="false"] > button > i.fa-folder {
-  display: inline-block;
+.editor-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+.editor-header h3 {
+  font-size: 1.1em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.editor-header h3 i {
+  color: var(--text-color-light);
+}
+.editor-content-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  border: 1px dashed var(--border-color);
+  padding: 10px;
+  background-color: #fdfdfd;
+  min-height: 50px; /* Give min height */
+}
+#editor-item-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+#editor-item-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  border: 1px solid var(--border-color-light);
+  margin-bottom: 5px;
+  background-color: var(--content-bg);
+  font-size: 0.9em;
+}
+#editor-item-list li img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+#editor-item-list li span {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#editor-item-list li button.editor-remove-item-btn {
+  flex-shrink: 0;
+  padding: 2px 5px;
+  font-size: 0.8em;
+  line-height: 1;
+  background: var(--button-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+#editor-item-list li button.editor-remove-item-btn:hover {
+  background-color: var(--button-hover-bg);
+}
+.editor-controls {
+  flex-shrink: 0;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.editor-controls button {
+  padding: 6px 12px;
+}
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--text-color-white);
+  border-color: var(--primary-color-dark);
+}
+.button-primary:hover {
+  background-color: var(--primary-color-dark);
 }
 
-li[role="treeitem"][aria-expanded="true"] > button > i.fa-folder {
-  /* Ensure correct icon shows when defined in HTML */
+/* --- Context Menu --- */
+.custom-context-menu {
+  position: absolute;
+  z-index: 1000;
+  display: block;
+  min-width: 180px;
+  padding: 5px 0;
+  background-color: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  outline: none;
+}
+.custom-context-menu[hidden] {
   display: none;
 }
-li[role="treeitem"][aria-expanded="true"] > button > i.fa-folder-open {
-  display: inline-block;
+.custom-context-menu [role="menuitem"] {
+  display: block;
+  width: 100%;
+  padding: 8px 15px;
+  text-align: left;
+  font-size: 0.9em;
+  color: var(--text-color);
+  background-color: transparent;
+  border: none;
+  white-space: nowrap;
 }
-/* Hide the text-based +/- indicator if using icons */
-li[role="treeitem"][aria-expanded] > button::before {
-  /* content: none; */ /* Uncomment if using icons exclusively */
+/* Apply cursor only to button menu items */
+.custom-context-menu button[role="menuitem"] {
+  cursor: pointer;
+}
+.custom-context-menu [role="menuitem"] i {
+  margin-right: 10px;
+  width: 1.1em;
+  text-align: center;
+  color: var(--text-color-light);
+}
+.custom-context-menu [role="menuitem"]:hover,
+.custom-context-menu [role="menuitem"]:focus-visible {
+  background-color: #f0f0f0;
+  color: #000;
+  outline: none;
+}
+.custom-context-menu [role="menuitem"]:focus:not(:focus-visible) {
+  outline: none;
+}
+.custom-context-menu .menuitem-danger {
+  color: var(--danger-color);
+}
+.custom-context-menu .menuitem-danger:hover,
+.custom-context-menu .menuitem-danger:focus-visible {
+  background-color: var(--danger-hover-bg);
+  color: var(--text-color-white);
+}
+.custom-context-menu .menuitem-danger:hover i,
+.custom-context-menu .menuitem-danger:focus-visible i {
+  color: var(--text-color-white);
+}
+.menu-separator {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 5px 0;
 }
 
-/* Add JS for tree expansion/collapse & tab switching */
-/* Add JS for accordion if not using <details> */
+/* ============================================ */
+/* === 5. Accessibility & Focus Styles === */
+/* ============================================ */
 
-/* === Base Styles & Resets === */
-:root {
-  /* ... other variables ... */
-  --focus-outline-color: dodgerblue; /* Or another high-contrast color */
-  --focus-outline-width: 2px;
-  --focus-outline-offset: 2px;
-}
-
-/* ... other resets ... */
-
-/* --- Consistent Visual Focus Indicator --- */
-
-/* Apply focus style using :focus-visible for keyboard navigation */
 :is(a,
   button,
   input:not([type="radio"]):not([type="checkbox"]),
   select,
   textarea,
-  summary, /* For <details> accordion */
+  summary, /* Covers accordion summary */
   [role="tab"],
-  [role="treeitem"] > *, /* Target button/link inside treeitem */
-  [tabindex]:not([tabindex*="-"]) /* Elements made focusable */
+  [role="radio"],
+  [role="menuitem"],
+  [role="treeitem"], /* Target the element with the role directly */
+  [tabindex]:not([tabindex*="-"]) /* Covers focusable tabpanel etc. */
 ):focus-visible {
   outline: var(--focus-outline-width) solid var(--focus-outline-color);
   outline-offset: var(--focus-outline-offset);
   box-shadow: 0 0 0 calc(var(--focus-outline-width) + 1px)
-    rgba(30, 144, 255, 0.3); /* Optional: subtle outer glow */
+    var(--focus-glow-color);
 }
 
-/* Remove default outline for mouse focus when :focus-visible is supported */
-/* This avoids the outline appearing briefly on mouse click in some browsers */
+/* Remove outline for non-keyboard focus */
 :is(
     a,
     button,
@@ -628,215 +754,30 @@ li[role="treeitem"][aria-expanded] > button::before {
     textarea,
     summary,
     [role="tab"],
-    [role="treeitem"] > *,
+    [role="radio"],
+    [role="menuitem"],
+    [role="treeitem"],
     [tabindex]:not([tabindex*="-"])
   ):focus:not(:focus-visible) {
   outline: none;
-  box-shadow: none; /* Also remove the glow */
-}
-
-/* Optional: If you *really* want a different style specifically for the tree */
-/* Keep this ONLY if the main style above is not desired for the tree */
-/*
-ul[role="tree"] button:focus-visible,
-ul[role="tree"] a:focus-visible {
-  outline: 1px dotted #333;
-  outline-offset: -1px;
   box-shadow: none;
 }
-*/
 
-/* Style for focused tabpanel (when JS moves focus to it) */
-[role="tabpanel"]:focus-visible {
-  /* Uses the general :focus-visible style */
-  /* OR add a distinct style if preferred, e.g., highlighting the panel itself */
-  /* box-shadow: inset 0 0 0 2px var(--focus-outline-color); */
-}
-
-/* Ensure radio/checkbox focus is visible if you add them later */
+/* Specific focus for Radios/Checkboxes if needed */
 input[type="radio"]:focus-visible,
 input[type="checkbox"]:focus-visible {
   outline: var(--focus-outline-width) solid var(--focus-outline-color);
   outline-offset: var(--focus-outline-offset);
-  /* Consider custom styled radios/checkboxes for better cross-browser focus */
 }
 
-/* --- End Focus Styles --- */
-
-/* === Rest of your CSS rules === */
-/* ... */
-/* === Custom Context Menu Styles === */
-.custom-context-menu {
-  position: absolute; /* Position relative to viewport initially */
-  z-index: 1000; /* Ensure it appears above other content */
-  display: block; /* Overrides 'hidden' attribute when shown by JS */
-  min-width: 180px; /* Minimum width */
-  padding: 5px 0; /* Vertical padding */
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  outline: none; /* Menu container shouldn't typically show focus */
-}
-
-/* Hide menu when 'hidden' attribute is present */
-.custom-context-menu[hidden] {
-  display: none;
-}
-
-/* Menu Items */
-.custom-context-menu [role="menuitem"] {
-  display: block;
-  width: 100%;
-  padding: 8px 15px;
-  text-align: left;
-  font-size: 0.9em;
-  color: #333;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-/* Add space for icons */
-.custom-context-menu [role="menuitem"] i {
-  margin-right: 10px;
-  width: 1.1em; /* Align icons */
-  text-align: center;
-  color: #555;
-}
-
-/* Hover/Focus state for Menu Items */
-.custom-context-menu [role="menuitem"]:hover,
-.custom-context-menu [role="menuitem"]:focus-visible {
-  background-color: #f0f0f0;
-  color: #000;
-  outline: none; /* Use background change for focus */
-}
-.custom-context-menu [role="menuitem"]:focus:not(:focus-visible) {
-  outline: none; /* Remove outline for non-keyboard focus */
-}
-
-/* Danger item styling */
-.custom-context-menu .menuitem-danger {
-  color: #d9534f; /* Red color for delete */
-}
-.custom-context-menu .menuitem-danger:hover,
-.custom-context-menu .menuitem-danger:focus-visible {
-  background-color: #d9534f;
-  color: white;
-}
-.custom-context-menu .menuitem-danger:hover i,
-.custom-context-menu .menuitem-danger:focus-visible i {
-  color: white;
-}
-
-/* Separator Styling */
-.menu-separator {
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 5px 0;
-}
-/* === General Button Styles (Ensure base styles exist) === */
-.radio-button {
-  /* Inherit basic button styles or define common ones here */
-  padding: 6px 12px;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #e0e0e0;
-  border-radius: 4px;
-  color: #333;
-  /* Add any other base styles */
-}
-
-/* === Toolbar Radio Group === */
-.toolbar-radio-group {
-  display: flex; /* Keep them side-by-side */
-  gap: 5px; /* Maintain gap */
-}
-/* Ensure toolbar buttons fit */
-.controls-col .radio-button {
-  padding: 6px 12px; /* Match other controls */
-}
-
-/* === Left Nav Radio Group === */
-/* .left-col-fixed already has display: flex and gap from previous step */
-.left-col .radio-button.full-width {
-  flex: 1; /* Maintain equal width */
-  text-align: center;
-  padding: 8px 5px; /* Match previous style */
-  white-space: nowrap;
-}
-
-/* --- Styling for the SELECTED state --- */
-.radio-button[aria-checked="true"] {
-  background-color: #c0c0c0; /* Darker background */
-  border-color: #a0a0a0; /* Darker border */
-  color: #000; /* Darker text */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Inset shadow */
-  font-weight: bold; /* Optional: make text bold */
-}
-
-/* --- Remove or update old toggle styles if they conflict --- */
-/* Make sure styles previously targeting .toggle-button or [aria-pressed="true"] */
-/* are removed or adjusted if they interfere */
-
-/* Example: Remove old pressed style if it existed separately */
+/* Optional subtle focus for tree items if main style is too much */
 /*
-.toggle-button[aria-pressed="true"] {
-     REMOVE THESE STYLES
+[role="treeitem"]:focus-visible {
+   outline: 1px dotted #333;
+   outline-offset: -1px;
+   box-shadow: none;
+}
+[role="treeitem"]:focus:not(:focus-visible) {
+    outline: none;
 }
 */
-
-/* Ensure focus styles still work (global style should cover this) */
-.radio-button:focus-visible {
-  /* Uses the global :focus-visible style */
-  /* Or add specific override if needed */
-}
-/* === Toolbar Row Styles === */
-/* ... existing .toolbar-row, .toolbar-col styles ... */
-
-/* --- Column 2: Controls --- */
-.controls-col {
-  flex: 0 0 50%;
-  gap: 10px;
-  display: flex; /* Ensure items align */
-  align-items: center; /* Align items vertically */
-}
-
-/* --- ADD: Search Container Styles --- */
-.search-container {
-  position: relative; /* For absolute positioning of the icon */
-  display: flex; /* Use flex to manage input width */
-  flex-grow: 1; /* Allow container to take available space */
-  align-items: center;
-}
-
-/* Style the icon itself */
-.search-icon {
-  position: absolute;
-  left: 10px; /* Adjust as needed for horizontal position */
-  top: 50%;
-  transform: translateY(-50%);
-  color: #777; /* Adjust color to match placeholder or border */
-  z-index: 2; /* Ensure icon is above input background */
-  pointer-events: none; /* Prevent icon from interfering with clicks on input */
-}
-
-/* Adjust input field styles */
-.controls-col input[type="search"] {
-  /* Keep existing padding-top/bottom, border, font-size etc. */
-  padding: 6px 8px 6px 30px; /* INCREASE left padding significantly */
-  font-size: 0.9em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%; /* Make input fill the search-container */
-  flex-grow: 1; /* Ensure input grows within the flex container */
-  /* Remove flex-grow from here if it was set directly before */
-}
-
-/* Remove flex-grow from the input if it was directly applied before */
-/* Adjust if #search-field had specific styles before */
-/* #search-field { flex-grow: 1; } /* REMOVE if it existed */
-
-/* ... rest of toolbar, controls-col, radio button styles ... */

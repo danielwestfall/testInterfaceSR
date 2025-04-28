@@ -771,6 +771,21 @@
               </nav>
             </div>
           </div>
+
+          <div
+            class="add-controls"
+            style="
+              text-align: center;
+              margin-top: 15px;
+              padding: 10px;
+              border-top: 1px solid #eee;
+            "
+          >
+            <button id="add-selected-to-editor-btn" disabled>
+              <i class="fas fa-plus-circle" aria-hidden="true"></i> Add Selected
+              to Editor
+            </button>
+          </div>
         </section>
 
         <aside class="app-col right-col">
@@ -991,6 +1006,38 @@
                 </a>
               </li>
             </ul>
+            <div id="editor-view" class="editor-view-container" hidden>
+              <div class="editor-header">
+                <h3 id="editor-heading">
+                  <i
+                    id="editor-item-icon"
+                    class="fas fa-folder"
+                    aria-hidden="true"
+                  ></i>
+                  Editing: <span id="editor-item-name">Item Name</span>
+                </h3>
+              </div>
+              <div
+                id="editor-content"
+                class="editor-content-area"
+                aria-labelledby="editor-heading"
+              >
+                <p id="editor-placeholder-text">
+                  Select items from the center panel and use 'Add Selected' to
+                  add them here.
+                </p>
+                <ul
+                  id="editor-item-list"
+                  aria-label="Items currently in editor"
+                ></ul>
+              </div>
+              <div class="editor-controls">
+                <button id="editor-save-btn" class="button-primary">
+                  Save Changes
+                </button>
+                <button id="editor-cancel-btn">Cancel</button>
+              </div>
+            </div>
           </div>
         </aside>
       </div>
@@ -1006,7 +1053,10 @@
       <button role="menuitem" tabindex="-1">
         <i class="fas fa-play" aria-hidden="true"></i> Preview
       </button>
-      <button role="menuitem" tabindex="-1">
+      <button role="menuitem" class="menuitem-edit" tabindex="-1">
+        <i class="fas fa-edit" aria-hidden="true"></i> Edit Contents
+      </button>
+      <button role="menuitem" class="menuitem-rename" tabindex="-1">
         <i class="fas fa-pencil-alt" aria-hidden="true"></i> Rename
       </button>
       <button role="menuitem" tabindex="-1">
@@ -1042,101 +1092,386 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        console.log("DOM fully loaded and parsed. Initializing scripts...");
+        console.log("DOM fully loaded. Initializing all scripts...");
 
-        // --- Live Region Setup ---
+        // --- 1. Get Element References ---
         const statusLiveRegion = document.getElementById("status-live-region");
         const alertLiveRegion = document.getElementById("alert-live-region");
-
-        function announceStatus(message) {
-          if (statusLiveRegion) {
-            statusLiveRegion.textContent = "";
-            setTimeout(() => {
-              statusLiveRegion.textContent = message;
-              console.log("Announce Status:", message);
-            }, 50);
-          } else {
-            console.warn("Status live region not found.");
-          }
-        }
-
-        function announceAlert(message) {
-          if (alertLiveRegion) {
-            alertLiveRegion.textContent = "";
-            setTimeout(() => {
-              alertLiveRegion.textContent = message;
-              console.warn("Announce Alert:", message);
-            }, 50);
-          } else {
-            console.warn("Alert live region not found.");
-          }
-        }
-        // --- End Live Region Setup ---
-
-        // --- Tabs Implementation ---
+        const treeView = document.getElementById("resource-tree");
+        const editorView = document.getElementById("editor-view");
+        const editorHeading = document.getElementById("editor-heading");
+        const editorItemName = document.getElementById("editor-item-name");
+        const editorItemIcon = document.getElementById("editor-item-icon");
+        const editorItemList = document.getElementById("editor-item-list");
+        const editorSaveBtn = document.getElementById("editor-save-btn");
+        const editorCancelBtn = document.getElementById("editor-cancel-btn");
+        const editorPlaceholderText = document.getElementById(
+          "editor-placeholder-text"
+        );
+        const addSelectedBtn = document.getElementById(
+          "add-selected-to-editor-btn"
+        );
+        const thumbnailGrid = document.querySelector(".thumbnail-grid");
         const tablist = document.querySelector(
           '[role="tablist"][aria-label="Resource Type Filters"]'
-        ); // More specific selector
+        );
+        const contextMenu = document.getElementById("customContextMenu");
+
+        // --- 2. State Variables ---
+        let isEditorActive = false;
+        let editedItemElement = null;
+        let currentTrigger = null; // Context menu trigger
+        let currentFocusedItemIndex = -1; // Context menu focus index
+        let focusableTreeNodes = []; // Treeview nodes (populated if tree exists)
+
+        // --- 3. Define ALL Helper Functions ---
+
+        // Live Region Helpers
+        function announceStatus(message) {
+          /* ... definition ... */ if (!statusLiveRegion) return;
+          statusLiveRegion.textContent = "";
+          setTimeout(() => {
+            statusLiveRegion.textContent = message;
+            console.log("Announce Status:", message);
+          }, 50);
+        }
+        function announceAlert(message) {
+          /* ... definition ... */ if (!alertLiveRegion) return;
+          alertLiveRegion.textContent = "";
+          setTimeout(() => {
+            alertLiveRegion.textContent = message;
+            console.warn("Announce Alert:", message);
+          }, 50);
+        }
+
+        // Treeview Helpers
+        const setFocusableNode = (nodeToFocus) => {
+          // Use const for function expression
+          if (
+            !nodeToFocus ||
+            !focusableTreeNodes ||
+            focusableTreeNodes.length === 0 ||
+            !document.body.contains(nodeToFocus)
+          ) {
+            // console.warn("setFocusableNode: Preconditions not met.", {nodeToFocus, focusableTreeNodesExists: !!focusableTreeNodes});
+            return;
+          }
+          // console.log(`TREEVIEW: Setting tabindex=0 for:`, nodeToFocus); // Keep for debugging if needed
+          focusableTreeNodes.forEach((node) => {
+            if (document.body.contains(node)) {
+              node.setAttribute("tabindex", node === nodeToFocus ? "0" : "-1");
+            }
+          });
+        };
+        window.setTreeFocusableNode = setFocusableNode; // Expose globally AFTER definition
+
+        function getChildGroup(treeitemNode) {
+          // treeitemNode IS the button[role="treeitem"]
+          if (
+            treeitemNode.tagName !== "BUTTON" ||
+            !treeitemNode.hasAttribute("aria-expanded")
+          ) {
+            // Only expandable buttons have child groups in this pattern
+            return null;
+          }
+          // CORRECTED LOGIC: The group UL should be the immediate next element sibling of the BUTTON itself
+          const potentialGroup = treeitemNode.nextElementSibling;
+
+          if (
+            potentialGroup &&
+            potentialGroup.tagName === "UL" &&
+            potentialGroup.getAttribute("role") === "group"
+          ) {
+            // Found the group correctly
+            return potentialGroup;
+          }
+          // Log error if group not found where expected
+          console.error(
+            `getChildGroup: Could not find group UL as the next sibling for button:`,
+            treeitemNode,
+            " Button's Next sibling was:",
+            potentialGroup
+          );
+          return null;
+        }
+        function getParentTreeitem(treeitemNode) {
+          /* ... definition ... */ const parentLi = treeitemNode.parentElement;
+          const parentGroup = parentLi?.parentElement;
+          if (parentGroup && parentGroup.getAttribute("role") === "group") {
+            const grandParentLi = parentGroup.parentElement;
+            const parentTreeitem = grandParentLi?.querySelector(
+              ':scope > [role="treeitem"]'
+            );
+            if (
+              parentTreeitem &&
+              (parentTreeitem.tagName === "BUTTON" ||
+                parentTreeitem.tagName === "A")
+            )
+              return parentTreeitem;
+          }
+          return null;
+        }
+        function getVisibleFocusableNodes() {
+          /* ... definition ... */ return focusableTreeNodes.filter((node) => {
+            let current = node.parentElement;
+            while (current && current !== treeView) {
+              if (current.getAttribute("role") === "group" && current.hidden)
+                return false;
+              const groupParent = current.closest('[role="group"]');
+              if (groupParent) {
+                const parentLi = groupParent.parentElement;
+                const parentTreeitemButton = parentLi?.querySelector(
+                  ':scope > button[role="treeitem"][aria-expanded="false"]'
+                );
+                if (parentTreeitemButton) return false;
+                current = parentLi?.parentElement;
+              } else {
+                current = current.parentElement;
+              }
+            }
+            return true;
+          });
+        }
+        function toggleExpansion(buttonNode) {
+          /* ... definition ... */ if (
+            !buttonNode ||
+            buttonNode.tagName !== "BUTTON" ||
+            !buttonNode.hasAttribute("aria-expanded")
+          )
+            return;
+          const isExpanded =
+            buttonNode.getAttribute("aria-expanded") === "true";
+          const group = getChildGroup(buttonNode);
+          const icon = buttonNode.querySelector("i");
+          if (group) {
+            buttonNode.setAttribute("aria-expanded", String(!isExpanded));
+            group.hidden = isExpanded;
+            if (icon) {
+              icon.classList.toggle("fa-folder", isExpanded);
+              icon.classList.toggle("fa-folder-open", !isExpanded);
+            }
+            announceStatus(
+              `${buttonNode.textContent.trim()} ${
+                !isExpanded ? "expanded" : "collapsed"
+              }.`
+            );
+          } else {
+            console.error(
+              `toggleExpansion: Could not find child group for button:`,
+              buttonNode
+            );
+          }
+        }
+
+        // Editor View Helpers
+        function switchToEditorView(treeItemNode) {
+          /* ... definition ... */ if (
+            !treeItemNode ||
+            !treeView ||
+            !editorView
+          )
+            return;
+          editedItemElement = treeItemNode;
+          isEditorActive = true;
+          const itemName = editedItemElement.textContent.trim();
+          const itemIconClass =
+            editedItemElement.querySelector("i")?.className || "fas fa-file";
+          editorItemName.textContent = itemName;
+          editorItemIcon.className = itemIconClass;
+          editorHeading.setAttribute("aria-label", `Editing ${itemName}`);
+          editorItemList.innerHTML = "";
+          if (editorPlaceholderText) editorPlaceholderText.hidden = false;
+          treeView.hidden = true;
+          editorView.hidden = false;
+          if (addSelectedBtn) addSelectedBtn.disabled = false;
+          editorSaveBtn?.focus();
+          announceStatus(
+            `Editing ${itemName}. Select items and use Add Selected button.`
+          );
+          console.log("Switched to Editor View for:", editedItemElement);
+        }
+        function switchToTreeView() {
+          /* ... definition ... */ if (!editorView || !treeView) return;
+          editorView.hidden = true;
+          treeView.hidden = false;
+          isEditorActive = false;
+          if (addSelectedBtn) addSelectedBtn.disabled = true;
+          const triggerToFocus = editedItemElement;
+          editedItemElement = null;
+          if (triggerToFocus) {
+            if (typeof window.setTreeFocusableNode === "function")
+              window.setTreeFocusableNode(triggerToFocus);
+            setTimeout(() => {
+              triggerToFocus.focus({ preventScroll: true });
+              announceStatus("Exited editor view.");
+              console.log(
+                "Switched back to Tree View. Focused:",
+                document.activeElement
+              );
+            }, 50);
+          } else {
+            announceStatus("Exited editor view.");
+            console.log("Switched back to Tree View.");
+          }
+        }
+
+        // Context Menu Helpers
+        function openContextMenu(triggerElement, x, y) {
+          /* ... definition ... */ console.log(
+            `Opening context menu for trigger:`,
+            triggerElement
+          );
+          currentTrigger = triggerElement;
+          if (!contextMenu) return;
+          contextMenu.hidden = false;
+          const menuWidth = contextMenu.offsetWidth;
+          const menuHeight = contextMenu.offsetHeight;
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          let finalX = x;
+          let finalY = y;
+          if (x + menuWidth > viewportWidth)
+            finalX = viewportWidth - menuWidth - 5;
+          if (y + menuHeight > viewportHeight)
+            finalY = viewportHeight - menuHeight - 5;
+          finalX = Math.max(5, finalX);
+          finalY = Math.max(5, finalY);
+          contextMenu.style.left = `${finalX}px`;
+          contextMenu.style.top = `${finalY}px`;
+          currentFocusedItemIndex = 0;
+          menuItems[currentFocusedItemIndex]?.focus();
+        }
+        function closeContextMenu() {
+          /* ... definition ... */ if (!contextMenu || contextMenu.hidden)
+            return;
+          const triggerToFocus = currentTrigger;
+          contextMenu.hidden = true;
+          currentTrigger = null;
+          currentFocusedItemIndex = -1;
+          if (triggerToFocus) {
+            setTimeout(() => {
+              const treeContainer = document.getElementById("resource-tree");
+              const treeFocusSetter = window.setTreeFocusableNode;
+              if (
+                treeContainer &&
+                treeContainer.contains(triggerToFocus) &&
+                typeof treeFocusSetter === "function"
+              )
+                treeFocusSetter(triggerToFocus);
+              triggerToFocus.focus({ preventScroll: true });
+              if (document.activeElement !== triggerToFocus)
+                console.warn("Focus did not land on the trigger element.");
+              else console.log("Focus successfully returned to trigger.");
+            }, 0);
+          } else {
+            console.warn(
+              "closeContextMenu called but triggerToFocus was null."
+            );
+          }
+        }
+        function focusMenuItem(index) {
+          /* ... definition ... */ if (!contextMenu || contextMenu.hidden)
+            return;
+          currentFocusedItemIndex = index;
+          menuItems[currentFocusedItemIndex]?.focus();
+        }
+
+        // Radio Button Helper
+        function setupRadioButtonGroup(groupElement) {
+          /* ... definition ... */ if (!groupElement) return;
+          const buttons = Array.from(
+            groupElement.querySelectorAll('[role="radio"]')
+          );
+          if (buttons.length === 0) return;
+          buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+              if (button.getAttribute("aria-checked") === "true") return;
+              buttons.forEach((btn) =>
+                btn.setAttribute("aria-checked", "false")
+              );
+              button.setAttribute("aria-checked", "true");
+              console.log(
+                `Radio group "${groupElement.getAttribute(
+                  "aria-label"
+                )}": Selected "${button.textContent.trim()}"`
+              );
+            });
+          });
+          console.log(
+            `Radio group initialized: ${
+              groupElement.getAttribute("aria-label") || "Unnamed"
+            }`
+          );
+        }
+
+        // --- 4. Initialize Components and Add Event Listeners ---
+
+        // Tabs Initialization
         if (tablist) {
-          const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
-          // Assuming panels are within a container sibling to tablist container or globally queryable
+          /* ... Tabs initialization logic using activateTab ... */ const tabs =
+            Array.from(tablist.querySelectorAll('[role="tab"]'));
           const panelsContainer = document.querySelector(
             ".center-col-scrollable"
-          ); // Or appropriate container
+          );
           const panels = panelsContainer
             ? Array.from(
                 panelsContainer.querySelectorAll(':scope > [role="tabpanel"]')
               )
             : [];
-
           function activateTab(selectedTab) {
             if (!selectedTab) return;
             let panelFound = false;
+            let activePanelItemCount = 0;
             tabs.forEach((tab) => {
               const isSelected = tab === selectedTab;
               const panelId = tab.getAttribute("aria-controls");
-              // Find panel more robustly if panels aren't direct children/siblings
-              const panel = document.getElementById(panelId); // Rely on ID
-
-              tab.setAttribute("aria-selected", String(isSelected)); // Use string true/false
+              const panel = document.getElementById(panelId);
+              tab.setAttribute("aria-selected", String(isSelected));
               tab.setAttribute("tabindex", isSelected ? "0" : "-1");
-
               if (panel) {
                 panel.hidden = !isSelected;
-                panelFound = panelFound || isSelected; // Track if the selected panel was found
+                if (isSelected) {
+                  panelFound = true;
+                  // Example: Count items if needed for announcement (adapt selector if necessary)
+                  activePanelItemCount =
+                    panel.querySelectorAll(".thumbnail-button").length;
+                  // Optional: Move focus to the panel when activated by keyboard?
+                  // setTimeout(() => { panel.focus(); }, 0);
+                }
               } else {
                 console.error(
                   `Panel with ID ${panelId} not found for tab ${tab.id}`
                 );
               }
             });
-            // Announce after state changes
-            const itemCount = panelsContainer
-              ? panelsContainer.querySelector(
-                  `[role="tabpanel"]:not([hidden]) .thumbnail-button`
-                )?.length || 0
-              : 0;
-            const tabName = selectedTab.textContent.trim().split("(")[0].trim();
-            announceStatus(
-              `Showing ${itemCount > 0 ? itemCount : "content"} in ${tabName}.`
-            ); // Adjusted announcement
-          }
 
+            // Example Announce Status (Adjust based on your needs)
+            if (panelFound) {
+              const tabName = selectedTab.textContent
+                .trim()
+                .split("(")[0]
+                .trim();
+              announceStatus(
+                `Showing ${
+                  activePanelItemCount > 0
+                    ? activePanelItemCount + " items"
+                    : "content"
+                } in ${tabName}.`
+              );
+            }
+          }
           if (tabs.length > 0 && panels.length > 0) {
             tablist.addEventListener("click", (e) => {
               const clickedTab = e.target.closest('[role="tab"]');
-              if (!clickedTab) return;
-              activateTab(clickedTab);
+              if (clickedTab) activateTab(clickedTab);
             });
-
             tablist.addEventListener("keydown", (e) => {
-              const currentTab = e.target.closest('[role="tab"]'); // Use closest here too
+              /* keydown logic */ const currentTab =
+                e.target.closest('[role="tab"]');
               if (!currentTab) return;
-
               let newIndex;
               const currentIndex = tabs.indexOf(currentTab);
               const tabCount = tabs.length;
-
               switch (e.key) {
                 case "ArrowRight":
                 case "ArrowDown":
@@ -1157,27 +1492,21 @@
                   newIndex = tabCount - 1;
                   break;
                 default:
-                  return; // Exit if not a navigation key
+                  return;
               }
-
               if (newIndex !== undefined) {
                 tabs[newIndex].focus();
-                // Automatic Activation: Activate tab on focus change via keys
                 activateTab(tabs[newIndex]);
               }
             });
-
-            // Initial Setup
             let initiallyActiveTab = tabs.find(
               (tab) => tab.getAttribute("aria-selected") === "true"
             );
             if (!initiallyActiveTab && tabs.length > 0) {
-              // If none are selected by default in HTML, select the first one
               initiallyActiveTab = tabs[0];
               initiallyActiveTab.setAttribute("aria-selected", "true");
               initiallyActiveTab.setAttribute("tabindex", "0");
             } else if (initiallyActiveTab) {
-              // Ensure only the selected one has tabindex 0 initially
               tabs.forEach((tab) =>
                 tab.setAttribute(
                   "tabindex",
@@ -1185,232 +1514,56 @@
                 )
               );
             }
-
-            if (initiallyActiveTab) {
-              activateTab(initiallyActiveTab); // Sync panels on load
-            }
+            if (initiallyActiveTab) activateTab(initiallyActiveTab);
             console.log("Tabs initialized.");
           } else {
-            console.warn("Tabs or Panels not found for initialization.");
+            console.warn("Tabs or Panels not found.");
           }
         } else {
           console.warn("Tablist not found.");
         }
-        // --- End Tabs Implementation ---
 
-        // --- Radio Button Group Implementation ---
-        function setupRadioButtonGroup(groupElement) {
-          if (!groupElement) return;
-          const buttons = Array.from(
-            groupElement.querySelectorAll('[role="radio"]')
-          );
-          if (buttons.length === 0) return;
-
-          buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-              if (button.getAttribute("aria-checked") === "true") return;
-              buttons.forEach((btn) =>
-                btn.setAttribute("aria-checked", "false")
-              );
-              button.setAttribute("aria-checked", "true");
-              console.log(
-                `Radio group "${groupElement.getAttribute(
-                  "aria-label"
-                )}": Selected "${button.textContent.trim()}"`
-              );
-              // announceStatus(`${groupElement.getAttribute('aria-label')} changed to ${button.textContent.trim()}`); // Optional announcement
-            });
-          });
-          console.log(
-            `Radio group initialized: ${
-              groupElement.getAttribute("aria-label") || "Unnamed"
-            }`
-          );
-        }
-
+        // Radio Button Initialization
         setupRadioButtonGroup(document.querySelector(".toolbar-radio-group"));
         setupRadioButtonGroup(
           document.querySelector('.left-col-fixed[role="radiogroup"]')
         );
-        // --- End Radio Button Group Implementation ---
 
-        // --- ARIA Treeview Implementation (for role="treeitem" on button/a) ---
-        const tree = document.getElementById("resource-tree");
-        let setFocusableNode; // Declare function name in advance
+        // Treeview Initialization
+        if (treeView) {
+          focusableTreeNodes = Array.from(
+            treeView.querySelectorAll('[role="treeitem"]')
+          ); // Populate the array
 
-        if (tree) {
-          const focusableTreeNodes = Array.from(
-            tree.querySelectorAll('[role="treeitem"]')
-          );
-          let typeaheadBuffer = "";
-          let typeaheadTimeout = null;
-
-          function getChildGroup(treeitemNode) {
-            // treeitemNode is the button[role="treeitem"]
-            if (
-              treeitemNode.tagName !== "BUTTON" ||
-              !treeitemNode.hasAttribute("aria-expanded")
-            ) {
-              // Only expandable buttons have child groups in this pattern
-              return null;
-            }
-            // The group UL should be the next element sibling *of the button*
-            const potentialGroup = treeitemNode.nextElementSibling;
-            if (
-              potentialGroup &&
-              potentialGroup.tagName === "UL" &&
-              potentialGroup.getAttribute("role") === "group"
-            ) {
-              return potentialGroup;
-            }
-            // Add log for debugging if group not found where expected
-            console.error(
-              `getChildGroup: Could not find group UL as the next sibling for button:`,
-              treeitemNode,
-              "Next sibling was:",
-              potentialGroup
-            );
-            return null;
-          }
-
-          function getParentTreeitem(treeitemNode) {
-            const parentLi = treeitemNode.parentElement;
-            const parentGroup = parentLi?.parentElement;
-            if (parentGroup && parentGroup.getAttribute("role") === "group") {
-              const grandParentLi = parentGroup.parentElement;
-              const parentTreeitem = grandParentLi?.querySelector(
-                ':scope > [role="treeitem"]'
-              );
-              if (
-                parentTreeitem &&
-                (parentTreeitem.tagName === "BUTTON" ||
-                  parentTreeitem.tagName === "A")
-              ) {
-                return parentTreeitem;
-              }
-            }
-            return null;
-          }
-
-          function getVisibleFocusableNodes() {
-            // Basic visibility check - refine if deeply nested hidden checks are needed
-            return focusableTreeNodes.filter((node) => {
-              let current = node.parentElement; // Start checking from li[role=none] parent
-              while (current && current !== tree) {
-                if (
-                  current.getAttribute("role") === "group" &&
-                  current.hidden
-                ) {
-                  return false;
-                }
-                // Check collapsed state of ancestor buttons
-                const groupParent = current.closest('[role="group"]');
-                if (groupParent) {
-                  const parentLi = groupParent.parentElement;
-                  const parentTreeitemButton = parentLi?.querySelector(
-                    ':scope > button[role="treeitem"][aria-expanded="false"]'
-                  );
-                  if (parentTreeitemButton) {
-                    return false; // Inside a collapsed node
-                  }
-                  current = parentLi?.parentElement; // Move up past the li
-                } else {
-                  current = current.parentElement; // General traverse up
-                }
-              }
-              return true;
-            });
-          }
-
-          // Define setFocusableNode here so it's in scope
-          setFocusableNode = function (nodeToFocus) {
-            // Assign to the outer variable
-            if (!nodeToFocus) return;
-            console.log(`TREEVIEW: Setting tabindex=0 for:`, nodeToFocus);
-            focusableTreeNodes.forEach((node) => {
-              node.setAttribute("tabindex", node === nodeToFocus ? "0" : "-1");
-            });
-          };
-          // Make it globally accessible ONLY IF context menu absolutely needs it
-          window.setTreeFocusableNode = setFocusableNode;
-
-          function toggleExpansion(buttonNode) {
-            // buttonNode now IS the treeitem with aria-expanded
-            if (
-              !buttonNode ||
-              buttonNode.tagName !== "BUTTON" ||
-              !buttonNode.hasAttribute("aria-expanded")
-            )
-              return;
-
-            const isExpanded =
-              buttonNode.getAttribute("aria-expanded") === "true";
-            const group = getChildGroup(buttonNode); // Use the corrected helper
-            const icon = buttonNode.querySelector("i");
-
-            if (group) {
-              // Only proceed if the group was found
-              // Toggle button attribute
-              buttonNode.setAttribute("aria-expanded", String(!isExpanded)); // Use string true/false
-              // Toggle group visibility
-              group.hidden = isExpanded; // Correct: Hide if it WAS expanded, show if it WAS collapsed
-
-              // Toggle folder icon
-              if (icon) {
-                icon.classList.toggle("fa-folder", isExpanded); // Show closed icon if it WAS expanded
-                icon.classList.toggle("fa-folder-open", !isExpanded); // Show open icon if it WAS collapsed
-              }
-              console.log(
-                `Toggled expansion for "${buttonNode.textContent.trim()}". New state: ${!isExpanded}`
-              );
-              // Announce state change
-              announceStatus(
-                `${buttonNode.textContent.trim()} ${
-                  !isExpanded ? "expanded" : "collapsed"
-                }.`
-              );
-            } else {
-              // Log error if group wasn't found - helps debugging
-              console.error(
-                `toggleExpansion: Could not find child group for button:`,
-                buttonNode
-              );
-            }
-          }
-
-          tree.addEventListener("keydown", (e) => {
-            const currentFocusedNode = e.target.closest('[role="treeitem"]');
+          treeView.addEventListener("keydown", (e) => {
+            /* ... Treeview keydown handler using helpers ... */ const currentFocusedNode =
+              e.target.closest('[role="treeitem"]');
             if (
               !currentFocusedNode ||
               !focusableTreeNodes.includes(currentFocusedNode)
             )
               return;
-
             const visibleNodes = getVisibleFocusableNodes();
             const currentIndex = visibleNodes.indexOf(currentFocusedNode);
             let nextNode = null;
-
             switch (e.key) {
               case "ArrowDown":
                 e.preventDefault();
-                if (currentIndex < visibleNodes.length - 1) {
+                if (currentIndex < visibleNodes.length - 1)
                   nextNode = visibleNodes[currentIndex + 1];
-                }
                 break;
               case "ArrowUp":
                 e.preventDefault();
-                if (currentIndex > 0) {
-                  nextNode = visibleNodes[currentIndex - 1];
-                }
+                if (currentIndex > 0) nextNode = visibleNodes[currentIndex - 1];
                 break;
               case "ArrowRight":
                 e.preventDefault();
                 if (
                   currentFocusedNode.tagName === "BUTTON" &&
                   currentFocusedNode.getAttribute("aria-expanded") === "false"
-                ) {
+                )
                   toggleExpansion(currentFocusedNode);
-                } else if (
+                else if (
                   currentFocusedNode.tagName === "BUTTON" &&
                   currentFocusedNode.getAttribute("aria-expanded") === "true"
                 ) {
@@ -1426,9 +1579,9 @@
                 if (
                   currentFocusedNode.tagName === "BUTTON" &&
                   currentFocusedNode.getAttribute("aria-expanded") === "true"
-                ) {
+                )
                   toggleExpansion(currentFocusedNode);
-                } else {
+                else {
                   const parentNode = getParentTreeitem(currentFocusedNode);
                   if (parentNode) nextNode = parentNode;
                 }
@@ -1448,28 +1601,24 @@
                 if (
                   currentFocusedNode.tagName === "BUTTON" &&
                   currentFocusedNode.hasAttribute("aria-expanded")
-                ) {
+                )
                   toggleExpansion(currentFocusedNode);
-                } else if (currentFocusedNode.tagName === "A") {
+                else if (currentFocusedNode.tagName === "A")
                   currentFocusedNode.click();
-                }
                 break;
               default:
                 if (e.key.length === 1 && e.key.match(/\S/)) {
-                  // --- Basic Typeahead Logic ---
-                  e.preventDefault();
+                  /* typeahead logic */ e.preventDefault();
                   clearTimeout(typeaheadTimeout);
                   typeaheadBuffer += e.key.toLowerCase();
                   typeaheadTimeout = setTimeout(() => {
                     typeaheadBuffer = "";
                   }, 750);
-
-                  let searchNodes = getVisibleFocusableNodes(); // Search only visible nodes
+                  let searchNodes = getVisibleFocusableNodes();
                   let currentNodeIndex =
                     searchNodes.indexOf(currentFocusedNode);
                   if (currentNodeIndex < 0) currentNodeIndex = 0;
                   let searchIndex = (currentNodeIndex + 1) % searchNodes.length;
-
                   for (let i = 0; i < searchNodes.length; i++) {
                     const nodeToCheck = searchNodes[searchIndex];
                     if (nodeToCheck) {
@@ -1488,38 +1637,33 @@
                     )
                       break;
                   }
-                  // --- End Typeahead ---
                 }
                 break;
             }
-
             if (nextNode) {
               setFocusableNode(nextNode);
               nextNode.focus({ preventScroll: true });
             }
           });
-
-          tree.addEventListener("click", (e) => {
-            const clickedNode = e.target.closest('[role="treeitem"]');
+          treeView.addEventListener("click", (e) => {
+            /* ... Treeview click handler ... */ const clickedNode =
+              e.target.closest('[role="treeitem"]');
             if (!clickedNode || !focusableTreeNodes.includes(clickedNode))
               return;
             setFocusableNode(clickedNode);
             if (
               clickedNode.tagName === "BUTTON" &&
               clickedNode.hasAttribute("aria-expanded")
-            ) {
+            )
               toggleExpansion(clickedNode);
-            }
           });
-
-          tree.addEventListener("focusin", (e) => {
-            if (e.target === tree) {
-              const focusableNode = tree.querySelector(
+          treeView.addEventListener("focusin", (e) => {
+            /* ... Treeview focusin handler ... */ if (e.target === treeView) {
+              const focusableNode = treeView.querySelector(
                 '[role="treeitem"][tabindex="0"]'
               );
-              if (focusableNode) {
-                focusableNode.focus();
-              } else if (focusableTreeNodes.length > 0) {
+              if (focusableNode) focusableNode.focus();
+              else if (focusableTreeNodes.length > 0) {
                 setFocusableNode(focusableTreeNodes[0]);
                 focusableTreeNodes[0].focus();
               }
@@ -1530,43 +1674,135 @@
           if (focusableTreeNodes.length > 0) {
             const firstNode = focusableTreeNodes[0];
             setFocusableNode(firstNode);
-            // Ensure initial hidden states match aria-expanded
-            tree
+            treeView
               .querySelectorAll('button[role="treeitem"]')
               .forEach((button) => {
                 const group = getChildGroup(button);
-                if (group) {
+                if (group)
                   group.hidden =
                     button.getAttribute("aria-expanded") !== "true";
-                }
               });
           } else {
-            console.warn("Treeview: No focusable treeitem nodes found.");
+            console.warn("Treeview: No focusable nodes found on init.");
           }
-
-          console.log(
-            "Treeview initialized (Pattern: treeitem on interactive element)"
-          );
+          console.log("Treeview initialized");
         } else {
-          console.log("Treeview container not found");
+          console.warn("Treeview container (#resource-tree) not found.");
+          focusableTreeNodes = [];
+        } // Ensure empty array if no tree
+
+        // Thumbnail Selection Initialization
+        if (thumbnailGrid) {
+          /* ... thumbnail selection listeners ... */ thumbnailGrid.addEventListener(
+            "click",
+            (e) => {
+              const clickedButton = e.target.closest(".thumbnail-button");
+              if (!clickedButton) return;
+              const isPressed =
+                clickedButton.getAttribute("aria-pressed") === "true";
+              clickedButton.setAttribute("aria-pressed", String(!isPressed));
+            }
+          );
+          thumbnailGrid.addEventListener("keydown", (e) => {
+            if (e.key === " " || e.key === "Enter") {
+              const focusedButton =
+                document.activeElement?.closest(".thumbnail-button");
+              if (focusedButton && thumbnailGrid.contains(focusedButton)) {
+                e.preventDefault();
+                const isPressed =
+                  focusedButton.getAttribute("aria-pressed") === "true";
+                focusedButton.setAttribute("aria-pressed", String(!isPressed));
+              }
+            }
+          });
+          thumbnailGrid.querySelectorAll(".thumbnail-button").forEach((btn) => {
+            if (!btn.hasAttribute("aria-pressed"))
+              btn.setAttribute("aria-pressed", "false");
+          });
+          console.log("Thumbnail selection initialized.");
+        } else {
+          console.warn("Thumbnail grid not found.");
         }
-        // --- End Treeview Implementation ---
+
+        // "Add Selected" Button Initialization
+        if (addSelectedBtn) {
+          /* ... Add Selected button listener ... */ addSelectedBtn.addEventListener(
+            "click",
+            () => {
+              if (!isEditorActive || !editorItemList) return;
+              const selectedThumbnails = thumbnailGrid?.querySelectorAll(
+                '.thumbnail-button[aria-pressed="true"]'
+              );
+              if (!selectedThumbnails || selectedThumbnails.length === 0) {
+                announceStatus("No items selected to add.");
+                return;
+              }
+              let itemsAddedCount = 0;
+              selectedThumbnails.forEach((thumb) => {
+                const itemName =
+                  thumb.querySelector("span")?.textContent || "Unknown Item";
+                const itemThumbSrc = thumb.querySelector(".thumb-placeholder")
+                  ? "placeholder.png"
+                  : thumb.querySelector("img")?.src || "placeholder.png";
+                const itemId =
+                  thumb.dataset.itemId || `item-${Date.now()}-${Math.random()}`;
+                if (
+                  editorItemList.querySelector(`[data-item-id="${itemId}"]`)
+                ) {
+                  console.log(`Item "${itemName}" already in editor.`);
+                  thumb.setAttribute("aria-pressed", "false");
+                  return;
+                }
+                const li = document.createElement("li");
+                li.dataset.itemId = itemId;
+                li.innerHTML = `<img src="${itemThumbSrc}" alt="" width="30" height="30"> <span>${itemName}</span><button class="editor-remove-item-btn" aria-label="Remove ${itemName}">×</button>`;
+                editorItemList.appendChild(li);
+                li.querySelector(".editor-remove-item-btn")?.addEventListener(
+                  "click",
+                  (e) => {
+                    e.target.closest("li")?.remove();
+                    announceStatus(`Removed ${itemName}.`);
+                    if (
+                      editorItemList.children.length === 0 &&
+                      editorPlaceholderText
+                    )
+                      editorPlaceholderText.hidden = false;
+                  }
+                );
+                thumb.setAttribute("aria-pressed", "false");
+                itemsAddedCount++;
+              });
+              if (itemsAddedCount > 0) {
+                if (editorPlaceholderText) editorPlaceholderText.hidden = true;
+                announceStatus(
+                  `Added ${itemsAddedCount} item(s) to the editor.`
+                );
+              }
+            }
+          );
+          console.log("'Add Selected' button listener added.");
+        } else {
+          console.warn("'Add Selected to Editor' button not found.");
+        }
 
         // --- Custom Context Menu Implementation ---
-        const contextMenu = document.getElementById("customContextMenu");
         if (contextMenu) {
+          // Define menuItems *first* within this scope
           const menuItems = Array.from(
             contextMenu.querySelectorAll('[role="menuitem"]')
           );
-          const triggerSelectors = '.thumbnail-button, [role="treeitem"]'; // Update selector to target treeitem role directly
-          let currentTrigger = null;
-          let currentFocusedItemIndex = -1;
+          const triggerSelectors = '.thumbnail-button, [role="treeitem"]';
+          // currentTrigger, currentFocusedItemIndex defined globally outside this 'if'
+
+          // --- Define Context Menu Helpers *INSIDE* the if block ---
+          // Now they have access to menuItems via closure
 
           function openContextMenu(triggerElement, x, y) {
             console.log(`Opening context menu for trigger:`, triggerElement);
             currentTrigger = triggerElement;
-            contextMenu.hidden = false;
-            // Positioning logic... (ensure menu stays in viewport)
+            contextMenu.hidden = false; // Make menu visible
+
+            // Positioning logic...
             const menuWidth = contextMenu.offsetWidth;
             const menuHeight = contextMenu.offsetHeight;
             const viewportWidth = window.innerWidth;
@@ -1582,12 +1818,16 @@
             contextMenu.style.left = `${finalX}px`;
             contextMenu.style.top = `${finalY}px`;
 
+            // Focus the first menu item (menuItems is now accessible)
             currentFocusedItemIndex = 0;
-            menuItems[currentFocusedItemIndex]?.focus();
+            if (menuItems.length > 0) {
+              // Check if items exist
+              menuItems[currentFocusedItemIndex]?.focus();
+            }
           }
 
           function closeContextMenu() {
-            if (contextMenu.hidden) return; // Prevent multiple calls
+            if (contextMenu.hidden) return;
 
             const triggerToFocus = currentTrigger;
             contextMenu.hidden = true;
@@ -1597,10 +1837,8 @@
             if (triggerToFocus) {
               console.log("Closing menu. Returning focus to:", triggerToFocus);
               setTimeout(() => {
-                // Check if trigger is Tree item & ensure it's focusable via Treeview's function
                 const treeContainer = document.getElementById("resource-tree");
-                // Use the globally exposed function if needed
-                const treeFocusSetter = window.setTreeFocusableNode; // Access global function
+                const treeFocusSetter = window.setTreeFocusableNode; // Still use global ref
                 if (
                   treeContainer &&
                   treeContainer.contains(triggerToFocus) &&
@@ -1612,15 +1850,9 @@
                   treeFocusSetter(triggerToFocus);
                 }
                 triggerToFocus.focus({ preventScroll: true });
-                console.log(
-                  "Active element after focus attempt:",
-                  document.activeElement
-                );
-                if (document.activeElement !== triggerToFocus) {
+                if (document.activeElement !== triggerToFocus)
                   console.warn("Focus did not land on the trigger element.");
-                } else {
-                  console.log("Focus successfully returned to trigger.");
-                }
+                else console.log("Focus successfully returned to trigger.");
               }, 0);
             } else {
               console.warn(
@@ -1630,24 +1862,27 @@
           }
 
           function focusMenuItem(index) {
+            if (contextMenu.hidden || index < 0 || index >= menuItems.length)
+              return; // Add bounds check
             currentFocusedItemIndex = index;
-            menuItems[currentFocusedItemIndex]?.focus();
+            menuItems[currentFocusedItemIndex]?.focus(); // menuItems is accessible
           }
+          // --- End Context Menu Helper Definitions ---
 
-          // Event Listeners for Context Menu (Right Click, Keyboard Trigger, Menu Nav, Outside Click, Item Activation)
+          // --- Add context menu event listeners (they can call the helpers above) ---
           document.body.addEventListener("contextmenu", (e) => {
-            const trigger = e.target.closest(triggerSelectors); // Use updated selector
+            const trigger = e.target.closest(triggerSelectors);
             if (trigger) {
               e.preventDefault();
               openContextMenu(trigger, e.clientX, e.clientY);
             } else {
               closeContextMenu();
-            }
+            } // Close if clicking outside target
           });
 
           document.body.addEventListener("keydown", (e) => {
             if (e.key === "ContextMenu" || (e.key === "F10" && e.shiftKey)) {
-              const trigger = document.activeElement?.closest(triggerSelectors); // Use updated selector
+              const trigger = document.activeElement?.closest(triggerSelectors);
               if (trigger) {
                 e.preventDefault();
                 const rect = trigger.getBoundingClientRect();
@@ -1660,6 +1895,8 @@
             if (contextMenu.hidden) return;
             let newIndex;
             const totalItems = menuItems.length;
+            if (totalItems === 0) return; // Don't handle keys if no items
+
             switch (e.key) {
               case "ArrowDown":
                 e.preventDefault();
@@ -1696,34 +1933,54 @@
           });
 
           document.addEventListener("click", (e) => {
+            // Close if clicking outside the menu AND not on the original trigger
             if (
               !contextMenu.hidden &&
               !contextMenu.contains(e.target) &&
-              e.target !== currentTrigger
+              e.target !== currentTrigger &&
+              !currentTrigger?.contains(e.target)
             ) {
               closeContextMenu();
             }
           });
 
-          // Item Activation (with random success/failure)
+          // Item Activation Listener (includes calling editor logic)
           menuItems.forEach((item) => {
             item.addEventListener("click", (e) => {
               const action = item.textContent.trim();
-              const triggerElement = currentTrigger; // Use stored trigger before closeContextMenu clears it
+              const triggerElement = currentTrigger; // Use stored trigger
+
+              // Handle Edit Action
+              if (action === "Edit Contents") {
+                if (
+                  triggerElement &&
+                  treeView?.contains(triggerElement) &&
+                  triggerElement.tagName === "BUTTON" &&
+                  triggerElement.hasAttribute("aria-expanded")
+                ) {
+                  // We need to close menu *before* switching view might change focus target
+                  const triggerToRefocus = currentTrigger; // Hold reference
+                  closeContextMenu(); // This will try to refocus, but view switch might override
+                  switchToEditorView(triggerToRefocus);
+                } else {
+                  announceAlert("Edit Contents only available for folders.");
+                  closeContextMenu();
+                }
+                return; // Stop processing
+              }
+
+              // Random Success/Failure for other items
               const triggerDesc =
                 triggerElement?.textContent?.trim().substring(0, 30) ||
                 "the selected item";
               console.log(
                 `Action "${action}" clicked for element: "${triggerDesc}"`
               );
-
               const successProbability = 0.75;
               const isSuccess = Math.random() < successProbability;
               let announcement = "";
-
               if (isSuccess) {
-                // Generate success message... (use switch statement as before)
-                switch (action) {
+                /* ... success messages ... */ switch (action) {
                   case "Preview":
                     announcement = `Previewing "${triggerDesc}".`;
                     break;
@@ -1748,8 +2005,7 @@
                 console.log("Simulated Success:", announcement);
                 announceStatus(announcement);
               } else {
-                // Generate failure message... (use switch statement as before)
-                switch (action) {
+                /* ... failure messages ... */ switch (action) {
                   case "Preview":
                     announcement = `Error: Could not load preview for "${triggerDesc}".`;
                     break;
@@ -1774,17 +2030,36 @@
                 console.warn("Simulated Failure:", announcement);
                 announceAlert(announcement);
               }
+
               closeContextMenu(); // Close menu AFTER action/announcement
             });
           });
+
           console.log("Context menu initialized.");
         } else {
           console.warn("Context menu container not found.");
         }
         // --- End Context Menu Implementation ---
 
-        console.log("All scripts initialized.");
-      }); // End DOMContentLoaded
+        // ... other initializations like Editor Save/Cancel ...
+
+        console.log("All component initializations successfully completed.");
+
+        // Editor Save/Cancel Button Initialization
+        if (editorCancelBtn)
+          editorCancelBtn.addEventListener("click", switchToTreeView);
+        if (editorSaveBtn)
+          editorSaveBtn.addEventListener("click", () => {
+            console.log(
+              "Save button clicked. Items in editor:",
+              editorItemList?.children.length || 0
+            );
+            announceStatus("Changes saved successfully."); // Placeholder
+            switchToTreeView();
+          });
+
+        console.log("All component initializations successfully completed.");
+      }); // === END DOMContentLoaded ===
     </script>
   </body>
 </html>

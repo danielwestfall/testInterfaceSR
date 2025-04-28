@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessible Quiz Game Editor</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❓</text></svg>"
+    />
+  </head>
+  <body>
+    <div
+      id="sr-announcer"
+      class="visually-hidden"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <header class="main-header">
+      <h1>Quiz Game Editor</h1>
+      <p>Build your own Jeopardy-style quiz board!</p>
+    </header>
+
+    <div id="game-board-area">
+      <div
+        id="column-controls"
+        class="controls-container column-controls-container"
+      >
+        <button
+          id="add-col-btn"
+          class="control-btn add-btn"
+          aria-label="Add Column"
+          style="display: none"
+        >
+          +
+        </button>
+      </div>
+      <div id="row-controls" class="controls-container row-controls-container">
+        <button
+          id="add-row-btn"
+          class="control-btn add-btn"
+          aria-label="Add Row"
+          style="display: none"
+        >
+          +
+        </button>
+      </div>
+
+      <div id="game-board"></div>
+    </div>
+
+    <div
+      id="category-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="category-modal-title"
+      hidden
+    >
+      <div class="modal-content">
+        <header class="modal-header">
+          <h2 id="category-modal-title">Edit Category</h2>
+          <button
+            class="close-modal-btn"
+            aria-label="Close Edit Category Dialog"
+          >
+            &times;
+          </button>
+        </header>
+        <div class="modal-body">
+          <label for="category-input">Category Name:</label>
+          <input
+            type="text"
+            id="category-input"
+            placeholder="Enter category name"
+            aria-describedby="category-error"
+          />
+          <div
+            id="category-error"
+            class="error-message"
+            aria-live="assertive"
+          ></div>
+        </div>
+        <footer class="modal-footer">
+          <button id="cancel-category-btn" type="button" class="btn-secondary">
+            Cancel
+          </button>
+          <button id="save-category-btn" type="button" class="btn-primary">
+            Save
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <div
+      id="question-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="question-modal-title"
+      hidden
+    >
+      <div class="modal-content large">
+        <header class="modal-header">
+          <h2 id="question-modal-title">
+            Edit Question (<span id="modal-point-value"></span> points)
+          </h2>
+          <button
+            class="close-modal-btn"
+            aria-label="Close Edit Question Dialog"
+          >
+            &times;
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="question-text">Question:</label>
+            <input
+              type="text"
+              id="question-text"
+              placeholder="Enter your question text here"
+              aria-describedby="question-text-error"
+            />
+            <div
+              id="question-text-error"
+              class="error-message"
+              aria-live="assertive"
+            ></div>
+          </div>
+
+          <fieldset
+            class="form-group"
+            aria-describedby="answer-options-error correct-answer-error"
+          >
+            <legend>Answer Options (Select the correct answer)</legend>
+            <div id="answer-options"></div>
+            <div
+              id="answer-options-error"
+              class="error-message"
+              aria-live="assertive"
+            ></div>
+            <div
+              id="correct-answer-error"
+              class="error-message"
+              aria-live="assertive"
+            ></div>
+            <button
+              id="add-answer-btn"
+              type="button"
+              class="btn-add-option"
+              disabled
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="18px"
+                viewBox="0 0 24 24"
+                width="18px"
+                fill="currentColor"
+              >
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              Add Answer Option (Max 4)
+            </button>
+          </fieldset>
+
+          <div class="form-group media-upload">
+            <label for="media-input">Add Image or Audio (Optional):</label>
+            <input
+              type="file"
+              id="media-input"
+              accept="image/*, audio/*"
+              aria-describedby="media-error"
+            />
+            <div id="media-preview" aria-live="polite">
+              <span>No media uploaded.</span>
+            </div>
+            <button
+              id="remove-media-btn"
+              type="button"
+              class="btn-danger-subtle"
+              style="display: none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="16px"
+                viewBox="0 0 24 24"
+                width="16px"
+                fill="currentColor"
+              >
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                />
+              </svg>
+              Remove Media
+            </button>
+            <div
+              id="media-error"
+              class="error-message"
+              aria-live="assertive"
+            ></div>
+          </div>
+        </div>
+        <footer class="modal-footer space-between">
+          <button
+            id="delete-question-btn"
+            type="button"
+            class="btn-danger delete-btn"
+            aria-label="Delete this Question"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="currentColor"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+              />
+            </svg>
+          </button>
+          <div>
+            <button
+              id="cancel-question-btn"
+              type="button"
+              class="btn-secondary"
+            >
+              Cancel
+            </button>
+            <button id="save-question-btn" type="button" class="btn-primary">
+              Save Question
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <div
+      id="delete-confirm-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-confirm-title"
+      hidden
+    >
+      <div class="modal-content">
+        <header class="modal-header">
+          <h2 id="delete-confirm-title">Confirm Deletion</h2>
+          <button
+            class="close-modal-btn"
+            aria-label="Close Confirmation Dialog"
+          >
+            &times;
+          </button>
+        </header>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete this question and its answers? This
+            action cannot be undone.
+          </p>
+          <div
+            id="delete-confirm-error"
+            class="error-message"
+            aria-live="assertive"
+          ></div>
+        </div>
+        <footer class="modal-footer">
+          <button id="cancel-delete-btn" type="button" class="btn-secondary">
+            Cancel
+          </button>
+          <button
+            id="confirm-delete-btn"
+            type="button"
+            class="btn-danger"
+            aria-describedby="delete-confirm-error"
+          >
+            Delete Question
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

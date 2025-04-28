@@ -1,0 +1,671 @@
+/* style.css - Grid Alignment Restore & Focus Order */
+
+/* Basic Reset & Body Styling */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: var(--font-family);
+  line-height: 1.6;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: var(--spacing-md);
+}
+:root {
+  /* Color Palette */
+  --primary-color: #0d47a1;
+  --secondary-color: #ffab00;
+  --accent-color: #ffffff;
+  --background-color: #f8f9fa;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --cell-bg: #ffffff;
+  --cell-text: #212529;
+  --category-bg: #e9ecef;
+  --points-text: #495057;
+  --border-color: #dee2e6;
+  --danger-color: #d32f2f;
+  --danger-bg-subtle: #ffebee;
+  --success-color: #388e3c;
+  --disabled-color: #adb5bd;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  /* Typography */
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --font-family-jeopardy: "Arial Black", Gadget, sans-serif;
+  /* Spacing & Sizing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --border-radius: 6px;
+  --control-size: 30px;
+  --modal-max-width: 600px;
+  --modal-max-width-large: 800px;
+  --control-area-size: 40px;
+  /* Effects */
+  --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --box-shadow-modal: 0 5px 15px rgba(0, 0, 0, 0.15);
+  --focus-ring-outer: #000000;
+  --focus-ring-inner: #ffffff;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 1px;
+  --focus-ring-shadow: 0 0 0 var(--focus-ring-offset) var(--focus-ring-inner),
+    0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width))
+      var(--focus-ring-outer);
+}
+
+/* Visually Hidden Class */
+.visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+}
+
+/* Header Styling */
+.main-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+.main-header h1 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-xs);
+}
+.main-header p {
+  color: var(--text-muted);
+}
+
+/* Game Board Area */
+#game-board-area {
+  position: relative;
+  padding-top: var(--control-area-size);
+  padding-left: var(--control-area-size);
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* Controls Container Base Styles */
+.controls-container {
+  position: absolute;
+  gap: var(--spacing-sm);
+  z-index: 10;
+}
+
+/* Column Controls Styling - Reverted to Grid */
+.column-controls-container {
+  display: grid; /* Use Grid */
+  /* grid-template-columns set by JS */
+  top: 5px;
+  left: var(--control-area-size);
+  /* Let width be determined by content + grid definition */
+  /* width: calc(100% - var(--control-area-size) - 10px); */
+  right: var(--control-area-size); /* Adjust if add button needs space */
+  height: var(--control-size);
+  align-items: center;
+  padding: 0 var(--spacing-sm);
+  gap: var(--spacing-sm);
+}
+.column-controls-container .control-btn {
+  justify-self: center; /* Center button within its grid cell */
+}
+/* Style for the Add Column button within the grid */
+.column-controls-container #add-col-btn {
+  justify-self: start; /* Align add button to the start of its grid cell */
+  margin-left: var(--spacing-sm); /* Add some space */
+}
+
+/* Row Controls Styling (Keep as Grid) */
+.row-controls-container {
+  display: grid;
+  /* grid-template-rows set by JS */
+  grid-template-columns: 1fr;
+  left: 5px;
+  top: var(--control-area-size);
+  bottom: 5px;
+  width: var(--control-size);
+  align-items: center;
+  justify-items: center;
+  padding: var(--spacing-sm) 0;
+  gap: var(--spacing-sm);
+}
+.row-controls-container #add-row-btn {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* General Control Button Styling (Add/Remove) */
+.control-btn {
+  background-color: var(--danger-color);
+  color: var(--accent-color);
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  font-weight: bold;
+  width: var(--control-size);
+  height: var(--control-size);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1em;
+  line-height: 1;
+  transition: background-color 0.2s ease, transform 0.1s ease,
+    box-shadow 0.2s ease;
+  flex-shrink: 0;
+  outline: none;
+}
+.control-btn.add-btn {
+  background-color: var(--success-color);
+}
+.control-btn:hover {
+  opacity: 0.85;
+}
+.control-btn:active {
+  transform: scale(0.95);
+}
+.control-btn:focus-visible {
+  box-shadow: var(--focus-ring-shadow);
+}
+
+/* Game Board Grid */
+#game-board {
+  display: grid;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background-color: #6c757d;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+/* Grid Cell Styling */
+.grid-cell {
+  background-color: var(--cell-bg);
+  color: var(--cell-text);
+  padding: var(--spacing-sm);
+  text-align: center;
+  border-radius: var(--border-radius);
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease,
+    box-shadow 0.2s ease;
+  font-family: var(--font-family-jeopardy);
+  font-weight: bold;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--box-shadow);
+  outline: none;
+}
+.grid-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+.grid-cell:focus-visible {
+  box-shadow: inset var(--focus-ring-shadow);
+  z-index: 1;
+}
+.category-cell {
+  background-color: var(--category-bg);
+  font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+  min-height: 50px;
+  font-family: var(--font-family);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-color);
+}
+.category-cell span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-xs);
+}
+.question-cell span {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  color: var(--points-text);
+  line-height: 1;
+}
+.question-cell.edited {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+}
+.question-cell.edited span {
+  color: var(--disabled-color);
+}
+.question-cell.edited::after {
+  content: "✓";
+  position: absolute;
+  bottom: 5px;
+  right: 8px;
+  font-size: 0.8em;
+  color: var(--success-color);
+  font-family: var(--font-family);
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: var(--modal-overlay);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: var(--spacing-md);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal:not([hidden]) {
+  opacity: 1;
+  visibility: visible;
+}
+.modal[hidden] {
+  display: none;
+}
+.modal-content {
+  background-color: var(--accent-color);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: var(--modal-max-width);
+  box-shadow: var(--box-shadow-modal);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+}
+.modal-content.large {
+  max-width: var(--modal-max-width-large);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
+}
+.modal-header h2 {
+  color: var(--primary-color);
+}
+#modal-point-value {
+  color: var(--points-text);
+}
+.close-modal-btn {
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  font-size: 2em;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 var(--spacing-sm);
+  transition: color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 50%;
+  outline: none;
+}
+.close-modal-btn:hover {
+  color: var(--text-color);
+}
+.close-modal-btn:focus-visible {
+  color: var(--text-color);
+  box-shadow: var(--focus-ring-shadow);
+}
+.modal-body {
+  margin-bottom: var(--spacing-lg);
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: var(--spacing-sm);
+}
+
+/* Form Elements within Modal */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+.modal-body label,
+.modal-body legend {
+  color: var(--primary-color);
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+}
+.modal-body input[type="text"],
+.modal-body input[type="file"] {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1em;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+.modal-body input[type="file"] {
+  padding: var(--spacing-xs);
+  cursor: pointer;
+}
+.modal-body input[type="text"]:focus-visible {
+  border-color: var(--primary-color);
+  box-shadow: var(--focus-ring-shadow);
+}
+#question-text {
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+/* Styling for Inline Error Messages */
+.error-message {
+  color: var(--danger-color);
+  font-size: 0.9em;
+  margin-top: var(--spacing-xs);
+  min-height: 1.2em;
+}
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"],
+fieldset[aria-invalid="true"] {
+  border-color: var(--danger-color) !important;
+  box-shadow: 0 0 0 1px var(--danger-color);
+}
+
+/* Modal Footer */
+.modal-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-lg);
+  text-align: right;
+  flex-shrink: 0;
+}
+.modal-footer.space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* General Button Styles */
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-danger-subtle,
+.btn-add-option {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  line-height: 1.2;
+  outline: none;
+}
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--accent-color);
+}
+.btn-primary:hover {
+  background-color: #0b3d8f;
+}
+.btn-secondary {
+  background-color: #f1f3f5;
+  color: var(--text-color);
+  border: 1px solid #ced4da;
+}
+.btn-secondary:hover {
+  background-color: #e9ecef;
+}
+.btn-danger {
+  background-color: var(--danger-color);
+  color: var(--accent-color);
+}
+.btn-danger:hover {
+  background-color: #c62828;
+}
+.btn-danger-subtle {
+  background-color: var(--danger-bg-subtle);
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.9em;
+}
+.btn-danger-subtle:hover {
+  background-color: #ffcdd2;
+}
+.btn-add-option {
+  background-color: #e6f9f0;
+  color: #1a7d4a;
+  border: 1px dashed #2fb370;
+}
+.btn-add-option:hover {
+  background-color: #d1f3e0;
+}
+.btn-add-option:disabled {
+  background-color: #f8f9fa;
+  color: var(--disabled-color);
+  border-color: var(--border-color);
+}
+.btn-add-option svg {
+  vertical-align: middle;
+}
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-danger:focus-visible,
+.btn-danger-subtle:focus-visible,
+.btn-add-option:focus-visible:not(:disabled) {
+  box-shadow: var(--focus-ring-shadow);
+}
+.btn-primary:active,
+.btn-secondary:active,
+.btn-danger:active,
+.btn-danger-subtle:active,
+.btn-add-option:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#delete-question-btn {
+  padding: var(--spacing-sm);
+  line-height: 1;
+}
+#delete-question-btn svg {
+  margin: 0;
+}
+
+/* Answer Options Styling */
+#answer-options {
+  margin-bottom: var(--spacing-md);
+  display: grid;
+  gap: var(--spacing-md);
+}
+.answer-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  position: relative;
+  padding-bottom: 1.8em;
+}
+.answer-option input[type="radio"] {
+  margin-right: var(--spacing-xs);
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+  outline: none;
+}
+.answer-option input[type="radio"]:focus-visible {
+  box-shadow: var(--focus-ring-shadow);
+  border-radius: 50%;
+}
+.answer-option input[type="text"] {
+  flex-grow: 1;
+  margin-bottom: 0;
+  border: none;
+  padding: var(--spacing-xs);
+  background-color: transparent;
+  outline: none;
+}
+.answer-option input[type="text"]:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+.answer-option .remove-answer-btn {
+  background: none;
+  border: none;
+  color: var(--danger-color);
+  font-size: 1.8em;
+  cursor: pointer;
+  padding: 0 var(--spacing-sm);
+  line-height: 1;
+  flex-shrink: 0;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+}
+.answer-option .remove-answer-btn:hover {
+  background-color: var(--danger-bg-subtle);
+}
+.answer-option .remove-answer-btn:focus-visible {
+  background-color: var(--danger-bg-subtle);
+  box-shadow: var(--focus-ring-shadow);
+}
+.answer-option .error-message {
+  position: absolute;
+  bottom: 2px;
+  left: calc(20px + var(--spacing-md) + var(--spacing-xs));
+}
+
+/* Media Upload Styling */
+.media-upload {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px dashed var(--border-color);
+}
+#media-preview {
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  max-width: 100%;
+  min-height: 80px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: #f1f3f5;
+  padding: var(--spacing-sm);
+}
+#media-preview span {
+  color: var(--text-muted);
+  font-style: italic;
+}
+#media-preview img,
+#media-preview audio {
+  max-width: 100%;
+  max-height: 200px;
+  display: block;
+  border-radius: var(--border-radius);
+}
+#media-preview audio {
+  width: 100%;
+}
+#remove-media-btn {
+  margin-top: var(--spacing-sm);
+}
+
+/* Utility */
+.hidden {
+  display: none !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  :root {
+    --modal-max-width: 95%;
+    --modal-max-width-large: 95%;
+    --control-area-size: 35px;
+    --control-size: 28px;
+  }
+  body {
+    padding: var(--spacing-sm);
+  }
+  #game-board-area {
+    padding-top: var(--control-area-size);
+    padding-left: var(--control-area-size);
+  }
+  /* Adjust column controls */
+  .column-controls-container {
+    left: var(--control-area-size);
+    right: var(--spacing-sm); /* Adjust right spacing */
+    width: auto; /* Let grid determine width */
+    gap: var(--spacing-xs);
+  }
+  /* Adjust add column button placement if needed */
+  .column-controls-container #add-col-btn {
+    /* May not need specific adjustment if grid handles it */
+    margin-left: var(--spacing-sm);
+  }
+
+  .row-controls-container {
+    top: var(--control-area-size);
+    gap: var(--spacing-xs);
+  }
+  /* Removed add-col-btn-absolute responsive style */
+
+  .modal-content {
+    padding: var(--spacing-md);
+  }
+  .modal-header h2 {
+    font-size: 1.3em;
+  }
+  .modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: stretch;
+  }
+  .modal-footer.space-between {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .modal-footer.space-between > div {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+  }
+  #delete-question-btn {
+    align-self: flex-start;
+  }
+  .answer-option {
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  .answer-option input[type="text"] {
+    min-width: 150px;
+  }
+}

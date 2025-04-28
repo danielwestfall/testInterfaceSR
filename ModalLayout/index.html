@@ -77,8 +77,6 @@
           </div>
 
           <div class="form-group checkbox-group">
-            <input type="checkbox" id="checkbox1" name="check1" value="val1" />
-            <label for="checkbox1">Checkbox Item 1</label>
             <button
               type="button"
               class="tooltip-trigger"
@@ -87,6 +85,8 @@
             >
               i
             </button>
+            <input type="checkbox" id="checkbox1" name="check1" value="val1" />
+            <label for="checkbox1">Checkbox Item 1</label>
             <div
               role="tooltip"
               id="tooltip1"
@@ -99,8 +99,6 @@
           </div>
 
           <div class="form-group checkbox-group">
-            <input type="checkbox" id="checkbox2" name="check2" value="val2" />
-            <label for="checkbox2">Checkbox Item 2</label>
             <button
               type="button"
               class="tooltip-trigger"
@@ -109,6 +107,8 @@
             >
               i
             </button>
+            <input type="checkbox" id="checkbox2" name="check2" value="val2" />
+            <label for="checkbox2">Checkbox Item 2</label>
             <div
               role="tooltip"
               id="tooltip2"
@@ -118,15 +118,9 @@
               Here is some helpful text for the second checkbox.
             </div>
           </div>
-
           <p id="required-hint" class="required-indicator">
             <span aria-hidden="true">*</span> Indicates Required Field
           </p>
-
-          <div class="form-actions">
-            <button type="button" class="cancel-btn">Cancel</button>
-            <button type="submit" class="save-btn">Save</button>
-          </div>
         </form>
       </section>
 
@@ -185,23 +179,16 @@
               This section lists available content items. Click an item to see a
               preview below.
             </div>
-
-            Option
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20px"
-              height="20px"
-              viewBox="0 0 24 24"
-            >
-              <g>
-                <path fill="none" d="M0 0h24v24H0z" />
-                <path
-                  d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-3a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"
-                />
-              </g>
-            </svg>
+            <label class="option-label">
+              Option
+              <input
+                type="radio"
+                name="content-option"
+                value="optionA"
+                checked
+              />
+            </label>
           </div>
-
           <ul class="contents-list" aria-label="Selectable Content Items">
             <li>
               <button
@@ -224,14 +211,14 @@
               >
                 <span class="item-label-group"
                   ><img src="placeholder-icon.png" alt="" /> Item 2</span
-                >
-                <label
+                ><label
                   class="item-checkbox-group"
                   aria-label="Select Item 2 Separately"
-                >
-                  <input type="checkbox" id="select-item2" />
-                  <span class="custom-checkbox-style" aria-hidden="true"></span>
-                </label>
+                  ><input type="checkbox" id="select-item2" /><span
+                    class="custom-checkbox-style"
+                    aria-hidden="true"
+                  ></span
+                ></label>
               </button>
             </li>
             <li>
@@ -267,14 +254,14 @@
               >
                 <span class="item-label-group"
                   ><img src="placeholder-icon.png" alt="" /> Item 5</span
-                >
-                <label
+                ><label
                   class="item-checkbox-group"
                   aria-label="Select Item 5 Separately"
-                >
-                  <input type="checkbox" id="select-item5" />
-                  <span class="custom-checkbox-style" aria-hidden="true"></span>
-                </label>
+                  ><input type="checkbox" id="select-item5" /><span
+                    class="custom-checkbox-style"
+                    aria-hidden="true"
+                  ></span
+                ></label>
               </button>
             </li>
             <li>
@@ -314,7 +301,6 @@
               </button>
             </li>
           </ul>
-
           <div
             id="content-item-preview"
             class="content-item-preview"
@@ -348,27 +334,22 @@
           <div class="selection-box-container">
             <label for="select-button-1">Select Item 1</label>
             <div class="selection-box">
-              <span
-                class="selected-value-display"
-                id="selected-value-1"
-                aria-live="polite"
-              ></span>
               <button
                 type="button"
                 id="select-button-1"
-                class="select-modal-trigger"
-                data-targetid="selected-value-1"
-                aria-label="Select value for Item 1"
+                class="select-modal-trigger main-select-button"
+                data-default-text="Select Item 1"
+                aria-live="polite"
               >
-                Select
+                Select Item 1
               </button>
               <button
                 type="button"
                 class="clear-selection"
-                data-targetid="selected-value-1"
                 aria-label="Clear selection for Item 1"
-                aria-controls="selected-value-1 select-button-1"
-                hidden
+                data-controls="select-button-1"
+                aria-controls="select-button-1"
+                disabled
               >
                 X
               </button>
@@ -377,27 +358,22 @@
           <div class="selection-box-container">
             <label for="select-button-2">Select Item 2</label>
             <div class="selection-box">
-              <span
-                class="selected-value-display"
-                id="selected-value-2"
-                aria-live="polite"
-              ></span>
               <button
                 type="button"
                 id="select-button-2"
-                class="select-modal-trigger"
-                data-targetid="selected-value-2"
-                aria-label="Select value for Item 2"
+                class="select-modal-trigger main-select-button"
+                data-default-text="Select Item 2"
+                aria-live="polite"
               >
-                Select
+                Select Item 2
               </button>
               <button
                 type="button"
                 class="clear-selection"
-                data-targetid="selected-value-2"
                 aria-label="Clear selection for Item 2"
-                aria-controls="selected-value-2 select-button-2"
-                hidden
+                data-controls="select-button-2"
+                aria-controls="select-button-2"
+                disabled
               >
                 X
               </button>
@@ -406,6 +382,13 @@
         </div>
       </section>
     </main>
+
+    <footer class="bottom-action-bar">
+      <div class="form-actions">
+        <button type="button" class="cancel-btn">Cancel</button>
+        <button type="submit" class="save-btn" form="main-form">Save</button>
+      </div>
+    </footer>
 
     <div
       id="select-modal"
@@ -428,34 +411,62 @@
           </button>
         </header>
         <div class="modal-body">
-          <ul
-            id="modal-item-list"
-            class="modal-item-list"
-            role="listbox"
-            aria-label="Options to select"
-          >
-            <li role="option" tabindex="0" data-value="detail1">
-              Detail Option One
-            </li>
-            <li role="option" tabindex="0" data-value="detail2">
-              Detail Option Two
-            </li>
-            <li role="option" tabindex="0" data-value="detail3">
-              Detail Option Three
-            </li>
-            <li role="option" tabindex="0" data-value="detail4">
-              Another Detail
-            </li>
-            <li role="option" tabindex="0" data-value="detail5">
-              Final Detail Item
-            </li>
-            <li role="option" tabindex="0" data-value="item1">
-              Item 1 From List
-            </li>
-            <li role="option" tabindex="0" data-value="item3">
-              Item 3 From List
-            </li>
-          </ul>
+          <table class="modal-options-table" aria-label="Selectable Options">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <button
+                    type="button"
+                    class="sort-button"
+                    data-column="name"
+                    aria-sort="none"
+                  >
+                    Name
+                  </button>
+                </th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    class="sort-button"
+                    data-column="date"
+                    aria-sort="none"
+                  >
+                    Date Created
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="modal-table-body">
+              <tr tabindex="0" data-value="detail1" data-sort-date="2024-01-15">
+                <td>Detail Option One</td>
+                <td>2024-01-15</td>
+              </tr>
+              <tr tabindex="0" data-value="detail3" data-sort-date="2023-11-30">
+                <td>Detail Option Three</td>
+                <td>2023-11-30</td>
+              </tr>
+              <tr tabindex="0" data-value="detail2" data-sort-date="2024-03-01">
+                <td>Detail Option Two</td>
+                <td>2024-03-01</td>
+              </tr>
+              <tr tabindex="0" data-value="detail4" data-sort-date="2023-05-20">
+                <td>Another Detail</td>
+                <td>2023-05-20</td>
+              </tr>
+              <tr tabindex="0" data-value="item1" data-sort-date="2024-04-10">
+                <td>Item 1 From List</td>
+                <td>2024-04-10</td>
+              </tr>
+              <tr tabindex="0" data-value="detail5" data-sort-date="2022-12-25">
+                <td>Final Detail Item</td>
+                <td>2022-12-25</td>
+              </tr>
+              <tr tabindex="0" data-value="item3" data-sort-date="2024-02-18">
+                <td>Item 3 From List</td>
+                <td>2024-02-18</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <footer class="modal-footer">
           <button type="button" id="modal-cancel-button">Cancel</button>

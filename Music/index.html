@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessible Music Notation Builder</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Open Sans", sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #f0f0f0;
+      }
+      #root {
+        display: flex;
+        flex: 1;
+      }
+      .sidebar {
+        width: 250px;
+        background-color: #4caf50;
+        color: white;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .sidebar h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: white;
+      }
+      .form-group select,
+      .form-group button {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 1em;
+      }
+      .form-group select {
+        background-color: white;
+        color: #333;
+      }
+      .form-group button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .form-group button:hover {
+        background-color: #0056b3;
+      }
+      #measures-container {
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: flex-start;
+      }
+      .measure {
+        display: flex;
+        width: calc(100% - 20px);
+        max-width: 800px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+        margin-bottom: 10px;
+      }
+      .cell {
+        width: 12.5%;
+        height: 50px;
+        border-right: 1px solid #ddd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.8em;
+        position: relative; /* Make sure the number labels are positioned relative to the cell */
+      }
+      .cell:last-child {
+        border-right: none;
+      }
+      .cell-label {
+        position: absolute;
+        top: 2px; /* Adjust as needed */
+        right: 2px; /* Adjust as needed */
+        color: #888; /* Make the labels a bit less prominent */
+        font-size: 0.7em;
+      }
+      .note {
+        width: 80%;
+        height: 80%;
+        cursor: grab;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .note img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .notes-palette {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px;
+        background-color: #f0f0f0;
+        border-top: 1px solid #ddd;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .note-option {
+        width: 80px;
+        height: 50px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: grab;
+        background-color: white;
+      }
+      .note-option img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .selected-note {
+        border: 2px solid blue;
+        box-shadow: 0 0 5px blue;
+        background-color: black;
+        color: white;
+      }
+      .invalid-drop {
+        background-color: rgba(255, 0, 0, 0.5); /* Red with 50% opacity */
+        border: 2px solid red;
+      }
+      .note-option:focus {
+        outline: 2px solid black;
+      }
+      .selected-button {
+        background-color: #0056b3;
+      }
+
+      @media (max-width: 768px) {
+        #root {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+        }
+        #measures-container {
+          width: 100%;
+        }
+        .measure {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <header class="sidebar">
+        <h2>Options</h2>
+        <div class="form-group">
+          <label for="key-select">Key:</label>
+          <select id="key-select">
+            <option>C Major</option>
+            <option>G Major</option>
+            <option>A Minor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tempo-select">Tempo:</label>
+          <select id="tempo-select">
+            <option>60 bpm</option>
+            <option>120 bpm</option>
+            <option>Adagio</option>
+            <option>Allegro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="note-range-select">Note Range:</label>
+          <select id="note-range-select">
+            <option>Middle C to High C</option>
+            <option>Bass Clef Range</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="note-bank-select">Note Bank:</label>
+          <select id="note-bank-select">
+            <option>Basic Rhythms</option>
+            <option>Single Octave</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button id="add-measure-button">Add Measure</button>
+        </div>
+      </header>
+      <main id="measures-container"></main>
+      <footer class="notes-palette">
+        <div
+          class="note-option"
+          data-note="eighth"
+          tabindex="0"
+          aria-label="Eighth Note"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">⅛</span>
+        </div>
+        <div
+          class="note-option"
+          data-note="eighth-pair"
+          tabindex="0"
+          aria-label="Two Eighth Notes"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">2/8</span>
+        </div>
+        <div
+          class="note-option"
+          data-note="quarter"
+          tabindex="0"
+          aria-label="Quarter Note"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">¼</span>
+        </div>
+        <div
+          class="note-option"
+          data-note="quarter-dot"
+          tabindex="0"
+          aria-label="Dotted Quarter Note"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">¼.</span>
+        </div>
+        <div
+          class="note-option"
+          data-note="half"
+          tabindex="0"
+          aria-label="Half Note"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">½</span>
+        </div>
+        <div
+          class="note-option"
+          data-note="half-dot"
+          tabindex="0"
+          aria-label="Dotted Half Note"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">½.</span>
+        </div>
+        <div
+          class="note-option"
+          data-note="whole"
+          tabindex="0"
+          aria-label="Whole Note"
+        >
+          <span style="font-family: 'Arial', fontSize: '2em'">1</span>
+        </div>
+      </footer>
+    </div>
+    <script>
+      const noteImages = {
+        eighth: "<span style=\"font-family: 'Arial', fontSize: '2em'>⅛</span>",
+        "eighth-pair":
+          "<span style=\"font-family: 'Arial', fontSize: '2em'>2/8</span>",
+        quarter: "<span style=\"font-family: 'Arial', fontSize: '2em'>¼</span>",
+        "quarter-dot":
+          "<span style=\"font-family: 'Arial', fontSize: '2em'>¼.</span>",
+        half: "<span style=\"font-family: 'Arial', fontSize: '2em'>½</span>",
+        "half-dot":
+          "<span style=\"font-family: 'Arial', fontSize: '2em'>½.</span>",
+        whole: "<span style=\"font-family: 'Arial', fontSize: '2em'>1</span>",
+      };
+
+      const measuresContainer = document.getElementById("measures-container");
+      const addMeasureButton = document.getElementById("add-measure-button");
+      const noteOptions = document.querySelectorAll(".note-option");
+      const keySelect = document.getElementById("key-select");
+      const tempoSelect = document.getElementById("tempo-select");
+      const noteRangeSelect = document.getElementById("note-range-select");
+      const noteBankSelect = document.getElementById("note-bank-select");
+
+      let measures = [[]];
+      let draggedNote = null;
+      let focusedCell = null;
+      let focusedNote = null;
+      let currentMeasure = 0;
+      let currentCell = 0;
+      let selectedButton = null;
+
+      function addMeasure() {
+        if (measures.length < 4) {
+          measures.push([]);
+          renderMeasures();
+        }
+      }
+
+      function handleDrop(event, measureIndex, cellIndex) {
+        event.preventDefault();
+        const noteType = draggedNote;
+        if (!noteType) return;
+
+        const newMeasures = [...measures];
+        let noteLength = 0;
+
+        switch (noteType) {
+          case "eighth":
+            noteLength = 1;
+            break;
+          case "eighth-pair":
+            noteLength = 2;
+            break;
+          case "quarter":
+            noteLength = 2;
+            break;
+          case "quarter-dot":
+            noteLength = 3;
+            break;
+          case "half":
+            noteLength = 4;
+            break;
+          case "half-dot":
+            noteLength = 6;
+            break;
+          case "whole":
+            noteLength = 8;
+            break;
+        }
+
+        let currentLength = newMeasures[measureIndex].reduce((acc, note) => {
+          if (note === "eighth") return acc + 1;
+          if (note === "eighth-pair") return acc + 2;
+          if (note === "quarter") return acc + 2;
+          if (note === "quarter-dot") return acc + 3;
+          if (note === "half") return acc + 4;
+          if (note === "half-dot") return acc + 6;
+          if (note === "whole") return acc + 8;
+        }, 0);
+
+        if (currentLength + noteLength <= 8) {
+          newMeasures[measureIndex][cellIndex] = noteType;
+          measures = newMeasures;
+          renderMeasures();
+          draggedNote = null;
+          if (focusedNote) {
+            focusedNote.classList.remove("selected-note");
+          }
+          focusedNote = null;
+        } else {
+          alert("Note cannot be added. Measure is full.");
+        }
+        focusedCell = null;
+      }
+
+      function handleDragStart(event, noteType) {
+        event.dataTransfer.setData("text/plain", noteType);
+        draggedNote = noteType;
+      }
+
+      function handleDragOver(event) {
+        event.preventDefault();
+      }
+
+      function handleKeyDown(event) {
+        if (event.key === "Enter" && draggedNote && focusedCell) {
+          const measureIndex = parseInt(focusedCell.dataset.measureIndex, 10);
+          const cellIndex = parseInt(focusedCell.dataset.cellindex, 10);
+          if (!isNaN(measureIndex) && !isNaN(cellIndex)) {
+            const newMeasures = [...measures];
+            let noteLength = 0;
+
+            switch (draggedNote) {
+              case "eighth":
+                noteLength = 1;
+                break;
+              case "eighth-pair":
+                noteLength = 2;
+                break;
+              case "quarter":
+                noteLength = 2;
+                break;
+              case "quarter-dot":
+                noteLength = 3;
+                break;
+              case "half":
+                noteLength = 4;
+                break;
+              case "half-dot":
+                noteLength = 6;
+                break;
+              case "whole":
+                noteLength = 8;
+                break;
+            }
+
+            let currentLength = newMeasures[measureIndex].reduce(
+              (acc, note) => {
+                if (note === "eighth") return acc + 1;
+                if (note === "eighth-pair") return acc + 2;
+                if (note === "quarter") return acc + 2;
+                if (note === "quarter-dot") return acc + 3;
+                if (note === "half") return acc + 4;
+                if (note === "half-dot") return acc + 6;
+                if (note === "whole") return acc + 8;
+              },
+              0
+            );
+
+            if (currentLength + noteLength <= 8) {
+              handleDrop(event, measureIndex, cellIndex);
+            } else {
+              focusedCell.classList.add("invalid-drop");
+              setTimeout(() => {
+                focusedCell.classList.remove("invalid-drop");
+              }, 1000);
+            }
+          }
+        }
+        if (event.key === "Escape") {
+          draggedNote = null;
+          if (focusedNote) {
+            focusedNote.classList.remove("selected-note");
+          }
+          focusedNote = null;
+        }
+        if (event.key === "ArrowRight") {
+          const newCell = currentCell + 1;
+          if (newCell < 8) {
+            setCurrentCell(newCell);
+            const nextCellElement = document.querySelector(
+              `[data-measure-index="${currentMeasure}"][data-cellindex="${newCell}"]`
+            );
+            if (nextCellElement) {
+              nextCellElement.focus();
+              focusedCell = nextCellElement;
+            }
+          } else if (currentMeasure < measures.length - 1) {
+            setCurrentMeasure(currentMeasure + 1);
+            setCurrentCell(0);
+            const nextCellElement = document.querySelector(
+              `[data-measure-index="${currentMeasure + 1}"][data-cellindex="0"]`
+            );
+            if (nextCellElement) {
+              nextCellElement.focus();
+              focusedCell = nextCellElement;
+            }
+          }
+          event.preventDefault();
+        }
+
+        if (event.key === "ArrowLeft") {
+          const newCell = currentCell - 1;
+          if (newCell >= 0) {
+            setCurrentCell(newCell);
+            const nextCellElement = document.querySelector(
+              `[data-measure-index="${currentMeasure}"][data-cellindex="${newCell}"]`
+            );
+            if (nextCellElement) {
+              nextCellElement.focus();
+              focusedCell = nextCellElement;
+            }
+          } else if (currentMeasure > 0) {
+            setCurrentMeasure(currentMeasure - 1);
+            setCurrentCell(7);
+            const nextCellElement = document.querySelector(
+              `[data-measure-index="${currentMeasure - 1}"][data-cellindex="7"]`
+            );
+            if (nextCellElement) {
+              nextCellElement.focus();
+              focusedCell = nextCellElement;
+            }
+          }
+          event.preventDefault();
+        }
+        if (event.key === "ArrowDown") {
+          const newMeasure = currentMeasure + 1;
+          if (newMeasure < measures.length) {
+            setCurrentMeasure(newMeasure);
+            const nextCellElement = document.querySelector(
+              `[data-measure-index="${newMeasure}"][data-cellindex="${currentCell}"]`
+            );
+            if (nextCellElement) {
+              nextCellElement.focus();
+              focusedCell = nextCellElement;
+            }
+          }
+          event.preventDefault();
+        }
+
+        if (event.key === "ArrowUp") {
+          const newMeasure = currentMeasure - 1;
+          if (newMeasure >= 0) {
+            setCurrentMeasure(newMeasure);
+            const nextCellElement = document.querySelector(
+              `[data-measure-index="${newMeasure}"][data-cellindex="${currentCell}"]`
+            );
+            if (nextCellElement) {
+              nextCellElement.focus();
+              focusedCell = nextCellElement;
+            }
+          }
+          event.preventDefault();
+        }
+      }
+
+      function renderMeasures() {
+        measuresContainer.innerHTML = "";
+        measures.forEach((measure, measureIndex) => {
+          const measureDiv = document.createElement("section");
+          measureDiv.className = "measure";
+          measure.forEach((_, cellIndex) => {
+            const cellDiv = document.createElement("div");
+            cellDiv.className = "cell";
+            cellDiv.dataset.measureIndex = measureIndex;
+            cellDiv.dataset.cellindex = cellIndex;
+            cellDiv.tabIndex = 0;
+            cellDiv.setAttribute(
+              "aria-label",
+              `Cell ${cellIndex + 1} in measure ${measureIndex + 1}`
+            );
+            cellDiv.addEventListener("drop", (event) =>
+              handleDrop(event, measureIndex, cellIndex)
+            );
+            cellDiv.addEventListener("dragover", handleDragOver);
+            cellDiv.addEventListener("keydown", handleKeyDown);
+            cellDiv.addEventListener("focus", (event) => {
+              focusedCell = event.target;
+              currentMeasure = measureIndex;
+              currentCell = cellIndex;
+            });
+
+            if (measure[cellIndex]) {
+              cellDiv.innerHTML = noteImages[measure[cellIndex]];
+            }
+            measureDiv.appendChild(cellDiv);
+          });
+          measuresContainer.appendChild(measureDiv);
+        });
+      }
+
+      addMeasureButton.addEventListener("click", addMeasure);
+
+      noteOptions.forEach((noteOption) => {
+        noteOption.addEventListener("dragstart", (event) => {
+          handleDragStart(event, noteOption.dataset.note);
+        });
+        noteOption.addEventListener("click", (event) => {
+          if (focusedNote) {
+            focusedNote.classList.remove("selected-note");
+          }
+          if (focusedNote !== event.target) {
+            draggedNote = noteOption.dataset.note;
+            focusedNote = event.target;
+            event.target.classList.add("selected-note");
+          } else {
+            draggedNote = null;
+            focusedNote = null;
+            event.target.classList.remove("selected-note");
+          }
+        });
+        noteOption.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === "Space") {
+            if (!draggedNote) {
+              draggedNote = noteOption.dataset.note;
+              focusedNote = event.target;
+              event.target.classList.add("selected-note");
+            } else if (draggedNote && focusedCell) {
+              const measureIndex = parseInt(
+                focusedCell.dataset.measureIndex,
+                10
+              );
+              const cellIndex = parseInt(focusedCell.dataset.cellindex, 10);
+              if (!isNaN(measureIndex) && !isNaN(cellIndex)) {
+                handleDrop(event, measureIndex, cellIndex);
+              }
+            } else if (draggedNote && focusedNote === event.target) {
+              draggedNote = null;
+              focusedNote = null;
+              event.target.classList.remove("selected-note");
+            }
+          }
+        });
+        noteOption.addEventListener("focus", (event) => {
+          if (focusedNote) {
+            focusedNote.classList.remove("selected-note");
+          }
+          draggedNote = noteOption.dataset.note;
+          focusedNote = event.target;
+          event.target.classList.add("selected-note");
+        });
+        noteOption.addEventListener("blur", (event) => {
+          if (focusedNote === event.target) {
+            event.target.classList.remove("selected-note");
+            focusedNote = null;
+          }
+        });
+      });
+
+      renderMeasures();
+
+      //handle button selected states
+      const keySelectElement = document.getElementById("key-select");
+      const tempoSelectElement = document.getElementById("tempo-select");
+      const noteRangeSelectElement =
+        document.getElementById("note-range-select");
+      const noteBankSelectElement = document.getElementById("note-bank-select");
+      const addMeasureButtonElement =
+        document.getElementById("add-measure-button");
+
+      function handleButtonClick(buttonElement) {
+        if (selectedButton) {
+          selectedButton.classList.remove("selected-button");
+        }
+        buttonElement.classList.add("selected-button");
+        selectedButton = buttonElement;
+      }
+
+      keySelectElement.addEventListener("focus", () =>
+        handleButtonClick(keySelectElement)
+      );
+      tempoSelectElement.addEventListener("focus", () =>
+        handleButtonClick(tempoSelectElement)
+      );
+      noteRangeSelectElement.addEventListener("focus", () =>
+        handleButtonClick(noteRangeSelectElement)
+      );
+      noteBankSelectElement.addEventListener("focus", () =>
+        handleButtonClick(noteBankSelectElement)
+      );
+      addMeasureButtonElement.addEventListener("focus", () =>
+        handleButtonClick(addMeasureButtonElement)
+      );
+
+      addMeasureButtonElement.addEventListener("click", () =>
+        handleButtonClick(addMeasureButtonElement)
+      );
+    </script>
+  </body>
+</html>

@@ -39,21 +39,27 @@ main.container {
   overflow-y: auto; /* Allow main area to scroll if needed, default usually okay */
 }
 
-.left-column {
-  flex: 1; /* Adjust flex ratio as needed */
+/* Landmark Sections */
+section[aria-labelledby] {
+  /* Use display: contents; if the section itself shouldn't affect layout */
+  /* Or style the section directly if it should act as a container */
+  display: contents;
+}
+/* Apply column styles to the direct child div */
+section[aria-labelledby="form-section-title"] > .left-column {
+  flex: 1;
   background-color: #ffffff;
   padding: 1.5rem;
   border: 1px solid #80deea;
   border-radius: 5px;
-  align-self: flex-start; /* Prevent stretching vertically */
+  align-self: flex-start;
 }
-
-.right-column {
-  flex: 1; /* Adjust flex ratio as needed */
+section[aria-labelledby="content-section-title"] > .right-column {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* Controls space between contents-box and static-selection-area */
-  min-width: 0; /* Prevent flex overflow issues */
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 /* Form Styles */
@@ -68,6 +74,7 @@ main.container {
   flex-wrap: wrap; /* Allow wrapping for smaller screens */
   align-items: center; /* Align items vertically */
   gap: 0.5rem;
+  position: relative; /* For positioning error messages */
 }
 
 .form-group label {
@@ -90,20 +97,45 @@ main.container {
   font-size: 1em; /* Ensure consistent font size */
 }
 
+/* Styles for Invalid Form Fields */
+.form-group input[aria-invalid="true"],
+.form-group select[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] {
+  border-color: #d32f2f; /* Red border for error */
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.3); /* Optional: subtle glow */
+}
+
+/* Error Message Styling */
+.error-message {
+  display: none; /* Hidden by default */
+  color: #d32f2f; /* Red text */
+  font-size: 0.85em;
+  font-weight: bold;
+  width: 100%; /* Take full width below the input */
+  padding-left: calc(100px + 1rem); /* Align with input start */
+  margin-top: 0.2rem; /* Space below input */
+}
+/* Show error message when input is invalid */
+input[aria-invalid="true"] ~ .error-message, /* Use ~ general sibling combinator */
+select[aria-invalid="true"] ~ .error-message,
+textarea[aria-invalid="true"] ~ .error-message {
+  display: block;
+}
+
 .form-group.date-group {
   gap: 1rem;
-  align-items: baseline; /* Align labels better with date inputs */
+  align-items: baseline;
 }
 .form-group.date-group label {
-  flex-basis: auto; /* Reset basis for date labels */
+  flex-basis: auto;
 }
 .form-group.date-group input[type="date"] {
-  flex-grow: 0; /* Don't let date inputs grow excessively */
+  flex-grow: 0;
   padding: 0.4rem;
 }
 
 .form-group textarea {
-  width: 100%; /* Make textarea take full available width */
+  width: 100%;
   min-height: 100px;
 }
 
@@ -112,81 +144,77 @@ main.container {
   color: #666;
   width: 100%;
   text-align: right;
-  padding-right: 5px; /* Align with input right edge */
-  /* Align roughly under textarea (adjust if label width changes) */
-  padding-left: calc(100px + 1rem); /* label basis + gap approx */
+  padding-right: 5px;
+  padding-left: calc(100px + 1rem);
 }
 
-/* Checkboxes in the LEFT form (Standard Style) - Adjusted Order */
+/* Checkboxes in the LEFT form - Adjusted Order */
 .form-group.checkbox-group {
   align-items: center;
-  /* Indent group to align roughly with inputs */
-  padding-left: calc(100px + 1rem); /* label basis + gap approx */
-  gap: 0.5em; /* Adjust gap */
+  padding-left: calc(100px + 1rem);
+  gap: 0.5em;
 }
 .form-group.checkbox-group .tooltip-trigger {
-  order: 1; /* 1. Tooltip */
-  margin-left: 0; /* Reset margin */
-  margin-right: 0.3em; /* Space after tooltip */
-  vertical-align: middle; /* Align with checkbox/label text */
+  order: 1;
+  margin-left: 0;
+  margin-right: 0.3em;
+  vertical-align: middle;
 }
 .form-group.checkbox-group input[type="checkbox"] {
-  order: 2; /* 2. Checkbox */
-  margin-right: 0; /* Reset margin */
-  /* Standard checkbox appearance */
+  order: 2;
+  margin-right: 0;
   appearance: auto;
   width: auto;
   height: auto;
   opacity: 1;
   position: static;
-  vertical-align: middle; /* Align checkbox with label text */
-  flex-shrink: 0; /* Prevent shrinking */
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 .form-group.checkbox-group label {
-  order: 3; /* 3. Label */
+  order: 3;
   font-weight: normal;
   flex-basis: auto;
   text-align: left;
-  margin-right: 0; /* Reset margin */
-  padding-left: 0.3em; /* Space before label */
-  cursor: pointer; /* Indicate clickable */
-  vertical-align: middle; /* Align label text */
+  margin-right: 0;
+  padding-left: 0.3em;
+  cursor: pointer;
+  vertical-align: middle;
 }
 .form-group.checkbox-group .tooltip {
-  order: 4; /* Tooltip content last in source order */
-  /* Adjust positioning relative to trigger if needed */
+  order: 4;
 }
 
 .required-indicator {
   font-size: 0.9em;
-  color: #d32f2f; /* Red color for indicator */
-  padding-left: calc(100px + 1rem); /* Align with indented checkboxes/inputs */
-  width: 100%; /* Take full width */
+  color: #d32f2f;
+  padding-left: calc(100px + 1rem);
+  width: 100%;
 }
 
 /* Buttons */
 button,
 .button {
   padding: 0.6rem 1rem;
-  border: 1px solid #4dd0e1; /* Light cyan border */
+  border: 1px solid #4dd0e1;
   border-radius: 4px;
-  background-color: #e0f7fa; /* Very light cyan */
-  color: #00796b; /* Teal */
+  background-color: #e0f7fa;
+  color: #00796b;
   cursor: pointer;
   font-size: 0.95em;
-  line-height: 1.2; /* Ensure consistent line height */
+  line-height: 1.2;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  vertical-align: middle; /* Align with text */
+  vertical-align: middle;
 }
 
 button:hover,
 .button:hover {
-  background-color: #b2ebf2; /* Medium cyan */
+  background-color: #b2ebf2;
 }
 
 button:active,
 .button:active {
-  background-color: #80deea; /* Darker cyan */
+  background-color: #80deea;
 }
 
 /* Focus styles */
@@ -197,15 +225,15 @@ select:focus-visible,
 textarea:focus-visible,
 [tabindex="0"]:focus-visible,
 tr[tabindex="0"]:focus-visible {
-  /* Add focus for table rows */
-  outline: 2px solid #005f56; /* Dark teal outline */
-  outline-offset: 1px; /* Adjust offset */
-  box-shadow: 0 0 0 4px rgba(77, 208, 225, 0.4); /* Cyan glow */
+  outline: 2px solid #005f56;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px rgba(77, 208, 225, 0.4);
 }
-/* Remove default outline when custom focus is applied via box-shadow or for specific elements */
-.modal-item-list li:focus, /* Keep old one just in case */
+/* Remove default outline when custom focus is applied */
 .modal-options-table tbody tr:focus,
-.item-checkbox-group input[type="checkbox"]:focus-visible + .custom-checkbox-style,
+.item-checkbox-group
+  input[type="checkbox"]:focus-visible
+  + .custom-checkbox-style,
 .main-select-button:focus-visible,
 .modal-options-table th .sort-button:focus-visible {
   outline: none;
@@ -215,11 +243,10 @@ tr[tabindex="0"]:focus-visible {
 .form-actions {
   display: flex;
   gap: 0.8rem;
-  /* Centering handled by footer */
 }
 
 .save-btn {
-  background-color: #4db6ac; /* Teal */
+  background-color: #4db6ac;
   color: white;
   border-color: #26a69a;
 }
@@ -245,7 +272,7 @@ tr[tabindex="0"]:focus-visible {
   justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
-  position: relative; /* For menu positioning */
+  position: relative;
   padding: 0;
   flex-shrink: 0;
 }
@@ -295,61 +322,56 @@ tr[tabindex="0"]:focus-visible {
   background-color: #ffffff;
   border: 1px solid #80deea;
   border-radius: 5px;
-  padding: 0; /* Padding applied to children */
+  padding: 0;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 300px; /* Or adjust as needed */
-  overflow: hidden; /* Contains children */
+  min-height: 300px;
+  overflow: hidden;
 }
 
 /* Contents Box Header - Adjusted order */
 .contents-header {
   display: flex;
   align-items: center;
-  gap: 0.8rem; /* Adjust gap as needed */
-  padding: 1rem; /* Padding inside header */
+  gap: 0.8rem;
+  padding: 1rem;
   border-bottom: 1px solid #eee;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 .contents-header h2 {
-  /* 1. Header */
   font-size: 1.2em;
   margin: 0;
-  flex-shrink: 0; /* Prevent header shrinking */
+  flex-shrink: 0;
 }
 .contents-header .tooltip-trigger {
-  /* 2. Tooltip */
   order: 2;
-  margin-left: auto; /* Push tooltip and option right */
+  margin-left: auto;
 }
 .contents-header .tooltip {
-  /* (Associated tooltip content) */
   order: 3;
 }
 .contents-header .option-label {
-  /* 4. Option Label+Radio */
   order: 4;
-  display: inline-flex; /* Align text and radio nicely */
+  display: inline-flex;
   align-items: center;
-  gap: 0.4em; /* Space between "Option" and radio */
+  gap: 0.4em;
   font-size: 0.9em;
-  margin-left: 0.5rem; /* Space before option */
-  flex-shrink: 0; /* Prevent shrinking */
+  margin-left: 0.5rem;
+  flex-shrink: 0;
 }
 .contents-header .option-label input[type="radio"] {
-  margin: 0; /* Reset radio margin */
+  margin: 0;
   vertical-align: middle;
 }
 
 .contents-list {
   list-style: none;
-  padding: 1rem 1rem 0.5rem 1rem; /* Padding around list items */
+  padding: 1rem 1rem 0.5rem 1rem;
   margin: 0;
-  overflow-y: auto; /* Makes the list scrollable */
-  flex-grow: 1; /* Allows list to take up space */
+  overflow-y: auto;
+  flex-grow: 1;
 }
-
 .contents-list li {
   margin-bottom: 0.3rem;
 }
@@ -363,19 +385,20 @@ tr[tabindex="0"]:focus-visible {
   text-align: left;
   padding: 0.4rem 0.6rem;
   border: 1px solid transparent;
-  background-color: #fff; /* Base background */
+  background-color: #fff;
   cursor: pointer;
-  border-radius: 3px; /* Optional: slight rounding */
+  border-radius: 3px;
 }
 /* Highlight selected item */
-.content-item.is-selected {
+.content-item.is-selected,
+.content-item[aria-pressed="true"] {
   border-color: #00796b;
   background-color: #e0f2f1;
   box-shadow: inset 0 0 0 1px #00796b;
 }
-/* Hover effect - ensure it doesn't conflict with selected */
-.content-item:not(.is-selected):hover {
-  background-color: #f0fafa; /* Very light cyan on hover */
+/* Hover effect */
+.content-item:not(.is-selected):not([aria-pressed="true"]):hover {
+  background-color: #f0fafa;
   border-color: #b2ebf2;
 }
 
@@ -383,9 +406,8 @@ tr[tabindex="0"]:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  flex-grow: 1; /* Pushes checkbox right */
-  /* Prevent clicks on icon/text triggering checkbox via label */
-  pointer-events: none; /* Clicks pass through to the button */
+  flex-grow: 1;
+  pointer-events: none;
 }
 .content-item .item-label-group img {
   width: 16px;
@@ -396,17 +418,17 @@ tr[tabindex="0"]:focus-visible {
 
 /* Styles for right-aligned custom checkboxes */
 .content-item.has-checkbox {
-  justify-content: space-between; /* Space out label and checkbox group */
-  padding-right: 0.6rem; /* Adjust padding */
+  justify-content: space-between;
+  padding-right: 0.6rem;
 }
 .item-checkbox-group {
-  position: relative; /* Needed for positioning hidden input */
+  position: relative;
   display: inline-flex;
   align-items: center;
-  padding-left: 0.5rem; /* Space from main label */
-  flex-shrink: 0; /* Prevent shrinking */
+  padding-left: 0.5rem;
+  flex-shrink: 0;
   cursor: pointer;
-  pointer-events: auto; /* Ensure label group is clickable */
+  pointer-events: auto;
 }
 /* Visually hide the native checkbox */
 .item-checkbox-group input[type="checkbox"] {
@@ -428,7 +450,7 @@ tr[tabindex="0"]:focus-visible {
   background-color: #fff;
   transition: background-color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
-  position: relative; /* For inner dot */
+  position: relative;
 }
 /* Checked state */
 .item-checkbox-group input[type="checkbox"]:checked + .custom-checkbox-style {
@@ -459,7 +481,7 @@ tr[tabindex="0"]:focus-visible {
 .item-checkbox-group
   input[type="checkbox"]:focus-visible
   + .custom-checkbox-style {
-  box-shadow: 0 0 0 3px rgba(77, 208, 225, 0.5); /* Focus ring */
+  box-shadow: 0 0 0 3px rgba(77, 208, 225, 0.5);
 }
 
 /* Item Preview Pane */
@@ -467,12 +489,11 @@ tr[tabindex="0"]:focus-visible {
   border-top: 2px solid #4dd0e1;
   padding: 0.8rem 1rem;
   background-color: #f5fcfd;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 .content-item-preview[hidden] {
   display: none;
 }
-
 .preview-header {
   display: flex;
   justify-content: space-between;
@@ -503,7 +524,6 @@ tr[tabindex="0"]:focus-visible {
 .close-preview:focus {
   color: #333;
 }
-
 .preview-body {
   display: flex;
   gap: 0.8rem;
@@ -524,74 +544,67 @@ tr[tabindex="0"]:focus-visible {
   flex-grow: 1;
 }
 
-/* Static Selection Area (Below Contents Box) */
+/* Static Selection Area */
 .static-selection-area {
   background-color: #ffffff;
   border: 1px solid #80deea;
   border-radius: 5px;
   padding: 1rem;
-  /* margin-top handled by parent gap */
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
-
 .selection-box-container {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 }
-
 .selection-box-container label {
   font-weight: bold;
   font-size: 0.9em;
   color: #00796b;
 }
-
 .selection-box {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Gap between main button and X */
-  border: 1px solid #ccc; /* Border around the group */
+  gap: 0.5rem;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 0; /* Padding applied to buttons */
-  background-color: #f8f8f8; /* Background for the container */
+  padding: 0;
+  background-color: #f8f8f8;
 }
-
 /* Main Button acting as display */
 .main-select-button {
-  flex-grow: 1; /* Take available space */
+  flex-grow: 1;
   text-align: left;
-  padding: 0.5rem 0.8rem; /* Padding */
-  background-color: #fff; /* Make it look like the old span */
-  border: 1px solid transparent; /* Remove default button border within the box */
-  border-radius: 3px 0 0 3px; /* Round left corners only */
-  color: #333; /* Standard text color */
+  padding: 0.5rem 0.8rem;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 3px 0 0 3px;
+  color: #333;
   font-size: 0.95em;
-  min-height: calc(1.5em + 1rem); /* Match height roughly */
-  line-height: 1.5em; /* Ensure text centered vertically */
-  cursor: pointer; /* Indicate clickable */
+  min-height: calc(1.5em + 1rem);
+  line-height: 1.5em;
+  cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  transition: none; /* Remove default button transitions */
+  transition: none;
 }
 .main-select-button:hover,
 .main-select-button:active {
-  background-color: #f9f9f9; /* Subtle hover */
+  background-color: #f9f9f9;
   border-color: transparent;
 }
-/* Focus style for main button */
 .main-select-button:focus-visible {
   outline: 2px solid #005f56;
-  outline-offset: -1px; /* Inside border */
+  outline-offset: -1px;
   box-shadow: none;
   border-color: transparent;
-  position: relative; /* Ensure outline is drawn correctly */
-  z-index: 1; /* Ensure outline is above siblings */
+  position: relative;
+  z-index: 1;
 }
-
 /* 'X' Clear Button */
 .selection-box .clear-selection {
   background-color: #ffcdd2;
@@ -603,47 +616,44 @@ tr[tabindex="0"]:focus-visible {
   line-height: 1;
   border-radius: 3px;
   flex-shrink: 0;
-  margin: 0.3rem 0.5rem 0.3rem 0; /* Add margin */
+  margin: 0.3rem 0.5rem 0.3rem 0;
   border-style: solid;
   border-width: 1px;
 }
 .selection-box .clear-selection:hover:not(:disabled) {
-  /* Only hover effect when enabled */
   background-color: #ef9a9a;
 }
 /* Style for disabled 'X' clear button */
 .selection-box .clear-selection:disabled {
-  background-color: #e0e0e0; /* Lighter grey background */
-  border-color: #ccc; /* Lighter grey border */
-  color: #aaa; /* Dimmer text color */
-  cursor: not-allowed; /* Indicate not clickable */
-  opacity: 0.7; /* Slightly faded */
+  background-color: #e0e0e0;
+  border-color: #ccc;
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* Tooltips */
 .tooltip-trigger {
   background: none;
   border: none;
-  color: #1e88e5; /* Blue */
+  color: #1e88e5;
   font-weight: bold;
-  /* font-style: italic; */ /* Removed italic */
   cursor: pointer;
   border-radius: 50%;
   width: 20px;
   height: 20px;
-  line-height: 18px; /* Center 'i' */
+  line-height: 18px;
   text-align: center;
-  border: 1px solid #90caf9; /* Light blue border */
+  border: 1px solid #90caf9;
   padding: 0;
   margin-left: 0.2rem;
-  flex-shrink: 0; /* Prevent shrinking */
-  vertical-align: middle; /* Align better */
+  flex-shrink: 0;
+  vertical-align: middle;
 }
 .tooltip-trigger:hover,
 .tooltip-trigger:focus {
-  background-color: #e3f2fd; /* Very light blue */
+  background-color: #e3f2fd;
 }
-
 .tooltip {
   position: absolute;
   background-color: #333;
@@ -664,44 +674,41 @@ tr[tabindex="0"]:focus-visible {
   visibility: visible;
 }
 
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 99;
-}
-.modal-overlay[hidden] {
-  display: none;
-}
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
+/* Modal Styles using <dialog> */
+dialog.modal {
+  /* Reset default dialog styles if needed */
+  padding: 0;
+  border: 1px solid #ccc; /* Keep border */
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 100;
   width: 90%;
   max-width: 500px;
-  border: 1px solid #ccc;
-  overflow: hidden; /* Prevents content spill */
+  /* Position fixed implicitly by showModal() */
+  /* top: 50%; left: 50%; transform: translate(-50%, -50%); */ /* Not needed */
+  overflow: hidden; /* Contain content */
+  z-index: 100;
 }
-.modal[hidden] {
+/* Style the backdrop */
+dialog.modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Add transitions if desired */
+  /* transition: backdrop-filter 0.3s ease, background-color 0.3s ease; */
+  /* backdrop-filter: blur(3px); */
+}
+/* Hide dialog when not open (using attribute selector) */
+dialog.modal:not([open]) {
   display: none;
 }
 
+/* Keep internal modal structure styles */
+.modal-form-wrapper {
+  display: contents;
+} /* Prevent form from interfering */
 .modal-content {
   display: flex;
   flex-direction: column;
-  max-height: 80vh; /* Limit modal height */
+  max-height: 80vh;
 }
-
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -709,7 +716,7 @@ tr[tabindex="0"]:focus-visible {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #eee;
   background-color: #f9f9f9;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 .modal-header h2 {
   margin: 0;
@@ -730,20 +737,15 @@ tr[tabindex="0"]:focus-visible {
 .modal-close:focus {
   color: #333;
 }
-
 .modal-body {
-  padding: 1rem; /* Consistent padding */
-  overflow-y: auto; /* Scroll if content overflows */
-  flex-grow: 1; /* Allow body to take space */
+  padding: 1rem;
+  overflow-y: auto;
+  flex-grow: 1;
 }
-
-/* Modal Body Table Styles */
 .modal-options-table {
   width: 100%;
   border-collapse: collapse;
-  /* table-layout: fixed; */ /* Let content determine width */
 }
-
 .modal-options-table th,
 .modal-options-table td {
   padding: 0.6rem 0.8rem;
@@ -751,55 +753,46 @@ tr[tabindex="0"]:focus-visible {
   border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
 }
-
 .modal-options-table th {
   font-weight: bold;
-  background-color: #f9f9f9; /* Light background for header */
-  position: sticky; /* Make header sticky within modal body scroll */
-  top: -1rem; /* Adjust based on modal-body padding for better stickiness */
-  z-index: 1; /* Keep above scrolling rows */
+  background-color: #f9f9f9;
+  position: sticky;
+  top: -1rem;
+  z-index: 1;
 }
-
 .modal-options-table tbody tr {
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
-
 .modal-options-table tbody tr:hover,
 .modal-options-table tbody tr:focus {
-  background-color: #e0f7fa; /* Highlight on hover/focus */
+  background-color: #e0f7fa;
 }
-/* Style for potentially selected row (if needed later) */
 .modal-options-table tbody tr[aria-selected="true"] {
   background-color: #a7ffeb;
   font-weight: bold;
 }
-
-/* Make TH buttons look less like standard buttons */
 .modal-options-table th .sort-button {
   background: none;
   border: none;
   padding: 0;
   margin: 0;
-  font: inherit; /* Inherit TH font */
-  color: inherit; /* Inherit TH color */
+  font: inherit;
+  color: inherit;
   cursor: pointer;
   text-align: left;
   width: 100%;
-  display: inline-flex; /* Align text and indicator */
+  display: inline-flex;
   align-items: center;
   gap: 0.3em;
 }
 .modal-options-table th .sort-button:hover,
 .modal-options-table th .sort-button:focus-visible {
-  /* Style focus on button */
   text-decoration: underline;
-  background: none; /* Override general button hover */
-  box-shadow: none; /* Remove default button focus glow */
-  outline-offset: 2px; /* Adjust standard outline */
+  background: none;
+  box-shadow: none;
+  outline-offset: 2px;
 }
-
-/* Sort indicator styles */
 .modal-options-table th .sort-button::after {
   content: "";
   display: inline-block;
@@ -810,55 +803,50 @@ tr[tabindex="0"]:focus-visible {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;
-  /* Default unsorted icon (optional) */
-  /* background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="%23888"><path d="M50 15L10 65h80zM50 85L10 35h80z"/></svg>'); */
-  flex-shrink: 0; /* Prevent indicator shrinking */
+  flex-shrink: 0;
 }
 .modal-options-table th .sort-button[aria-sort="ascending"]::after {
-  content: "▲"; /* Up arrow character */
+  content: "▲";
   opacity: 1;
 }
 .modal-options-table th .sort-button[aria-sort="descending"]::after {
-  content: "▼"; /* Down arrow character */
+  content: "▼";
   opacity: 1;
 }
-
-/* Table column widths */
 .modal-options-table th:nth-child(1),
 .modal-options-table td:nth-child(1) {
-  width: 65%; /* Adjust width for name column */
+  width: 65%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .modal-options-table th:nth-child(2),
 .modal-options-table td:nth-child(2) {
-  width: 35%; /* Adjust width for date column */
+  width: 35%;
   white-space: nowrap;
 }
-
 .modal-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid #eee;
   background-color: #f9f9f9;
   text-align: right;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
 /* Bottom Action Bar (Sticky Footer) */
 .bottom-action-bar {
-  position: sticky; /* Sticks to bottom when scrolling down */
+  position: sticky;
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 0.8rem 1rem; /* Vertical and horizontal padding */
-  background-color: #e0e0e0; /* Neutral grey background */
-  border-top: 1px solid #bdbdbd; /* Slightly darker border */
-  z-index: 50; /* Ensure it's above other content if needed */
+  padding: 0.8rem 1rem;
+  background-color: #e0e0e0;
+  border-top: 1px solid #bdbdbd;
+  z-index: 50;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
 /* Placeholder images */

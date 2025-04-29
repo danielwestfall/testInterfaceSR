@@ -1,50 +1,71 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded and parsed");
+
   // --- Tooltip Handling ---
   const tooltipTriggers = document.querySelectorAll(".tooltip-trigger");
-  tooltipTriggers.forEach((button) => {
+  console.log(`Found ${tooltipTriggers.length} tooltip triggers.`);
+
+  tooltipTriggers.forEach((button, index) => {
     const tooltipId = button.getAttribute("aria-describedby");
     const tooltip = document.getElementById(tooltipId);
-    if (!tooltip) return;
+    console.log(
+      `Trigger #${
+        index + 1
+      }: aria-describedby="${tooltipId}". Tooltip element found:`,
+      tooltip ? "Yes" : "NO!"
+    );
+    if (!tooltip) {
+      console.warn(
+        `Tooltip with ID "${tooltipId}" not found for trigger:`,
+        button
+      );
+      return;
+    }
     const positionTooltip = () => {
-      // Basic positioning logic (adjust as needed)
-      if (!button || !tooltip) return; // Add check if elements disappear
-      const rect = button.getBoundingClientRect();
+      if (!button || !tooltip) return;
+      const buttonRect = button.getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
-      let top = rect.top + window.scrollY - tooltipRect.height - 8; // 8px gap above
+      const offsetParent = button.offsetParent || document.body;
+      const parentRect = offsetParent.getBoundingClientRect();
+      let top = button.offsetTop - tooltipRect.height - 8;
       let left =
-        rect.left + window.scrollX + rect.width / 2 - tooltipRect.width / 2;
-
-      // Adjust if off-screen
-      if (top < window.scrollY) {
-        // Check if cut off at top
-        top = rect.bottom + window.scrollY + 8; // Position below instead
+        button.offsetLeft + button.offsetWidth / 2 - tooltipRect.width / 2;
+      const viewportTop = buttonRect.top - tooltipRect.height - 8;
+      const viewportLeft =
+        buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2;
+      if (viewportTop < 0) {
+        console.log(`Tooltip #${tooltipId} collided with top, moving below.`);
+        top = button.offsetTop + button.offsetHeight + 8;
       }
-      if (left < window.scrollX) {
-        // Check left edge
-        left = window.scrollX + 5;
-      }
-      let viewportWidth =
+      const viewportWidth =
         window.innerWidth || document.documentElement.clientWidth;
-      if (left + tooltipRect.width > viewportWidth + window.scrollX) {
-        // Check right edge
-        left = viewportWidth + window.scrollX - tooltipRect.width - 5;
+      if (viewportLeft < 0) {
+        console.log(`Tooltip #${tooltipId} collided with left.`);
+        left = -parentRect.left + 5;
+      } else if (viewportLeft + tooltipRect.width > viewportWidth) {
+        console.log(`Tooltip #${tooltipId} collided with right.`);
+        left = viewportWidth - parentRect.left - tooltipRect.width - 5;
       }
-
+      tooltip.style.position = "absolute";
       tooltip.style.left = `${left}px`;
       tooltip.style.top = `${top}px`;
     };
     const showTooltip = () => {
+      console.log(`Showing tooltip: #${tooltipId}`);
       tooltip.setAttribute("aria-hidden", "false");
       positionTooltip();
     };
     const hideTooltip = () => {
+      console.log(`Hiding tooltip: #${tooltipId}`);
       tooltip.setAttribute("aria-hidden", "true");
     };
+    console.log(`Attaching listeners for tooltip #${tooltipId}`);
     button.addEventListener("mouseenter", showTooltip);
     button.addEventListener("focus", showTooltip);
     button.addEventListener("mouseleave", hideTooltip);
     button.addEventListener("blur", hideTooltip);
     button.addEventListener("click", (e) => {
+      console.log(`Click event on tooltip trigger #${tooltipId}`);
       e.stopPropagation();
       if (tooltip.getAttribute("aria-hidden") === "false") {
         hideTooltip();
@@ -54,14 +75,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     button.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
+        console.log(`Escape key on tooltip trigger #${tooltipId}`);
         hideTooltip();
         button.focus();
       }
     });
-    // Initial position check not strictly needed if hidden by default
-    // if (tooltip.getAttribute("aria-hidden") === "false") { positionTooltip(); }
     window.addEventListener("resize", () => {
       if (tooltip.getAttribute("aria-hidden") === "false") {
+        console.log(`Resizing window, repositioning tooltip #${tooltipId}`);
         positionTooltip();
       }
     });
@@ -137,397 +158,391 @@ document.addEventListener("DOMContentLoaded", () => {
   const previewName = document.getElementById("preview-item-name");
   const previewThumb = document.getElementById("preview-item-thumbnail");
   const previewDesc = document.getElementById("preview-item-description");
-  const previewCloseBtn = previewPane?.querySelector(".close-preview"); // Added safe navigation
+  const previewCloseBtn = previewPane?.querySelector(".close-preview");
   let currentlySelectedListItem = null;
-
-  // Function to show the preview pane
   const showPreview = (itemButton) => {
-    if (!previewPane || !itemButton) return; // Safety check
-
+    if (!previewPane || !itemButton) return;
     const itemId = itemButton.dataset.id;
     const itemName = itemButton.dataset.name;
-
-    // If already showing this item, hide it (toggle off)
-    if (!previewPane.hidden && previewPane.dataset.currentItemId === itemId) {
+    if (itemButton.getAttribute("aria-pressed") === "true") {
       hidePreview();
       return;
     }
-    // Update preview content
     if (previewName) previewName.textContent = itemName;
     if (previewThumb) {
-      // Ensure placeholder files like placeholder-thumb-item1.png etc. exist or use a default
-      previewThumb.src = `placeholder-thumb-${itemId}.png`; // Use unique placeholder per item
+      previewThumb.src = `placeholder-thumb-${itemId}.png`;
       previewThumb.alt = `Thumbnail for ${itemName}`;
     }
     if (previewDesc)
       previewDesc.textContent = `This is a short description for ${itemName} (ID: ${itemId}). More details could go here.`;
-    previewPane.dataset.currentItemId = itemId; // Store which item is showing
-
-    // Update selected state in the list
+    previewPane.dataset.currentItemId = itemId;
     if (currentlySelectedListItem) {
       currentlySelectedListItem.classList.remove("is-selected");
+      currentlySelectedListItem.setAttribute("aria-pressed", "false");
     }
     itemButton.classList.add("is-selected");
+    itemButton.setAttribute("aria-pressed", "true");
     currentlySelectedListItem = itemButton;
-    // Show the pane
     previewPane.removeAttribute("hidden");
   };
-
-  // Function to hide the preview pane
   const hidePreview = () => {
-    if (!previewPane) return; // Safety check
+    if (!previewPane) return;
     previewPane.setAttribute("hidden", "");
     previewPane.removeAttribute("data-current-item-id");
     if (currentlySelectedListItem) {
       currentlySelectedListItem.classList.remove("is-selected");
+      currentlySelectedListItem.setAttribute("aria-pressed", "false");
       currentlySelectedListItem = null;
     }
   };
-
-  // Add click listener to the list container (event delegation)
   if (contentItemsList) {
     contentItemsList.addEventListener("click", (e) => {
       const itemButton = e.target.closest(".content-item");
-
-      // Check if the click happened ON or INSIDE the checkbox's label/custom span area
       const checkboxGroupClicked = e.target.closest(".item-checkbox-group");
-
       if (checkboxGroupClicked) {
-        // Click was on the checkbox area. Stop propagation to prevent preview.
         e.stopPropagation();
-        // Log state (optional debugging)
         const checkboxInput = checkboxGroupClicked.querySelector(
           'input[type="checkbox"]'
         );
         setTimeout(() => {
-          // Use timeout to log state *after* default action
           if (checkboxInput) {
             console.log(
               `Checkbox for ${
-                checkboxInput.closest(".content-item")?.dataset.name // Added safe navigation
+                checkboxInput.closest(".content-item")?.dataset.name
               } state: ${checkboxInput.checked}`
             );
           }
         }, 0);
-        return; // Prevent preview logic
+        return;
       }
-
-      // If the click was on the item button but NOT within the checkbox group area, show the preview.
       if (itemButton) {
         showPreview(itemButton);
       }
     });
   }
-
-  // Listener for the preview pane's close button
   if (previewCloseBtn) {
     previewCloseBtn.addEventListener("click", hidePreview);
   }
-
   // --- End Content Item Selection & Preview ---
 
   // --- Modal Dialog Handling ---
+  console.log("Setting up Modal Dialog Handling...");
   const modal = document.getElementById("select-modal");
-  const modalOverlay = document.getElementById("modal-overlay");
   const modalCloseButton = document.getElementById("modal-close-button");
   const modalCancelButton = document.getElementById("modal-cancel-button");
-  // ** UPDATED: Target table body instead of list **
   const modalTableBody = document.getElementById("modal-table-body");
-  const modalSortButtons = modal?.querySelectorAll(".sort-button"); // Get sort buttons
-
+  const modalSortButtons = modal?.querySelectorAll(".sort-button"); // Select buttons within the modal context
+  const sortAnnouncementRegion = document.getElementById(
+    "modal-sort-announcement"
+  );
+  console.log("Modal element:", modal ? "Found" : "NOT FOUND");
+  console.log("Modal Close Button:", modalCloseButton ? "Found" : "NOT FOUND");
   let currentModalTrigger = null;
   let focusedElementBeforeModal;
   let focusableElements = [];
   let firstFocusableElement;
   let lastFocusableElement;
-
-  // Focus trap keydown handler
   const keydownHandler = (e) => {
-    if (!modal || modal.hasAttribute("hidden")) return; // Only trap when modal is open
-    if (e.key !== "Tab") return;
-
-    if (focusableElements.length === 0) {
-      // Prevent errors if no focusable elements
-      e.preventDefault();
+    /* ... focus trap logic ... */
+  };
+  const trapFocus = (element) => {
+    /* ... focus trap setup ... */
+  };
+  const removeTrapFocus = () => {
+    document.removeEventListener("keydown", keydownHandler);
+  };
+  const openModal = (triggerButton) => {
+    if (!modal) {
+      console.error("Modal <dialog> element not found!");
       return;
     }
-
-    if (e.shiftKey) {
-      // Shift + Tab
-      if (document.activeElement === firstFocusableElement) {
-        lastFocusableElement.focus();
-        e.preventDefault();
-      }
-    } else {
-      // Tab
-      if (document.activeElement === lastFocusableElement) {
-        firstFocusableElement.focus();
-        e.preventDefault();
-      }
-    }
-  };
-
-  // Function to set up focus trap
-  const trapFocus = (element) => {
-    if (!element) return;
+    console.log(
+      ">>> openModal function CALLED. Trigger button ID:",
+      triggerButton?.id
+    );
+    focusedElementBeforeModal = document.activeElement;
+    currentModalTrigger = triggerButton;
     focusableElements = Array.from(
-      element.querySelectorAll(
-        'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input:not([type="hidden"]):not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"]), tr[tabindex="0"]' // Include table rows now
+      modal.querySelectorAll(
+        'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input:not([type="hidden"]):not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"]), tr[tabindex="0"]'
       )
     ).filter(
       (el) =>
         el.offsetWidth > 0 ||
         el.offsetHeight > 0 ||
         el.getClientRects().length > 0
-    ); // Filter only visible elements
-
+    );
     if (focusableElements.length > 0) {
       firstFocusableElement = focusableElements[0];
       lastFocusableElement = focusableElements[focusableElements.length - 1];
-      // Add listener only once, ensure it's removed on close
-      document.removeEventListener("keydown", keydownHandler); // Remove previous if any
-      document.addEventListener("keydown", keydownHandler);
     } else {
-      // If no focusable elements found, maybe focus the close button as fallback or the container?
-      modalCloseButton?.focus();
-      document.removeEventListener("keydown", keydownHandler); // Remove previous if any
-      document.addEventListener("keydown", keydownHandler); // Still trap to prevent tabbing out
+      firstFocusableElement = modalCloseButton;
+      lastFocusableElement = modalCloseButton;
     }
+    console.log("...Calling modal.showModal()");
+    modal.showModal();
+    console.log("...Modal should be open.");
   };
-
-  // Function to remove focus trap
-  const removeTrapFocus = () => {
-    document.removeEventListener("keydown", keydownHandler);
+  const closeModal = (returnValue = "cancel") => {
+    if (!modal) return;
+    console.log("<<< closeModal function CALLED. Return value:", returnValue);
+    modal.close(returnValue);
+    console.log("<<< Modal closed.");
   };
-
-  // Function to open the modal
-  const openModal = (triggerButton) => {
-    // Ensure modal elements exist before proceeding
-    if (!modal || !modalOverlay || !modalCloseButton) {
-      console.error("Modal elements not found in the DOM!");
+  if (modal) {
+    modal.addEventListener("close", () => {
+      console.log(
+        "Modal 'close' event fired. Dialog returnValue:",
+        modal.returnValue
+      );
+      if (
+        focusedElementBeforeModal &&
+        typeof focusedElementBeforeModal.focus === "function"
+      ) {
+        console.log("...Restoring focus to:", focusedElementBeforeModal);
+        focusedElementBeforeModal.focus();
+      } else {
+        console.log(
+          "...Original trigger element not focusable or lost, focus not restored."
+        );
+      }
+      currentModalTrigger = null;
+    });
+  }
+  console.log("Attaching modal trigger listeners...");
+  const modalTriggers = document.querySelectorAll(
+    ".main-select-button.select-modal-trigger"
+  );
+  console.log(`Found ${modalTriggers.length} modal trigger buttons.`);
+  modalTriggers.forEach((button, index) => {
+    console.log(
+      `Attaching listener to button #${index + 1} (ID: ${button.id})`
+    );
+    if (!button) {
+      console.error(`Button at index ${index} is null!`);
       return;
     }
-
-    focusedElementBeforeModal = document.activeElement;
-    currentModalTrigger = triggerButton;
-    modal.removeAttribute("hidden");
-    modalOverlay.removeAttribute("hidden");
-
-    // Set up focus trap elements before setting focus
-    trapFocus(modal);
-
-    // Set initial focus
-    if (focusableElements.length > 0) {
-      // Focus the first element found by trapFocus (could be header button or table row)
-      firstFocusableElement.focus();
-    } else {
-      // Fallback focus if no interactive elements found inside
-      modalCloseButton.focus();
-    }
-  };
-
-  // Function to close the modal
-  const closeModal = () => {
-    // Ensure modal elements exist
-    if (!modal || !modalOverlay) return;
-
-    modal.setAttribute("hidden", "");
-    modalOverlay.setAttribute("hidden", "");
-    removeTrapFocus(); // Remove trap before restoring focus
-    if (focusedElementBeforeModal) {
-      // Add check to ensure focus target still exists and is visible
-      if (
-        typeof focusedElementBeforeModal.focus === "function" &&
-        (focusedElementBeforeModal.offsetWidth > 0 ||
-          focusedElementBeforeModal.offsetHeight > 0)
-      ) {
-        focusedElementBeforeModal.focus();
-      }
-    }
-    currentModalTrigger = null;
-  };
-
-  // Attach listeners to the main "Select" buttons (modal triggers)
-  document
-    .querySelectorAll(".main-select-button.select-modal-trigger")
-    .forEach((button) => {
-      button.addEventListener("click", () => openModal(button));
+    const clonedButton = button.cloneNode(true);
+    button.parentNode.replaceChild(clonedButton, button);
+    clonedButton.addEventListener("click", () => {
+      console.log(`--- Click event fired on button: ${clonedButton.id} ---`);
+      openModal(clonedButton);
     });
+  });
+  console.log("Modal trigger listener attachment complete.");
 
-  // ** UPDATED: Handle selecting an item within the modal TABLE **
+  // Function to handle row selection (used by both click and keydown)
+  const handleRowSelection = (selectedRow) => {
+    if (!selectedRow) return;
+    console.log("Handling row selection for:", selectedRow); // Log selection attempt
+    const selectedValue = selectedRow.dataset.value;
+    const selectedText = selectedRow.cells[0]?.textContent || "";
+    if (currentModalTrigger) {
+      currentModalTrigger.textContent = selectedText; // Update main button text
+      const labelElement = document.querySelector(
+        `label[for="${currentModalTrigger.id}"]`
+      );
+      const baseLabel = labelElement ? labelElement.textContent.trim() : "Item";
+      currentModalTrigger.setAttribute(
+        "aria-label",
+        `Current value for ${baseLabel}: ${selectedText}`
+      );
+      console.log("Updated trigger button text and aria-label.");
+      const clearButton = currentModalTrigger.nextElementSibling;
+      if (clearButton && clearButton.classList.contains("clear-selection")) {
+        clearButton.disabled = false;
+        console.log("Enabled clear button.");
+      }
+    } else {
+      console.warn("currentModalTrigger is null, cannot update button.");
+    }
+    closeModal(selectedValue); // Close the modal after selection
+  };
+
+  // Handle selecting an item within the modal TABLE via CLICK
   if (modalTableBody) {
     modalTableBody.addEventListener("click", (e) => {
-      const selectedRow = e.target.closest("tr"); // Find clicked row
-      if (selectedRow) {
-        // Get value from row's data attribute, text from first cell
-        const selectedValue = selectedRow.dataset.value;
-        const selectedText = selectedRow.cells[0]?.textContent || ""; // Get Name column text
-
-        if (currentModalTrigger) {
-          currentModalTrigger.textContent = selectedText; // Update main button text
-          const clearButton = currentModalTrigger.nextElementSibling;
-          if (
-            clearButton &&
-            clearButton.classList.contains("clear-selection")
-          ) {
-            clearButton.disabled = false; // Enable the X button
-          }
-        }
-        closeModal();
-      }
+      const selectedRow = e.target.closest("tr");
+      console.log("Click event on modal table body, target:", e.target);
+      handleRowSelection(selectedRow);
     });
-
-    // ** UPDATED: Keyboard navigation for table rows **
+    // Handle selecting an item within the modal TABLE via KEYDOWN (Enter/Space)
     modalTableBody.addEventListener("keydown", (e) => {
-      const currentRow = e.target.closest("tr");
-      if (!currentRow) return;
-
+      if (!e.target.matches('tr[tabindex="0"]')) return;
+      const currentRow = e.target;
+      console.log(`Keydown event on modal table row: ${e.key}`, currentRow);
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        currentRow.click(); // Trigger the click handler
+        console.log("Enter/Space pressed, calling handleRowSelection.");
+        handleRowSelection(currentRow);
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
         const nextRow = currentRow.nextElementSibling;
-        nextRow?.focus(); // Focus the next row
+        console.log("ArrowDown, focusing next row:", nextRow);
+        nextRow?.focus();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         const prevRow = currentRow.previousElementSibling;
-        prevRow?.focus(); // Focus the previous row
+        console.log("ArrowUp, focusing previous row:", prevRow);
+        prevRow?.focus();
       }
-      // Could add Home/End key support here too
     });
   }
 
-  // ** ADDED: Table Sorting Logic **
-  let currentSort = { column: null, direction: "none" }; // Track current sort state
-
+  // Table Sorting Logic
+  let currentSort = { column: null, direction: "none" };
   const sortTable = (column, direction) => {
     if (!modalTableBody) return;
     const rows = Array.from(modalTableBody.querySelectorAll("tr"));
-
     rows.sort((rowA, rowB) => {
       let valA, valB;
-
       if (column === "name") {
         valA = rowA.cells[0]?.textContent.trim().toLowerCase() || "";
         valB = rowB.cells[0]?.textContent.trim().toLowerCase() || "";
       } else if (column === "date") {
-        // Use data attribute for reliable date sorting
         valA = rowA.dataset.sortDate || "";
         valB = rowB.dataset.sortDate || "";
-        // Optional: Convert to Date objects for more robust comparison
-        // valA = new Date(rowA.dataset.sortDate || 0);
-        // valB = new Date(rowB.dataset.sortDate || 0);
       } else {
-        return 0; // No sorting if column unknown
+        return 0;
       }
-
       let comparison = 0;
       if (valA > valB) {
         comparison = 1;
       } else if (valA < valB) {
         comparison = -1;
       }
-
       return direction === "descending" ? comparison * -1 : comparison;
     });
 
-    // Update aria-sort attributes and visual indicators
-    modalSortButtons?.forEach((button) => {
-      if (button.dataset.column === column) {
-        button.setAttribute("aria-sort", direction);
-      } else {
-        button.setAttribute("aria-sort", "none");
-      }
+    // ** Update aria-sort attributes on the buttons currently in the DOM **
+    const currentSortButtons = modal?.querySelectorAll(".sort-button"); // Re-select buttons inside function scope
+    console.log("Updating aria-sort attributes..."); // Log update attempt
+    currentSortButtons?.forEach((button) => {
+      const buttonColumn = button.dataset.column;
+      const sortValue = buttonColumn === column ? direction : "none";
+      button.setAttribute("aria-sort", sortValue);
+      console.log(
+        `Set aria-sort="${sortValue}" on button for column "${buttonColumn}"`
+      ); // Log each update
     });
 
-    // Re-append rows in sorted order
-    // Using DocumentFragment for performance is slightly better for large lists
+    if (sortAnnouncementRegion) {
+      const columnText = column === "date" ? "Date Created" : "Name";
+      sortAnnouncementRegion.textContent = "";
+      setTimeout(() => {
+        sortAnnouncementRegion.textContent = `Table sorted by ${columnText}, ${direction}.`;
+      }, 100);
+    }
     const fragment = document.createDocumentFragment();
     rows.forEach((row) => fragment.appendChild(row));
-    modalTableBody.innerHTML = ""; // Clear existing rows
-    modalTableBody.appendChild(fragment); // Append sorted rows
+    modalTableBody.innerHTML = "";
+    modalTableBody.appendChild(fragment);
   };
 
+  // ** Attach listeners directly to the sort buttons **
   modalSortButtons?.forEach((button) => {
-    // Ensure only one listener per button if script runs multiple times
-    const clonedButton = button.cloneNode(true);
-    button.parentNode.replaceChild(clonedButton, button);
-
-    clonedButton.addEventListener("click", () => {
-      const column = clonedButton.dataset.column;
+    // Removed cloning logic
+    button.addEventListener("click", () => {
+      const column = button.dataset.column;
       let newDirection;
-
-      const currentAriaSort = clonedButton.getAttribute("aria-sort");
-
+      // Use currentSort state to determine next direction
       if (currentSort.column === column) {
-        // Cycle direction: ascending -> descending -> ascending ...
-        // (Start with ascending if currently 'none' or 'descending')
         newDirection =
-          currentAriaSort === "ascending" ? "descending" : "ascending";
+          currentSort.direction === "ascending" ? "descending" : "ascending";
       } else {
-        // Start new column sort with ascending
         newDirection = "ascending";
       }
-
       currentSort = { column: column, direction: newDirection };
+      console.log(
+        `Sort button clicked. Sorting by "${column}", direction "${newDirection}"`
+      ); // Log sort trigger
       sortTable(currentSort.column, currentSort.direction);
     });
   });
 
-  // Modal Close Listeners
-  if (modalCloseButton) modalCloseButton.addEventListener("click", closeModal);
-  if (modalCancelButton)
-    modalCancelButton.addEventListener("click", closeModal);
-  if (modalOverlay) modalOverlay.addEventListener("click", closeModal);
-
-  // Close modal on Escape key
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal && !modal.hasAttribute("hidden")) {
-      closeModal();
-    }
-  });
   // --- End Modal Handling ---
 
   // --- Clear Selection Button Handling ---
-  // Remove previous listeners before adding new ones (prevents duplicates)
   document.querySelectorAll(".clear-selection").forEach((button) => {
     const newButton = button.cloneNode(true);
     button.parentNode.replaceChild(newButton, button);
   });
-  // Add listeners to the new buttons
   document.querySelectorAll(".clear-selection").forEach((button) => {
     button.addEventListener("click", () => {
       const mainButtonId = button.dataset.controls;
       const mainButton = document.getElementById(mainButtonId);
-
       if (mainButton) {
-        mainButton.textContent = mainButton.dataset.defaultText || "Select"; // Reset text
+        const defaultText = mainButton.dataset.defaultText || "Select";
+        mainButton.textContent = defaultText;
+        const labelElement = document.querySelector(
+          `label[for="${mainButton.id}"]`
+        );
+        const baseLabel = labelElement
+          ? labelElement.textContent.trim()
+          : "Item";
+        mainButton.setAttribute("aria-label", `Select value for ${baseLabel}`);
       }
-      button.disabled = true; // Disable the button
-
+      button.disabled = true;
       if (mainButton) {
-        mainButton.focus(); // Focus the main button
+        mainButton.focus();
       }
     });
   });
   // --- End Clear Selection ---
 
-  // --- Placeholder Thumbnail Setup (Example) ---
-  // Assumes function showPreview handles setting the correct src
-
-  // --- Form Submission ---
+  // --- Form Validation & Submission ---
   const form = document.getElementById("main-form");
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      console.log("Form Submitted");
-      // Add actual form submission logic here (e.g., using fetch)
-      // const formData = new FormData(form);
-      // for (let [key, value] of formData.entries()) {
-      //     console.log(key, value);
-      // }
-      alert("Form data logged to console. Add real submission logic.");
+  const saveButton = document.querySelector('.save-btn[form="main-form"]');
+  const validateField = (field) => {
+    const errorSpan = document.getElementById(`${field.id}-error`);
+    let isValid = true;
+    let errorMessage = "";
+    if (field.validity.valueMissing) {
+      isValid = false;
+      errorMessage = `${
+        field.labels[0]?.textContent.replace("*:", "").trim() || "This field"
+      } is required.`;
+    }
+    field.setAttribute("aria-invalid", !isValid);
+    if (errorSpan) {
+      errorSpan.textContent = errorMessage;
+      errorSpan.style.display = isValid ? "none" : "block";
+    } else {
+      console.warn(`Error span not found for field: ${field.id}`);
+    }
+    return isValid;
+  };
+  if (form && saveButton) {
+    saveButton.addEventListener("click", (e) => {
+      console.log("Save button clicked, validating form...");
+      let isFormValid = true;
+      let firstInvalidField = null;
+      form.querySelectorAll("[aria-invalid]").forEach((field) => {
+        field.setAttribute("aria-invalid", "false");
+        const errorSpan = document.getElementById(`${field.id}-error`);
+        if (errorSpan) errorSpan.textContent = "";
+      });
+      const requiredFields = form.querySelectorAll("[required]");
+      requiredFields.forEach((field) => {
+        if (!validateField(field)) {
+          isFormValid = false;
+          if (!firstInvalidField) {
+            firstInvalidField = field;
+          }
+        }
+      });
+      if (!isFormValid) {
+        console.log("Form is invalid.");
+        e.preventDefault();
+        if (firstInvalidField) {
+          console.log("Focusing first invalid field:", firstInvalidField.id);
+          firstInvalidField.focus();
+        }
+      } else {
+        console.log("Form is valid. Submitting (simulated)...");
+        e.preventDefault();
+        alert("Form data would be submitted now (check console).");
+      }
     });
-  } // --- End Form Submission ---
+  } // --- End Form Validation ---
 }); // End DOMContentLoaded

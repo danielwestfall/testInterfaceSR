@@ -12,371 +12,419 @@
     </header>
 
     <main class="container">
-      <section class="left-column">
-        <form id="main-form">
-          <div
-            class="form-group required-group"
-            role="group"
-            aria-labelledby="target-label"
-            aria-describedby="required-hint"
-          >
-            <label id="target-label" for="target-select"
-              >Target<span aria-hidden="true">*</span>:</label
-            >
-            <select
-              id="target-select"
-              name="target"
-              required
-              aria-required="true"
-            >
-              <option value="">--Please choose an option--</option>
-              <option value="option1">Random Option Alpha</option>
-              <option value="option2">Random Option Beta</option>
-              <option value="option3">Random Option Gamma</option>
-            </select>
-          </div>
-
-          <div
-            class="form-group required-group"
-            role="group"
-            aria-labelledby="name-label"
-            aria-describedby="required-hint"
-          >
-            <label id="name-label" for="name-input"
-              >Name<span aria-hidden="true">*</span>:</label
-            >
-            <input
-              type="text"
-              id="name-input"
-              name="name"
-              required
-              aria-required="true"
-              placeholder="Name Edit field"
-            />
-          </div>
-
-          <div class="form-group date-group">
-            <label for="date-assigned">Date Assigned:</label>
-            <input type="date" id="date-assigned" name="date_assigned" />
-
-            <label for="due-date">Due Date:</label>
-            <input type="date" id="due-date" name="due_date" />
-          </div>
-
-          <div class="form-group">
-            <label for="info-textarea">Information:</label>
-            <textarea
-              id="info-textarea"
-              name="information"
-              rows="6"
-              maxlength="3000"
-              aria-describedby="info-char-count"
-              placeholder="Info text box"
-            ></textarea>
-            <small id="info-char-count">(3000 character max)</small>
-          </div>
-
-          <div class="form-group checkbox-group">
-            <button
-              type="button"
-              class="tooltip-trigger"
-              aria-describedby="tooltip1"
-              aria-label="More info for Checkbox Item 1"
-            >
-              i
-            </button>
-            <input type="checkbox" id="checkbox1" name="check1" value="val1" />
-            <label for="checkbox1">Checkbox Item 1</label>
+      <section aria-labelledby="form-section-title">
+        <h2 id="form-section-title" class="visually-hidden">Main Data Form</h2>
+        <div class="left-column">
+          <form id="main-form" novalidate>
             <div
-              role="tooltip"
-              id="tooltip1"
-              class="tooltip"
-              aria-hidden="true"
+              class="form-group required-group"
+              role="group"
+              aria-labelledby="target-label"
+              aria-describedby="required-hint"
             >
-              This explains more about the first checkbox option. It's
-              important!
+              <label id="target-label" for="target-select"
+                >Target<span aria-hidden="true">*</span>:</label
+              >
+              <select
+                id="target-select"
+                name="target"
+                required
+                aria-required="true"
+                aria-invalid="false"
+                aria-describedby="target-label required-hint target-error"
+              >
+                <option value="">--Please choose an option--</option>
+                <option value="option1">Random Option Alpha</option>
+                <option value="option2">Random Option Beta</option>
+                <option value="option3">Random Option Gamma</option>
+              </select>
+              <span
+                id="target-error"
+                class="error-message"
+                aria-live="polite"
+              ></span>
             </div>
-          </div>
 
-          <div class="form-group checkbox-group">
-            <button
-              type="button"
-              class="tooltip-trigger"
-              aria-describedby="tooltip2"
-              aria-label="More info for Checkbox Item 2"
-            >
-              i
-            </button>
-            <input type="checkbox" id="checkbox2" name="check2" value="val2" />
-            <label for="checkbox2">Checkbox Item 2</label>
             <div
-              role="tooltip"
-              id="tooltip2"
-              class="tooltip"
-              aria-hidden="true"
+              class="form-group required-group"
+              role="group"
+              aria-labelledby="name-label"
+              aria-describedby="required-hint"
             >
-              Here is some helpful text for the second checkbox.
+              <label id="name-label" for="name-input"
+                >Name<span aria-hidden="true">*</span>:</label
+              >
+              <input
+                type="text"
+                id="name-input"
+                name="name"
+                required
+                aria-required="true"
+                placeholder="Name Edit field"
+                aria-invalid="false"
+                aria-describedby="name-label required-hint name-error"
+              />
+              <span
+                id="name-error"
+                class="error-message"
+                aria-live="polite"
+              ></span>
             </div>
-          </div>
-          <p id="required-hint" class="required-indicator">
-            <span aria-hidden="true">*</span> Indicates Required Field
-          </p>
-        </form>
+
+            <div class="form-group date-group">
+              <label for="date-assigned">Date Assigned:</label>
+              <input type="date" id="date-assigned" name="date_assigned" />
+
+              <label for="due-date">Due Date:</label>
+              <input type="date" id="due-date" name="due_date" />
+            </div>
+
+            <div class="form-group">
+              <label for="info-textarea">Information:</label>
+              <textarea
+                id="info-textarea"
+                name="information"
+                rows="6"
+                maxlength="3000"
+                aria-describedby="info-char-count"
+                placeholder="Info text box"
+              ></textarea>
+              <small id="info-char-count">(3000 character max)</small>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <button
+                type="button"
+                class="tooltip-trigger"
+                aria-describedby="tooltip1"
+                aria-label="More info for Checkbox Item 1"
+              >
+                i
+              </button>
+              <input
+                type="checkbox"
+                id="checkbox1"
+                name="check1"
+                value="val1"
+              />
+              <label for="checkbox1">Checkbox Item 1</label>
+              <div
+                role="tooltip"
+                id="tooltip1"
+                class="tooltip"
+                aria-hidden="true"
+              >
+                This explains more about the first checkbox option. It's
+                important!
+              </div>
+            </div>
+            <div class="form-group checkbox-group">
+              <button
+                type="button"
+                class="tooltip-trigger"
+                aria-describedby="tooltip2"
+                aria-label="More info for Checkbox Item 2"
+              >
+                i
+              </button>
+              <input
+                type="checkbox"
+                id="checkbox2"
+                name="check2"
+                value="val2"
+              />
+              <label for="checkbox2">Checkbox Item 2</label>
+              <div
+                role="tooltip"
+                id="tooltip2"
+                class="tooltip"
+                aria-hidden="true"
+              >
+                Here is some helpful text for the second checkbox.
+              </div>
+            </div>
+
+            <p id="required-hint" class="required-indicator">
+              <span aria-hidden="true">*</span> Indicates Required Field
+            </p>
+          </form>
+        </div>
       </section>
 
-      <section class="right-column">
-        <div class="right-column-header">
-          <div class="menu-container">
-            <button
-              id="menu-button"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-              aria-controls="main-menu"
-            >
-              Menu
-            </button>
-            <ul
-              role="menu"
-              id="main-menu"
-              class="menu-dropdown"
-              aria-hidden="true"
-            >
-              <li role="presentation">
-                <a role="menuitem" href="#">Menu Item A</a>
+      <section aria-labelledby="content-section-title">
+        <h2 id="content-section-title" class="visually-hidden">
+          Content Selection Area
+        </h2>
+        <div class="right-column">
+          <div class="right-column-header">
+            <div class="menu-container">
+              <button
+                id="menu-button"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="main-menu"
+              >
+                Menu
+              </button>
+              <ul
+                role="menu"
+                id="main-menu"
+                class="menu-dropdown"
+                aria-hidden="true"
+              >
+                <li role="presentation">
+                  <a role="menuitem" href="#">Menu Item A</a>
+                </li>
+                <li role="presentation">
+                  <a role="menuitem" href="#">Menu Item B</a>
+                </li>
+                <li role="presentation">
+                  <a role="menuitem" href="#">Menu Item C</a>
+                </li>
+                <li role="presentation">
+                  <button role="menuitem" type="button">Action D</button>
+                </li>
+              </ul>
+            </div>
+            <button type="button" class="help-btn">? Help</button>
+          </div>
+
+          <div id="contents-box" class="contents-box">
+            <div class="contents-header">
+              <h2>Contents</h2>
+              <button
+                type="button"
+                class="tooltip-trigger"
+                aria-describedby="tooltip-contents"
+                aria-label="More info for Contents"
+              >
+                i
+              </button>
+              <div
+                role="tooltip"
+                id="tooltip-contents"
+                class="tooltip"
+                aria-hidden="true"
+              >
+                This section lists available content items. Click an item to see
+                a preview below.
+              </div>
+              <label class="option-label">
+                Option
+                <input
+                  type="radio"
+                  name="content-option"
+                  value="optionA"
+                  checked
+                />
+              </label>
+            </div>
+
+            <ul class="contents-list" aria-label="Selectable Content Items">
+              <li>
+                <button
+                  type="button"
+                  class="content-item"
+                  data-id="item1"
+                  data-name="Item 1"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 1</span
+                  >
+                </button>
               </li>
-              <li role="presentation">
-                <a role="menuitem" href="#">Menu Item B</a>
+              <li>
+                <button
+                  type="button"
+                  class="content-item has-checkbox"
+                  data-id="item2"
+                  data-name="Item 2"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 2</span
+                  ><label
+                    class="item-checkbox-group"
+                    aria-label="Select Item 2 Separately"
+                    ><input type="checkbox" id="select-item2" /><span
+                      class="custom-checkbox-style"
+                      aria-hidden="true"
+                    ></span
+                  ></label>
+                </button>
               </li>
-              <li role="presentation">
-                <a role="menuitem" href="#">Menu Item C</a>
+              <li>
+                <button
+                  type="button"
+                  class="content-item"
+                  data-id="item3"
+                  data-name="Item 3"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 3</span
+                  >
+                </button>
               </li>
-              <li role="presentation">
-                <button role="menuitem" type="button">Action D</button>
+              <li>
+                <button
+                  type="button"
+                  class="content-item"
+                  data-id="item4"
+                  data-name="Item 4"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 4</span
+                  >
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="content-item has-checkbox"
+                  data-id="item5"
+                  data-name="Item 5"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 5</span
+                  ><label
+                    class="item-checkbox-group"
+                    aria-label="Select Item 5 Separately"
+                    ><input type="checkbox" id="select-item5" /><span
+                      class="custom-checkbox-style"
+                      aria-hidden="true"
+                    ></span
+                  ></label>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="content-item"
+                  data-id="item6"
+                  data-name="Item 6"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 6</span
+                  >
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="content-item"
+                  data-id="item7"
+                  data-name="Item 7"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 7</span
+                  >
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="content-item"
+                  data-id="item8"
+                  data-name="Item 8"
+                  aria-pressed="false"
+                >
+                  <span class="item-label-group"
+                    ><img src="placeholder-icon.png" alt="" /> Item 8</span
+                  >
+                </button>
               </li>
             </ul>
-          </div>
-          <button type="button" class="help-btn">? Help</button>
-        </div>
 
-        <div id="contents-box" class="contents-box">
-          <div class="contents-header">
-            <h2>Contents</h2>
-            <button
-              type="button"
-              class="tooltip-trigger"
-              aria-describedby="tooltip-contents"
-              aria-label="More info for Contents"
-            >
-              i
-            </button>
             <div
-              role="tooltip"
-              id="tooltip-contents"
-              class="tooltip"
-              aria-hidden="true"
+              id="content-item-preview"
+              class="content-item-preview"
+              role="region"
+              aria-live="polite"
+              aria-labelledby="preview-item-name"
+              hidden
             >
-              This section lists available content items. Click an item to see a
-              preview below.
-            </div>
-            <label class="option-label">
-              Option
-              <input
-                type="radio"
-                name="content-option"
-                value="optionA"
-                checked
-              />
-            </label>
-          </div>
-          <ul class="contents-list" aria-label="Selectable Content Items">
-            <li>
-              <button
-                type="button"
-                class="content-item"
-                data-id="item1"
-                data-name="Item 1"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 1</span
+              <div class="preview-header">
+                <h4 id="preview-item-name"></h4>
+                <button
+                  type="button"
+                  class="close-preview"
+                  aria-label="Close preview"
                 >
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item has-checkbox"
-                data-id="item2"
-                data-name="Item 2"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 2</span
-                ><label
-                  class="item-checkbox-group"
-                  aria-label="Select Item 2 Separately"
-                  ><input type="checkbox" id="select-item2" /><span
-                    class="custom-checkbox-style"
-                    aria-hidden="true"
-                  ></span
-                ></label>
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item"
-                data-id="item3"
-                data-name="Item 3"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 3</span
-                >
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item"
-                data-id="item4"
-                data-name="Item 4"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 4</span
-                >
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item has-checkbox"
-                data-id="item5"
-                data-name="Item 5"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 5</span
-                ><label
-                  class="item-checkbox-group"
-                  aria-label="Select Item 5 Separately"
-                  ><input type="checkbox" id="select-item5" /><span
-                    class="custom-checkbox-style"
-                    aria-hidden="true"
-                  ></span
-                ></label>
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item"
-                data-id="item6"
-                data-name="Item 6"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 6</span
-                >
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item"
-                data-id="item7"
-                data-name="Item 7"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 7</span
-                >
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                class="content-item"
-                data-id="item8"
-                data-name="Item 8"
-              >
-                <span class="item-label-group"
-                  ><img src="placeholder-icon.png" alt="" /> Item 8</span
-                >
-              </button>
-            </li>
-          </ul>
-          <div
-            id="content-item-preview"
-            class="content-item-preview"
-            role="region"
-            aria-live="polite"
-            aria-labelledby="preview-item-name"
-            hidden
-          >
-            <div class="preview-header">
-              <h4 id="preview-item-name"></h4>
-              <button
-                type="button"
-                class="close-preview"
-                aria-label="Close preview"
-              >
-                X
-              </button>
-            </div>
-            <div class="preview-body">
-              <img
-                id="preview-item-thumbnail"
-                src="placeholder-thumb.png"
-                alt=""
-                class="preview-thumbnail"
-              />
-              <p id="preview-item-description" class="preview-description"></p>
+                  X
+                </button>
+              </div>
+              <div class="preview-body">
+                <img
+                  id="preview-item-thumbnail"
+                  src="placeholder-thumb.png"
+                  alt=""
+                  class="preview-thumbnail"
+                />
+                <p
+                  id="preview-item-description"
+                  class="preview-description"
+                ></p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="static-selection-area">
-          <div class="selection-box-container">
-            <label for="select-button-1">Select Item 1</label>
-            <div class="selection-box">
-              <button
-                type="button"
-                id="select-button-1"
-                class="select-modal-trigger main-select-button"
-                data-default-text="Select Item 1"
-                aria-live="polite"
-              >
-                Select Item 1
-              </button>
-              <button
-                type="button"
-                class="clear-selection"
-                aria-label="Clear selection for Item 1"
-                data-controls="select-button-1"
-                aria-controls="select-button-1"
-                disabled
-              >
-                X
-              </button>
+
+          <div class="static-selection-area">
+            <div class="selection-box-container">
+              <label for="select-button-1">Select Item 1</label>
+              <div class="selection-box">
+                <button
+                  type="button"
+                  id="select-button-1"
+                  class="select-modal-trigger main-select-button"
+                  data-default-text="Select Item 1"
+                  aria-live="polite"
+                  aria-label="Select value for Item 1"
+                >
+                  Select Item 1
+                </button>
+                <button
+                  type="button"
+                  class="clear-selection"
+                  aria-label="Clear selection for Item 1"
+                  data-controls="select-button-1"
+                  aria-controls="select-button-1"
+                  disabled
+                >
+                  X
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="selection-box-container">
-            <label for="select-button-2">Select Item 2</label>
-            <div class="selection-box">
-              <button
-                type="button"
-                id="select-button-2"
-                class="select-modal-trigger main-select-button"
-                data-default-text="Select Item 2"
-                aria-live="polite"
-              >
-                Select Item 2
-              </button>
-              <button
-                type="button"
-                class="clear-selection"
-                aria-label="Clear selection for Item 2"
-                data-controls="select-button-2"
-                aria-controls="select-button-2"
-                disabled
-              >
-                X
-              </button>
+            <div class="selection-box-container">
+              <label for="select-button-2">Select Item 2</label>
+              <div class="selection-box">
+                <button
+                  type="button"
+                  id="select-button-2"
+                  class="select-modal-trigger main-select-button"
+                  data-default-text="Select Item 2"
+                  aria-live="polite"
+                  aria-label="Select value for Item 2"
+                >
+                  Select Item 2
+                </button>
+                <button
+                  type="button"
+                  class="clear-selection"
+                  aria-label="Clear selection for Item 2"
+                  data-controls="select-button-2"
+                  aria-controls="select-button-2"
+                  disabled
+                >
+                  X
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -390,91 +438,125 @@
       </div>
     </footer>
 
-    <div
-      id="select-modal"
-      class="modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-      hidden
-    >
-      <div class="modal-content">
-        <header class="modal-header">
-          <h2 id="modal-title">Select an Option</h2>
-          <button
-            id="modal-close-button"
-            type="button"
-            class="modal-close"
-            aria-label="Close selection dialog"
-          >
-            X
-          </button>
-        </header>
-        <div class="modal-body">
-          <table class="modal-options-table" aria-label="Selectable Options">
-            <thead>
-              <tr>
-                <th scope="col">
-                  <button
-                    type="button"
-                    class="sort-button"
-                    data-column="name"
-                    aria-sort="none"
-                  >
-                    Name
-                  </button>
-                </th>
-                <th scope="col">
-                  <button
-                    type="button"
-                    class="sort-button"
-                    data-column="date"
-                    aria-sort="none"
-                  >
-                    Date Created
-                  </button>
-                </th>
-              </tr>
-            </thead>
-            <tbody id="modal-table-body">
-              <tr tabindex="0" data-value="detail1" data-sort-date="2024-01-15">
-                <td>Detail Option One</td>
-                <td>2024-01-15</td>
-              </tr>
-              <tr tabindex="0" data-value="detail3" data-sort-date="2023-11-30">
-                <td>Detail Option Three</td>
-                <td>2023-11-30</td>
-              </tr>
-              <tr tabindex="0" data-value="detail2" data-sort-date="2024-03-01">
-                <td>Detail Option Two</td>
-                <td>2024-03-01</td>
-              </tr>
-              <tr tabindex="0" data-value="detail4" data-sort-date="2023-05-20">
-                <td>Another Detail</td>
-                <td>2023-05-20</td>
-              </tr>
-              <tr tabindex="0" data-value="item1" data-sort-date="2024-04-10">
-                <td>Item 1 From List</td>
-                <td>2024-04-10</td>
-              </tr>
-              <tr tabindex="0" data-value="detail5" data-sort-date="2022-12-25">
-                <td>Final Detail Item</td>
-                <td>2022-12-25</td>
-              </tr>
-              <tr tabindex="0" data-value="item3" data-sort-date="2024-02-18">
-                <td>Item 3 From List</td>
-                <td>2024-02-18</td>
-              </tr>
-            </tbody>
-          </table>
+    <dialog id="select-modal" class="modal" aria-labelledby="modal-title">
+      <form method="dialog" class="modal-form-wrapper">
+        <div class="modal-content">
+          <header class="modal-header">
+            <h2 id="modal-title">Select an Option</h2>
+            <button
+              id="modal-close-button"
+              type="submit"
+              class="modal-close"
+              value="close"
+              aria-label="Close selection dialog"
+            >
+              X
+            </button>
+          </header>
+          <div class="modal-body">
+            <div
+              id="modal-sort-announcement"
+              class="visually-hidden"
+              aria-live="assertive"
+              aria-atomic="true"
+            ></div>
+            <p id="modal-select-instruction" class="visually-hidden">
+              Use arrow keys to navigate rows, press Enter or Space to select an
+              option.
+            </p>
+            <table
+              class="modal-options-table"
+              aria-label="Selectable Options"
+              aria-describedby="modal-select-instruction"
+            >
+              <caption class="visually-hidden">
+                Options available for selection, sortable by Name or Date
+                Created.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <button
+                      type="button"
+                      class="sort-button"
+                      data-column="name"
+                      aria-sort="none"
+                    >
+                      Name
+                    </button>
+                  </th>
+                  <th scope="col">
+                    <button
+                      type="button"
+                      class="sort-button"
+                      data-column="date"
+                      aria-sort="none"
+                    >
+                      Date Created
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="modal-table-body">
+                <tr
+                  tabindex="0"
+                  data-value="detail1"
+                  data-sort-date="2024-01-15"
+                >
+                  <td>Detail Option One</td>
+                  <td>2024-01-15</td>
+                </tr>
+                <tr
+                  tabindex="0"
+                  data-value="detail3"
+                  data-sort-date="2023-11-30"
+                >
+                  <td>Detail Option Three</td>
+                  <td>2023-11-30</td>
+                </tr>
+                <tr
+                  tabindex="0"
+                  data-value="detail2"
+                  data-sort-date="2024-03-01"
+                >
+                  <td>Detail Option Two</td>
+                  <td>2024-03-01</td>
+                </tr>
+                <tr
+                  tabindex="0"
+                  data-value="detail4"
+                  data-sort-date="2023-05-20"
+                >
+                  <td>Another Detail</td>
+                  <td>2023-05-20</td>
+                </tr>
+                <tr tabindex="0" data-value="item1" data-sort-date="2024-04-10">
+                  <td>Item 1 From List</td>
+                  <td>2024-04-10</td>
+                </tr>
+                <tr
+                  tabindex="0"
+                  data-value="detail5"
+                  data-sort-date="2022-12-25"
+                >
+                  <td>Final Detail Item</td>
+                  <td>2022-12-25</td>
+                </tr>
+                <tr tabindex="0" data-value="item3" data-sort-date="2024-02-18">
+                  <td>Item 3 From List</td>
+                  <td>2024-02-18</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="modal-footer">
+            <button type="submit" id="modal-cancel-button" value="cancel">
+              Cancel
+            </button>
+          </footer>
         </div>
-        <footer class="modal-footer">
-          <button type="button" id="modal-cancel-button">Cancel</button>
-        </footer>
-      </div>
-    </div>
-    <div id="modal-overlay" class="modal-overlay" hidden></div>
-
+      </form>
+    </dialog>
     <script src="script.js"></script>
   </body>
 </html>

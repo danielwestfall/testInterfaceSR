@@ -12,7 +12,10 @@
   </head>
   <body>
     <header class="top-row">
-      <h1>Screen Reader RM Tester (Shift + F10 for context menu)</h1>
+      <h1>
+        Screen Reader RM Tester (Context Menu: PC - Shift + F10, VoiceOver - VO
+        + Shift + M, ChromeVox - Search + M)
+      </h1>
       <div class="header-buttons">
         <button>Refresh</button>
         <button>Exit</button>
@@ -35,22 +38,26 @@
       <div class="toolbar-col controls-col">
         <label for="number-select" class="visually-hidden">Select Number</label>
         <select id="number-select" name="number">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
+          <option value="1">1st</option>
+          <option value="2">2nd</option>
+          <option value="3">3rd</option>
+          <option value="4">4th</option>
+          <option value="5">5th</option>
+          <option value="6">6th</option>
+          <option value="7">7th</option>
+          <option value="8">8th</option>
         </select>
         <div class="search-container">
-          <i class="fas fa-search search-icon" aria-hidden="true"></i>
+          <i
+            class="fas fa-search search-icon"
+            alt="Search Resources"
+            id="searchIcon"
+          ></i>
           <input
             type="search"
             id="search-field"
             placeholder="Search..."
-            aria-label="Search Resources"
+            aria-labelledby="searchIcon"
           />
         </div>
 

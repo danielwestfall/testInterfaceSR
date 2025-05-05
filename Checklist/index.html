@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessible Checklist Builder</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+      }
+
+      #checklist-title-input {
+        font-size: 1.5em;
+        padding: 10px;
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      #checklist-container {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .checklist-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .remove-button {
+        background: none;
+        border: none;
+        color: red;
+        font-size: 1.2em;
+        cursor: pointer;
+        margin-right: 10px;
+        padding: 0;
+        /* Make the button focusable and give it an accessible label */
+      }
+
+      .remove-button:focus {
+        outline: 2px solid blue; /* Provide a visible focus indicator */
+      }
+
+      .item-checkbox {
+        margin-right: 10px;
+      }
+
+      .item-text-input {
+        flex-grow: 1;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+
+      #add-item-button {
+        padding: 10px 15px;
+        cursor: pointer;
+      }
+
+      /* Modal styles */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+      }
+
+      .modal-buttons {
+        text-align: right;
+        margin-top: 10px;
+      }
+
+      .modal-buttons button {
+        padding: 8px 12px;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .item-text-input:focus,
+      .item-checkbox:focus,
+      #add-item-button:focus {
+        outline: 2px solid blue;
+        border-color: blue;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+    </style>
+  </head>
+  <body>
+    <label for="checklist-title-input" class="sr-only">Checklist Title</label>
+    <input
+      type="text"
+      id="checklist-title-input"
+      placeholder="Enter checklist title"
+    />
+
+    <div id="checklist-container">
+      <div class="checklist-item">
+        <button class="remove-button" aria-label="Remove this item">
+          <span aria-hidden="true">×</span>
+        </button>
+        <input type="checkbox" class="item-checkbox" id="item-checkbox-0" />
+        <label for="item-checkbox-0" class="sr-only">Checklist Item</label>
+        <input
+          type="text"
+          class="item-text-input"
+          id="item-text-0"
+          placeholder="Enter item text"
+        />
+        <label for="item-text-0" class="sr-only">Item Description</label>
+      </div>
+    </div>
+
+    <button id="add-item-button">Add New Item</button>
+
+    <div
+      id="delete-modal"
+      class="modal"
+      aria-labelledby="delete-modal-title"
+      aria-modal="true"
+      role="dialog"
+    >
+      <div class="modal-content">
+        <h2 id="delete-modal-title">Confirm Delete</h2>
+        <p>Are you sure you want to delete this item?</p>
+        <div class="modal-buttons">
+          <button id="modal-cancel-button">Cancel</button>
+          <button id="modal-ok-button">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const checklistContainer = document.getElementById("checklist-container");
+      const addItemButton = document.getElementById("add-item-button");
+      const deleteModal = document.getElementById("delete-modal");
+      const modalOkButton = document.getElementById("modal-ok-button");
+      const modalCancelButton = document.getElementById("modal-cancel-button");
+      let itemToDelete = null;
+      let itemCounter = 1; //keep track of the number of items
+
+      function createNewItem() {
+        const newItem = document.createElement("div");
+        newItem.classList.add("checklist-item");
+
+        const removeButton = document.createElement("button");
+        removeButton.classList.add("remove-button");
+        removeButton.setAttribute("aria-label", "Remove this item");
+        removeButton.innerHTML = '<span aria-hidden="true">×</span>';
+        removeButton.addEventListener("click", showDeleteModal);
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.classList.add("item-checkbox");
+        const checkboxId = "item-checkbox-" + itemCounter; // Generate unique ID
+        checkbox.id = checkboxId;
+
+        const label = document.createElement("label");
+        label.classList.add("sr-only");
+        label.textContent = "Checklist Item";
+        label.setAttribute("for", checkboxId); // Associate label with checkbox
+
+        const textInput = document.createElement("input");
+        textInput.type = "text";
+        textInput.classList.add("item-text-input");
+        const textInputId = "item-text-" + itemCounter; // Generate unique ID
+        textInput.id = textInputId;
+        textInput.placeholder = "Enter item text";
+
+        const textLabel = document.createElement("label");
+        textLabel.classList.add("sr-only");
+        textLabel.textContent = "Item Description";
+        textLabel.setAttribute("for", textInputId);
+
+        newItem.appendChild(removeButton);
+        newItem.appendChild(checkbox);
+        newItem.appendChild(label);
+        newItem.appendChild(textInput);
+        newItem.appendChild(textLabel);
+        checklistContainer.appendChild(newItem);
+        itemCounter++;
+      }
+
+      function showDeleteModal(event) {
+        itemToDelete = event.target.closest(".checklist-item");
+        deleteModal.style.display = "block";
+        // Set focus to the OK button for accessibility
+        modalOkButton.focus();
+      }
+
+      function hideDeleteModal() {
+        deleteModal.style.display = "none";
+        // Return focus to the remove button that triggered the modal
+        if (itemToDelete && itemToDelete.querySelector(".remove-button")) {
+          itemToDelete.querySelector(".remove-button").focus();
+        }
+        itemToDelete = null;
+      }
+
+      function deleteItem() {
+        if (itemToDelete) {
+          checklistContainer.removeChild(itemToDelete);
+          itemToDelete = null;
+        }
+        hideDeleteModal();
+      }
+
+      addItemButton.addEventListener("click", createNewItem);
+      modalOkButton.addEventListener("click", deleteItem);
+      modalCancelButton.addEventListener("click", hideDeleteModal);
+
+      // Close modal if user clicks outside of it
+      window.addEventListener("click", function (event) {
+        if (event.target == deleteModal) {
+          hideDeleteModal();
+        }
+      });
+
+      //set focus on the add new item button on load
+      window.onload = function () {
+        addItemButton.focus();
+      };
+
+      // Initial item.  Make sure the labels have the correct IDs.
+      const initialCheckbox = document.getElementById("item-checkbox-0");
+      const initialTextInput = document.getElementById("item-text-0");
+      if (initialCheckbox) {
+        const initialLabel = document.createElement("label");
+        initialLabel.classList.add("sr-only");
+        initialLabel.textContent = "Checklist Item";
+        initialLabel.setAttribute("for", "item-checkbox-0");
+        initialCheckbox.parentNode.insertBefore(initialLabel, initialCheckbox);
+      }
+      if (initialTextInput) {
+        const initialTextLabel = document.createElement("label");
+        initialTextLabel.classList.add("sr-only");
+        initialTextLabel.textContent = "Item Description";
+        initialTextLabel.setAttribute("for", "item-text-0");
+        initialTextInput.parentNode.appendChild(initialTextLabel);
+      }
+
+      const initialRemoveButton =
+        checklistContainer.querySelector(".remove-button");
+      if (initialRemoveButton) {
+        initialRemoveButton.addEventListener("click", showDeleteModal);
+      }
+    </script>
+  </body>
+</html>

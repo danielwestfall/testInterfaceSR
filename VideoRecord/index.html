@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Record a Message</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+      }
+
+      .countdown {
+        font-family: "Roboto", sans-serif;
+      }
+
+      .recording-timer {
+        font-family: "Roboto", sans-serif;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        border: 0;
+        padding: 0;
+        clip: rect(0 0 0 0);
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 flex flex-col items-center justify-start min-h-screen py-10"
+  >
+    <h1 class="text-3xl font-semibold text-blue-600 mb-8">Record a Message</h1>
+
+    <div class="mb-6 w-full max-w-md">
+      <label for="title" class="block text-gray-700 text-sm font-bold mb-2"
+        >Title:</label
+      >
+      <input
+        type="text"
+        id="title"
+        placeholder="Enter message title"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+    </div>
+
+    <div class="relative mb-8 w-full max-w-xl">
+      <video
+        id="webcam-video"
+        class="w-full rounded-lg shadow-md"
+        autoplay
+        muted
+        playsinline
+        controls
+        aria-describedby="video-description"
+      ></video>
+      <div id="video-description" class="visually-hidden">
+        Video of a user recording a message.
+      </div>
+      <div
+        id="countdown"
+        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-6xl font-bold rounded-lg"
+        style="display: none"
+      ></div>
+      <div
+        id="recording-timer"
+        class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded-md text-sm"
+      >
+        5:00
+      </div>
+    </div>
+
+    <div class="flex space-x-4">
+      <button
+        id="record-button"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+      >
+        <i class="material-icons mr-2">videocam</i>
+        <span id="record-button-text">Record</span>
+      </button>
+      <button
+        id="playback-button"
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+        disabled
+        style="display: none"
+      >
+        <i class="material-icons mr-2">play_arrow</i>
+        <span id="playback-button-text">Playback</span>
+      </button>
+    </div>
+
+    <script>
+      const titleInput = document.getElementById("title");
+      const videoElement = document.getElementById("webcam-video");
+      const recordButton = document.getElementById("record-button");
+      const playbackButton = document.getElementById("playback-button");
+      const countdownElement = document.getElementById("countdown");
+      const recordingTimerElement = document.getElementById("recording-timer");
+      const recordButtonTextElement =
+        document.getElementById("record-button-text");
+      const playbackButtonTextElement = document.getElementById(
+        "playback-button-text"
+      );
+
+      let mediaRecorder;
+      let recordedChunks = [];
+      let isRecording = false;
+      let recordingStartTime;
+      let timerInterval;
+      let stream;
+      let cancelButton; // Declare cancelButton globally
+      let recordedVideoURL = null; // To store the recorded video URL
+      let isPlaying = false;
+
+      async function setupWebcam() {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          videoElement.srcObject = stream;
+        } catch (err) {
+          console.error("Error accessing webcam:", err);
+          alert(
+            "Failed to access webcam. Please make sure your webcam is connected and allowed."
+          );
+        }
+      }
+
+      function startRecording() {
+        if (recordedChunks.length > 0) {
+          if (
+            !confirm(
+              "Recording a new message will overwrite the previous recording. Are you sure you want to continue?"
+            )
+          ) {
+            return;
+          }
+          recordedChunks = [];
+          //revoke previous url
+          if (recordedVideoURL) {
+            URL.revokeObjectURL(recordedVideoURL);
+            recordedVideoURL = null;
+          }
+        }
+
+        isRecording = true;
+        recordButtonTextElement.textContent = "Stop";
+        recordButton.textContent = "Stop";
+        recordButton.classList.remove("bg-blue-500", "hover:bg-blue-700");
+        recordButton.classList.add("bg-red-500", "hover:bg-red-700");
+        playbackButton.style.display = "none";
+        playbackButton.disabled = true; // Disable playback during recording
+
+        startCountdown();
+      }
+
+      function startCountdown() {
+        let count = 5;
+        countdownElement.textContent = count;
+        countdownElement.style.display = "flex";
+
+        const countdownInterval = setInterval(() => {
+          count--;
+          countdownElement.textContent = count;
+          if (count <= 0) {
+            clearInterval(countdownInterval);
+            countdownElement.style.display = "none";
+            startRecordingProcess();
+            if (cancelButton) {
+              cancelButton.remove();
+            }
+          }
+        }, 1000);
+
+        // Add a cancel button below the countdown
+        cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.className =
+          "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm";
+        countdownElement.parentElement.appendChild(cancelButton);
+
+        cancelButton.onclick = () => {
+          clearInterval(countdownInterval);
+          countdownElement.style.display = "none";
+          isRecording = false;
+          recordButtonTextElement.textContent = "Record";
+          recordButton.textContent = "Record";
+          recordButton.classList.remove("bg-red-500", "hover:bg-red-700");
+          recordButton.classList.add("bg-blue-500", "hover:bg-blue-700");
+          cancelButton.remove();
+        };
+      }
+
+      function startRecordingProcess() {
+        if (!isRecording) return;
+
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp9",
+        });
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          stopRecordingProcess();
+        };
+
+        recordedChunks = [];
+        mediaRecorder.start();
+        recordingStartTime = Date.now();
+        startTimer();
+      }
+
+      function stopRecordingProcess() {
+        clearInterval(timerInterval);
+        isRecording = false;
+        recordButtonTextElement.textContent = "Record";
+        recordButton.textContent = "Record";
+        recordButton.classList.remove("bg-red-500", "hover:bg-red-700");
+        recordButton.classList.add("bg-blue-500", "hover:bg-blue-700");
+        playbackButton.style.display = "inline-block";
+        playbackButton.disabled = false; // Enable after recording
+        recordingTimerElement.textContent = "5:00";
+      }
+
+      function stopRecording() {
+        if (isRecording) {
+          mediaRecorder.stop();
+          if (stream) {
+            // Check if stream is defined
+            stream.getTracks().forEach((track) => track.stop());
+          }
+        }
+      }
+
+      function playRecording() {
+        if (recordedChunks.length === 0) return;
+
+        const blob = new Blob(recordedChunks, {
+          type: "video/webm;codecs=vp9",
+        });
+        const url = URL.createObjectURL(blob);
+        recordedVideoURL = url;
+        videoElement.srcObject = null;
+        videoElement.src = url;
+        videoElement
+          .play()
+          .then(() => {
+            isPlaying = true;
+            playbackButtonTextElement.textContent = "Pause";
+            playbackButton.textContent = "Pause";
+            playbackButton.onclick = stopPlayback;
+
+            videoElement.onended = () => {
+              isPlaying = false;
+              playbackButtonTextElement.textContent = "Playback";
+              playbackButton.textContent = "Playback";
+              playbackButton.onclick = playRecording;
+            };
+          })
+          .catch((error) => {
+            console.error("Playback failed:", error);
+            isPlaying = false;
+            playbackButtonTextElement.textContent = "Playback";
+            playbackButton.textContent = "Playback";
+            playbackButton.onclick = playRecording;
+            alert("Failed to play video. Please try recording again.");
+          });
+      }
+
+      function stopPlayback() {
+        if (videoElement) {
+          videoElement.pause();
+        }
+        isPlaying = false;
+        playbackButtonTextElement.textContent = "Playback";
+        playbackButton.textContent = "Playback";
+        playbackButton.onclick = playRecording;
+      }
+
+      function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${
+          remainingSeconds < 10 ? "0" : ""
+        }${remainingSeconds}`;
+      }
+
+      function startTimer() {
+        let timeRemaining = 300;
+
+        recordingTimerElement.textContent = formatTime(timeRemaining);
+        timerInterval = setInterval(() => {
+          if (timeRemaining > 0) {
+            timeRemaining--;
+            recordingTimerElement.textContent = formatTime(timeRemaining);
+          } else {
+            clearInterval(timerInterval);
+            stopRecording();
+          }
+        }, 1000);
+      }
+
+      recordButton.addEventListener("click", () => {
+        if (isRecording) {
+          stopRecording();
+        } else {
+          startRecording();
+        }
+      });
+
+      playbackButton.addEventListener("click", playRecording);
+
+      window.onload = () => {
+        setupWebcam();
+      };
+    </script>
+  </body>
+</html>

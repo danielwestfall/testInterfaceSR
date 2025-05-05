@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Fraction Learning Tool</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      a.sr-only.focusable {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #000;
+        color: #fff;
+        padding: 8px;
+        z-index: 1000;
+      }
+
+      .fraction-block {
+        width: 100px;
+        height: 50px;
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3498db;
+        color: white;
+        cursor: grab;
+        border-radius: 5px;
+        user-select: none;
+        text-align: center;
+      }
+
+      .fraction-block:focus {
+        outline: 2px dashed #333;
+      }
+
+      .fraction-block[aria-pressed="true"] {
+        background-color: #2c3e50;
+      }
+
+      #dropzone {
+        width: 500px;
+        height: 60px;
+        display: flex;
+        border: 2px dashed #aaa;
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .grid-cell {
+        width: 50px;
+        height: 100%;
+        border-right: 1px solid #ccc;
+        box-sizing: border-box;
+        background-color: #f9f9f9;
+      }
+
+      .grid-cell:focus {
+        outline: 2px solid #3498db;
+      }
+
+      .placed {
+        position: absolute;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(46, 204, 113, 0.8);
+        color: white;
+        border-radius: 4px;
+        cursor: grab;
+      }
+
+      .placed:focus {
+        outline: 2px solid #2c3e50;
+      }
+
+      #controls {
+        margin-bottom: 10px;
+      }
+
+      button {
+        margin-right: 10px;
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+
+      .counter {
+        margin-top: 10px;
+        font-size: 18px;
+      }
+
+      .sr-only {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      details {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fraction Learning Tool</h1>
+
+    <div id="toolbar" role="toolbar" aria-label="Fraction blocks for placement">
+      <div
+        class="fraction-block"
+        tabindex="0"
+        data-fraction="1/2"
+        data-size="5"
+        aria-label="Fraction one-half"
+        aria-pressed="false"
+        role="button"
+        draggable="true"
+      >
+        1/2
+      </div>
+      <div
+        class="fraction-block"
+        tabindex="0"
+        data-fraction="1/5"
+        data-size="2"
+        aria-label="Fraction one-fifth"
+        aria-pressed="false"
+        role="button"
+        draggable="true"
+      >
+        1/5
+      </div>
+      <div
+        class="fraction-block"
+        tabindex="0"
+        data-fraction="1/10"
+        data-size="1"
+        aria-label="Fraction one-tenth"
+        aria-pressed="false"
+        role="button"
+        draggable="true"
+      >
+        1/10
+      </div>
+    </div>
+    <br />
+    <div id="controls">
+      <button id="reset">Reset</button>
+      <button id="delete">Delete Selected</button>
+    </div>
+
+    <div
+      id="dropzone"
+      role="region"
+      aria-label="Fraction placement grid"
+      aria-roledescription="grid"
+    >
+      <!-- Grid cells will be created dynamically by JavaScript -->
+    </div>
+
+    <div class="counter" id="coverage" aria-live="polite">
+      Covered: 0/10 cells
+    </div>
+    <div id="sr-announcer" class="sr-only" aria-live="polite"></div>
+
+    <details>
+      <summary>Keyboard Instructions</summary>
+      <ul>
+        <li>Tab to a fraction and press Enter or Space to select it.</li>
+        <li>Tab to a cell and press Enter or Space to place it.</li>
+        <li>Arrow keys move a selected placed block.</li>
+        <li>Delete or Backspace removes a selected placed block.</li>
+        <li>Escape cancels selection.</li>
+      </ul>
+    </details>
+
+    <script>
+      const toolbar = document.getElementById("toolbar");
+      const dropzone = document.getElementById("dropzone");
+      const resetButton = document.getElementById("reset");
+      const deleteButton = document.getElementById("delete");
+      const coverageCounter = document.getElementById("coverage");
+      const srAnnouncer = document.getElementById("sr-announcer");
+
+      const totalCells = 10;
+      const occupied = Array(totalCells).fill(false);
+
+      let selectedBlock = null;
+      let focusedPlacedBlock = null;
+      let draggedBlock = null;
+
+      function announce(msg) {
+        srAnnouncer.textContent = msg;
+      }
+
+      function updateCellLabels() {
+        document.querySelectorAll(".grid-cell").forEach((cell, i) => {
+          const status = occupied[i] ? "occupied" : "empty";
+          cell.setAttribute(
+            "aria-label",
+            `Cell ${i + 1} of ${totalCells}, ${status}`
+          );
+        });
+      }
+
+      function updateCoverageCounter() {
+        const covered = occupied.filter(Boolean).length;
+        coverageCounter.textContent = `Covered: ${covered}/10 cells`;
+        updateCellLabels();
+      }
+
+      function markOccupied(start, size) {
+        for (let i = start; i < start + size; i++) occupied[i] = true;
+        updateCoverageCounter();
+      }
+
+      function unmarkOccupied(start, size) {
+        for (let i = start; i < start + size; i++) occupied[i] = false;
+        updateCoverageCounter();
+      }
+
+      function canPlace(start, size) {
+        if (start + size > totalCells) return false;
+        for (let i = start; i < start + size; i++) {
+          if (occupied[i]) return false;
+        }
+        return true;
+      }
+
+      function placeBlock(fraction, size, left) {
+        const block = document.createElement("div");
+        block.className = "placed";
+        block.textContent = fraction;
+        block.setAttribute("tabindex", "0");
+        block.setAttribute("data-size", size);
+        block.setAttribute("data-fraction", fraction);
+        block.setAttribute("draggable", "true");
+        block.style.width = `${size * 50}px`;
+        block.style.left = `${left}px`;
+        block.style.top = "0";
+
+        const startIndex = left / 50;
+        markOccupied(startIndex, size);
+
+        block.addEventListener("click", () => selectPlacedBlock(block));
+        block.addEventListener("focus", () => selectPlacedBlock(block));
+        block.addEventListener("keydown", handlePlacedKeydown);
+        block.addEventListener("dragstart", handlePlacedDragStart);
+        dropzone.appendChild(block);
+      }
+
+      function selectPlacedBlock(block) {
+        selectedBlock = null;
+        focusedPlacedBlock = block;
+        block.focus();
+      }
+
+      function handlePlacedKeydown(e) {
+        if (!focusedPlacedBlock) return;
+        const dir = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
+        if (dir !== undefined) movePlacedBlock(dir);
+        if (e.key === "Delete" || e.key === "Backspace")
+          deleteSelectedPlacedBlock();
+      }
+
+      function movePlacedBlock(direction) {
+        const size = +focusedPlacedBlock.dataset.size;
+        const currentLeft =
+          +focusedPlacedBlock.style.left.replace("px", "") / 50;
+        const newLeft = currentLeft + direction;
+
+        unmarkOccupied(currentLeft, size);
+        if (
+          newLeft >= 0 &&
+          newLeft + size <= totalCells &&
+          canPlace(newLeft, size)
+        ) {
+          focusedPlacedBlock.style.left = `${newLeft * 50}px`;
+          markOccupied(newLeft, size);
+        } else {
+          markOccupied(currentLeft, size); // restore
+        }
+      }
+
+      function deleteSelectedPlacedBlock() {
+        if (focusedPlacedBlock) {
+          const start = +focusedPlacedBlock.style.left.replace("px", "") / 50;
+          const size = +focusedPlacedBlock.dataset.size;
+          unmarkOccupied(start, size);
+          focusedPlacedBlock.remove();
+          focusedPlacedBlock = null;
+        }
+      }
+
+      function placeFractionAt(index) {
+        if (!selectedBlock) return;
+        const fraction = selectedBlock.dataset.fraction;
+        const size = +selectedBlock.dataset.size;
+        if (canPlace(index, size)) {
+          placeBlock(fraction, size, index * 50);
+          markOccupied(index, size);
+          announce(`Placed ${fraction} at cell ${index + 1}`);
+          selectedBlock.setAttribute("aria-pressed", "false");
+          selectedBlock = null;
+        } else {
+          alert("Not enough space to place this fraction!");
+          announce("No room to place fraction");
+        }
+      }
+
+      // Generate grid cells dynamically
+      function generateGridCells() {
+        for (let i = 0; i < totalCells; i++) {
+          const cell = document.createElement("div");
+          cell.className = "grid-cell";
+          cell.setAttribute("tabindex", "0");
+          cell.setAttribute("data-index", i);
+          cell.setAttribute(
+            "aria-label",
+            `Cell ${i + 1} of ${totalCells}, empty`
+          );
+          cell.setAttribute("role", "gridcell");
+          cell.addEventListener("keydown", (e) => {
+            if ((e.key === "Enter" || e.key === " ") && selectedBlock) {
+              e.preventDefault();
+              placeFractionAt(i);
+            }
+          });
+          dropzone.appendChild(cell);
+        }
+      }
+
+      // Initialize the grid
+      generateGridCells();
+
+      document.querySelectorAll(".fraction-block").forEach((block) => {
+        block.addEventListener("click", () => {
+          selectedBlock = block;
+          block.setAttribute("aria-pressed", "true");
+          announce(
+            `${block.dataset.fraction} selected. Move to a cell to place.`
+          );
+        });
+        block.addEventListener("keydown", (e) => {
+          if ((e.key === "Enter" || e.key === " ") && !selectedBlock) {
+            selectedBlock = block;
+            block.setAttribute("aria-pressed", "true");
+            announce(
+              `${block.dataset.fraction} selected. Move to a cell to place.`
+            );
+          }
+        });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && selectedBlock) {
+          selectedBlock.setAttribute("aria-pressed", "false");
+          selectedBlock = null;
+          announce("Fraction selection canceled.");
+        }
+      });
+
+      dropzone.addEventListener("dragover", (e) => e.preventDefault());
+
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (draggedBlock) {
+          const fraction = draggedBlock.dataset.fraction;
+          const size = +draggedBlock.dataset.size;
+          const dropX = e.clientX - dropzone.getBoundingClientRect().left;
+          const index = Math.floor(dropX / 50);
+          if (canPlace(index, size)) {
+            placeBlock(fraction, size, index * 50);
+            markOccupied(index, size);
+            draggedBlock = null;
+            selectedBlock = null;
+          } else {
+            alert("Not enough space to place this fraction!");
+          }
+        }
+      });
+
+      function handlePlacedDragStart(e) {
+        draggedBlock = e.target;
+      }
+
+      resetButton.addEventListener("click", () => {
+        document.querySelectorAll(".placed").forEach((b) => b.remove());
+        occupied.fill(false);
+        updateCoverageCounter();
+        selectedBlock = null;
+        focusedPlacedBlock = null;
+        announce("Reset complete");
+      });
+
+      deleteButton.addEventListener("click", deleteSelectedPlacedBlock);
+
+      updateCoverageCounter(); // initial run
+    </script>
+  </body>
+</html>

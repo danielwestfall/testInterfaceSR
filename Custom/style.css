@@ -1,0 +1,293 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto auto auto; /* Adjust grid columns */
+  grid-template-rows: auto auto auto auto auto auto;
+  grid-gap: 20px;
+  min-height: 100vh;
+  padding: 0 20px;
+}
+
+header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Initially center everything */
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.logo {
+  /* Style your logo */
+  /* Removed grid-column, will handle with flex */
+}
+
+.logo img {
+  max-width: 150px;
+  height: auto;
+}
+
+nav {
+  /* Removed grid-column, will handle with flex */
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none; /* Initially hidden */
+  flex-direction: column;
+  position: absolute; /* For stacking on top */
+  background-color: white;
+  border: 1px solid #ccc;
+  top: 60px; /* Adjust based on header height */
+  left: 20px; /* Align with the menu button */
+  z-index: 10; /* Ensure it's on top */
+}
+
+nav ul.open {
+  display: block;
+}
+
+nav ul li a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: black;
+}
+
+.menu-button {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.top-buttons {
+  /* Removed grid-column, will handle with flex */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.edit-button,
+.exit-button {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+h1 {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 20px;
+}
+
+.filter-radios {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.big-button {
+  grid-column: 1 / -1;
+  display: block;
+  margin: 0 auto 20px;
+  padding: 15px 30px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  width: 100%;
+  max-width: 600px;
+}
+
+.item-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-around;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.group {
+  flex: 1;
+  max-width: 350px;
+}
+
+.item-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* Larger screens (desktop) */
+@media (min-width: 900px) {
+  body {
+    grid-template-columns: auto 1fr auto auto auto; /* Adjust grid */
+  }
+
+  header {
+    justify-content: space-between; /* Distribute items in header */
+  }
+
+  .logo {
+    /* No grid-column needed, flex will handle */
+  }
+
+  nav {
+    /* No grid-column needed, flex will handle */
+    margin-left: auto; /* Push menu to the right */
+    margin-right: auto; /* Push menu to the left, creating space */
+  }
+
+  .top-buttons {
+    /* No grid-column needed, flex will handle */
+  }
+
+  .edit-button {
+    /* No grid-column needed, flex will handle */
+  }
+
+  .exit-button {
+    /* No grid-column needed, flex will handle */
+  }
+
+  h1,
+  .filter-radios,
+  .big-button,
+  .item-container {
+    grid-column: 1 / -1; /* Ensure full width */
+  }
+}
+
+/* Smaller screens */
+@media (max-width: 899px) {
+  body {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  nav {
+    width: 100%;
+    justify-self: start;
+  }
+
+  nav ul {
+    position: static; /* Flow normally */
+    border: none;
+    margin-top: 10px;
+    left: auto;
+  }
+
+  nav ul.open {
+    display: block;
+  }
+
+  .menu-button {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .top-buttons {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .edit-button,
+  .exit-button {
+    flex-basis: 45%;
+  }
+
+  .filter-radios {
+    justify-content: space-around;
+  }
+
+  .big-button {
+    width: 100%;
+    max-width: none;
+  }
+
+  .item-container {
+    flex-direction: column;
+    padding: 0 10px;
+  }
+
+  .group {
+    max-width: 100%;
+  }
+}
+@media (min-width: 900px) {
+  body {
+    grid-template-columns: auto 1fr auto; /* Adjust body grid */
+  }
+
+  header {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto; /* Adjust header columns */
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .logo {
+    grid-column: 1 / 2;
+  }
+
+  nav {
+    grid-column: 2 / 3;
+    justify-self: center;
+  }
+
+  .top-buttons {
+    grid-column: 3 / 4;
+    justify-self: center;
+    display: flex;
+    gap: 10px;
+  }
+
+  .edit-button {
+    grid-column: 4 / 5;
+    justify-self: end;
+  }
+
+  .exit-button {
+    grid-column: 5 / 6;
+    justify-self: end;
+  }
+
+  h1,
+  .filter-radios,
+  .big-button,
+  .item-container {
+    grid-column: 1 / -1; /* Ensure full width for main content */
+  }
+}

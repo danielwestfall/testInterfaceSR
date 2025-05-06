@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu Editor</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: grid;
+        grid-template-columns: 200px 1fr 300px;
+        grid-template-rows: auto 1fr auto;
+        gap: 20px;
+        padding: 20px;
+        height: 100vh;
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      h1 {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 0;
+      }
+
+      .top-buttons {
+        grid-column: 3;
+        grid-row: 1;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .top-buttons button {
+        padding: 8px 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .left-column {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        overflow-y: auto; /* Make left column scrollable */
+      }
+
+      .radio-group {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+
+      .radio-toggle {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #f9f9f9;
+      }
+
+      .radio-toggle.selected {
+        background-color: #ddd;
+      }
+
+      .accordion-item {
+        border-bottom: 1px solid #eee;
+      }
+
+      .accordion-header {
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .accordion-header:focus {
+        outline: 2px solid blue; /* Add focus outline for accessibility */
+      }
+
+      .accordion-content {
+        padding: 10px;
+        display: none;
+      }
+
+      .accordion-content.open {
+        display: block;
+      }
+
+      .accordion-button {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 5px;
+        text-align: left;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #fff;
+        cursor: pointer;
+      }
+
+      .accordion-button.selected {
+        background-color: #e0e0e0;
+      }
+
+      .accordion-button:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      .add-accordion-item {
+        padding: 8px;
+        background-color: #f0f0f0;
+        border: 1px dashed #ccc;
+        border-radius: 3px;
+        text-align: center;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .add-accordion-item:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 5px;
+        position: relative;
+      }
+
+      .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .modal-content label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .modal-content input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+      }
+
+      .modal-content button {
+        padding: 10px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .modal-content button:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      .middle-column {
+        grid-column: 2;
+        grid-row: 2;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        overflow-y: auto;
+      }
+
+      .middle-column h2 {
+        margin-top: 0;
+      }
+
+      .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        min-height: 50px; /* Add a minimum height for drop target */
+      }
+
+      .item-list li button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 5px;
+        text-align: left;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #fff;
+        cursor: grab; /* Indicate draggable */
+      }
+
+      .item-list li button:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      .item-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        border-radius: 50%;
+      }
+
+      .right-column {
+        grid-column: 3;
+        grid-row: 2;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* Make right column scrollable */
+      }
+
+      .tab-container {
+        display: flex;
+        border-bottom: 1px solid #eee;
+      }
+
+      .tab-button {
+        padding: 8px 15px;
+        border: none;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        border-radius: 5px 5px 0 0;
+        margin-right: 5px;
+      }
+
+      .tab-button.active {
+        background-color: #ddd;
+      }
+
+      .tab-button:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      .tab-panel {
+        padding: 10px;
+      }
+
+      .tab-panel.hidden {
+        display: none;
+      }
+
+      .draggable-item {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #fff;
+        cursor: grab;
+        user-select: none; /* Prevent text selection during drag */
+      }
+
+      .draggable-item:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      .legend {
+        margin-top: 10px;
+        padding: 10px;
+        border-top: 1px solid #eee;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+
+      .legend-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .notification-box {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        background-color: #e6ffe6;
+        color: #336633;
+        border: 1px solid #99cc99;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        position: fixed; /* Fix the position at the bottom */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+      }
+
+      .notification-box.show {
+        opacity: 1;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+
+      .pagination button {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .pagination button:focus {
+        outline: 2px solid blue; /* Add focus outline */
+      }
+
+      /* Styles for different icon groups - for demo */
+      .icon-group-1 {
+        background-color: #f00;
+      }
+      .icon-group-2 {
+        background-color: #0f0;
+      }
+      .icon-group-3 {
+        background-color: #00f;
+      }
+      .icon-group-4 {
+        background-color: #ff0;
+      }
+      .icon-group-5 {
+        background-color: #f0f;
+      }
+      .icon-group-6 {
+        background-color: #0ff;
+      }
+      .icon-group-7 {
+        background-color: #aaa;
+      }
+      .icon-group-8 {
+        background-color: #555;
+      }
+
+      /* Style for dragging */
+      .dragging {
+        background-color: rgba(
+          255,
+          255,
+          0,
+          0.7
+        ); /* Yellowish, semi-transparent */
+        border: 2px dashed #333;
+        cursor: grabbing;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Menu Editor</h1>
+    <div class="top-buttons">
+      <button>Back</button>
+      <button>Exit</button>
+    </div>
+
+    <div class="left-column">
+      <div
+        class="radio-group"
+        role="radiogroup"
+        aria-label="Radio Toggle Options"
+      >
+        <button
+          class="radio-toggle selected"
+          role="radio"
+          aria-checked="true"
+          aria-labelledby="radio1-label"
+          id="radio1"
+        >
+          <span id="radio1-label">Radio Toggle</span>
+        </button>
+        <button
+          class="radio-toggle"
+          role="radio"
+          aria-checked="false"
+          aria-labelledby="radio2-label"
+          id="radio2"
+        >
+          <span id="radio2-label">Radio Toggle</span>
+        </button>
+      </div>
+
+      <div class="accordion-container">
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-1"
+            aria-controls="accordion-content-1"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 1
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-1"
+            aria-labelledby="accordion-header-1"
+          >
+            <button class="accordion-button" aria-label="Accordion 1 Item 1">
+              Item One
+            </button>
+            <button
+              class="accordion-button selected"
+              aria-label="Accordion 1 Item 2"
+              aria-pressed="true"
+            >
+              Item Two
+            </button>
+            <button class="accordion-button" aria-label="Accordion 1 Item 3">
+              Item Three
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 1"
+              data-accordion-id="accordion-content-1"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-2"
+            aria-controls="accordion-content-2"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 2
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-2"
+            aria-labelledby="accordion-header-2"
+          >
+            <button class="accordion-button" aria-label="Accordion 2 Item A">
+              Item A
+            </button>
+            <button class="accordion-button" aria-label="Accordion 2 Item B">
+              Item B
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 2"
+              data-accordion-id="accordion-content-2"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header selected"
+            id="accordion-header-3"
+            aria-controls="accordion-content-3"
+            aria-expanded="true"
+            tabindex="0"
+          >
+            Accordion 3
+            <span aria-hidden="true">-</span>
+          </div>
+          <div
+            class="accordion-content open"
+            id="accordion-content-3"
+            aria-labelledby="accordion-header-3"
+          >
+            <button
+              class="accordion-button selected"
+              aria-label="Accordion 3 Subitem 1"
+              aria-pressed="true"
+            >
+              Accordion Subitem 1
+            </button>
+            <button class="accordion-button" aria-label="Accordion 3 Subitem 2">
+              Accordion Subitem 2
+            </button>
+            <button class="accordion-button" aria-label="Accordion 3 Subitem 3">
+              Accordion Subitem 3
+            </button>
+            <button class="accordion-button" aria-label="Accordion 3 Subitem 4">
+              Accordion Subitem 4
+            </button>
+            <button class="accordion-button" aria-label="Accordion 3 Subitem 5">
+              Accordion Subitem 5
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 3"
+              data-accordion-id="accordion-content-3"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-4"
+            aria-controls="accordion-content-4"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 4
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-4"
+            aria-labelledby="accordion-header-4"
+          >
+            <button class="accordion-button" aria-label="Accordion 4 Item X">
+              Item X
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 4"
+              data-accordion-id="accordion-content-4"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-5"
+            aria-controls="accordion-content-5"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 5
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-5"
+            aria-labelledby="accordion-header-5"
+          >
+            <button class="accordion-button" aria-label="Accordion 5 Alpha">
+              Alpha
+            </button>
+            <button
+              class="accordion-button selected"
+              aria-label="Accordion 5 Beta"
+              aria-pressed="true"
+            >
+              Beta
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 5"
+              data-accordion-id="accordion-content-5"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-6"
+            aria-controls="accordion-content-6"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 6
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-6"
+            aria-labelledby="accordion-header-6"
+          >
+            <button class="accordion-button" aria-label="Accordion 6 - 1">
+              6 - One
+            </button>
+            <button class="accordion-button" aria-label="Accordion 6 - 2">
+              6 - Two
+            </button>
+            <button class="accordion-button" aria-label="Accordion 6 - 3">
+              6 - Three
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 6"
+              data-accordion-id="accordion-content-6"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-7"
+            aria-controls="accordion-content-7"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 7
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-7"
+            aria-labelledby="accordion-header-7"
+          >
+            <button class="accordion-button" aria-label="Accordion 7 - A">
+              7 - A
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 7"
+              data-accordion-id="accordion-content-7"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div
+            class="accordion-header"
+            id="accordion-header-8"
+            aria-controls="accordion-content-8"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            Accordion 8
+            <span aria-hidden="true">+</span>
+          </div>
+          <div
+            class="accordion-content"
+            id="accordion-content-8"
+            aria-labelledby="accordion-header-8"
+          >
+            <button class="accordion-button" aria-label="Accordion 8 - First">
+              First Item
+            </button>
+            <button class="accordion-button" aria-label="Accordion 8 - Second">
+              Second Item
+            </button>
+            <button
+              class="accordion-button selected"
+              aria-label="Accordion 8 - Last"
+              aria-pressed="true"
+            >
+              Last One
+            </button>
+            <div
+              class="add-accordion-item"
+              tabindex="0"
+              aria-label="Add item to Accordion 8"
+              data-accordion-id="accordion-content-8"
+            >
+              + Add Accordion Subitem
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="middle-column">
+      <h2>Selected Item</h2>
+      <ul class="item-list" aria-label="Items dropped here"></ul>
+    </div>
+
+    <div class="right-column">
+      <div class="tab-container" role="tablist" aria-label="Available Items">
+        <button
+          class="tab-button active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="tab-panel-1"
+          id="tab-1"
+        >
+          Tab 1
+        </button>
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-panel-2"
+          id="tab-2"
+        >
+          Tab 2
+        </button>
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-panel-3"
+          id="tab-3"
+        >
+          Tab 3
+        </button>
+        <div class="pagination">
+          <button id="prev-tab">Prev</button>
+          <button id="next-tab">Next</button>
+        </div>
+      </div>
+      <div
+        class="tab-panel"
+        id="tab-panel-1"
+        aria-labelledby="tab-1"
+        role="tabpanel"
+      >
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 1-1, Group 1"
+          data-item-name="Item 1-1"
+          data-item-group="1"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-1"></span> Item 1-1
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 1-2, Group 2"
+          data-item-name="Item 1-2"
+          data-item-group="2"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-2"></span> Item 1-2
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 1-3, Group 1"
+          data-item-name="Item 1-3"
+          data-item-group="1"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-1"></span> Item 1-3
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 1-4, Group 3"
+          data-item-name="Item 1-4"
+          data-item-group="3"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-3"></span> Item 1-4
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 1-5, Group 2"
+          data-item-name="Item 1-5"
+          data-item-group="2"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-2"></span> Item 1-5
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 1-6, Group 4"
+          data-item-name="Item 1-6"
+          data-item-group="4"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-4"></span> Item 1-6
+        </div>
+      </div>
+      <div
+        class="tab-panel hidden"
+        id="tab-panel-2"
+        aria-labelledby="tab-2"
+        role="tabpanel"
+      >
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 2-1, Group 3"
+          data-item-name="Item 2-1"
+          data-item-group="3"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-3"></span> Item 2-1
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 2-2, Group 4"
+          data-item-name="Item 2-2"
+          data-item-group="4"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-4"></span> Item 2-2
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 2-3, Group 5"
+          data-item-name="Item 2-3"
+          data-item-group="5"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-5"></span> Item 2-3
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 2-4, Group 6"
+          data-item-name="Item 2-4"
+          data-item-group="6"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-6"></span> Item 2-4
+        </div>
+      </div>
+      <div
+        class="tab-panel hidden"
+        id="tab-panel-3"
+        aria-labelledby="tab-3"
+        role="tabpanel"
+      >
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 3-1, Group 5"
+          data-item-name="Item 3-1"
+          data-item-group="5"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-5"></span> Item 3-1
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 3-2, Group 6"
+          data-item-name="Item 3-2"
+          data-item-group="6"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-6"></span> Item 3-2
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 3-3, Group 7"
+          data-item-name="Item 3-3"
+          data-item-group="7"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-7"></span> Item 3-3
+        </div>
+        <div
+          class="draggable-item"
+          draggable="true"
+          aria-label="Item 3-4, Group 8"
+          data-item-name="Item 3-4"
+          data-item-group="8"
+          tabindex="0"
+        >
+          <span class="item-icon icon-group-8"></span> Item 3-4
+        </div>
+      </div>
+
+      <div class="legend">
+        <h3>Icon Group Legend</h3>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-1"></span> Group 1
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-2"></span> Group 2
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-3"></span> Group 3
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-4"></span> Group 4
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-5"></span> Group 5
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-6"></span> Group 6
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-7"></span> Group 7
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon icon-group-8"></span> Group 8
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="add-item-modal">
+      <div class="modal-content">
+        <span class="close-button" id="close-modal">&times;</span>
+        <h2>Add New Item</h2>
+        <label for="new-item-name">Item Name:</label>
+        <input type="text" id="new-item-name" name="new-item-name" />
+        <button id="add-new-item-button" data-accordion-id="">Add Item</button>
+      </div>
+    </div>
+
+    <div class="notification-box" id="notification-box"></div>
+
+    <script>
+      const radioGroup = document.querySelector(".radio-group");
+      const radioToggles = document.querySelectorAll(".radio-toggle");
+      const accordionHeaders = document.querySelectorAll(".accordion-header");
+      const accordionContents = document.querySelectorAll(".accordion-content");
+      const addAccordionItemButtons = document.querySelectorAll(
+        ".add-accordion-item"
+      );
+      const addItemModal = document.getElementById("add-item-modal");
+      const closeModalButton = document.getElementById("close-modal");
+      const newItemNameInput = document.getElementById("new-item-name");
+      const addNewItemButton = document.getElementById("add-new-item-button");
+      const itemList = document.querySelector(".item-list");
+      const notificationBox = document.getElementById("notification-box");
+      const tabButtons = document.querySelectorAll(".tab-button");
+      const tabPanels = document.querySelectorAll(".tab-panel");
+      const prevTabButton = document.getElementById("prev-tab");
+      const nextTabButton = document.getElementById("next-tab");
+      const numTabs = tabButtons.length;
+      let currentTab = 0;
+      let draggedItem = null;
+
+      // --- Utility Functions ---
+
+      /**
+       * Displays a notification message.
+       * @param {string} message - The message to display.
+       */
+      function showNotification(message) {
+        notificationBox.textContent = message;
+        notificationBox.classList.add("show");
+        setTimeout(() => {
+          notificationBox.classList.remove("show");
+        }, 3000); // Hide after 3 seconds
+      }
+
+      // --- Radio Group Handlers ---
+      radioToggles.forEach((radio) => {
+        radio.addEventListener("click", () => {
+          radioToggles.forEach((r) => {
+            r.classList.remove("selected");
+            r.setAttribute("aria-checked", "false");
+          });
+          radio.classList.add("selected");
+          radio.setAttribute("aria-checked", "true");
+        });
+        // Keyboard navigation
+        radio.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === "Space") {
+            e.preventDefault();
+            radioToggles.forEach((r) => {
+              r.classList.remove("selected");
+              r.setAttribute("aria-checked", "false");
+            });
+            radio.classList.add("selected");
+            radio.setAttribute("aria-checked", "true");
+          }
+        });
+      });
+
+      // --- Accordion Handlers ---
+
+      accordionHeaders.forEach((header) => {
+        header.addEventListener("click", () => {
+          const contentId = header.getAttribute("aria-controls");
+          const content = document.getElementById(contentId);
+          const isExpanded = header.getAttribute("aria-expanded") === "true";
+
+          header.classList.toggle("selected", !isExpanded);
+          header.setAttribute("aria-expanded", String(!isExpanded));
+          content.classList.toggle("open", !isExpanded);
+          const span = header.querySelector("span");
+          span.textContent = isExpanded ? "+" : "-";
+        });
+
+        // Keyboard navigation for accordion headers
+        header.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === "Space") {
+            e.preventDefault();
+            header.click(); // Simulate click to toggle
+          }
+        });
+      });
+
+      // --- Accordion Item Handlers ---
+      const accordionButtons = document.querySelectorAll(".accordion-button");
+      accordionButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          accordionButtons.forEach((b) => b.classList.remove("selected"));
+          button.classList.add("selected");
+          updateMiddleColumn(button);
+        });
+        button.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === "Space") {
+            e.preventDefault();
+            accordionButtons.forEach((b) => b.classList.remove("selected"));
+            button.classList.add("selected");
+            updateMiddleColumn(button);
+          }
+        });
+      });
+
+      // --- Add Item Modal Handlers ---
+
+      addAccordionItemButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          addItemModal.style.display = "block";
+          newItemNameInput.value = ""; // Clear input
+          // Set focus to the input field when the modal opens
+          newItemNameInput.focus();
+          // Store the accordion ID in the modal's add button
+          addNewItemButton.setAttribute(
+            "data-accordion-id",
+            button.getAttribute("data-accordion-id")
+          );
+        });
+        button.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === "Space") {
+            addItemModal.style.display = "block";
+            newItemNameInput.value = ""; // Clear input
+            newItemNameInput.focus();
+            addNewItemButton.setAttribute(
+              "data-accordion-id",
+              button.getAttribute("data-accordion-id")
+            );
+          }
+        });
+      });
+
+      closeModalButton.addEventListener("click", () => {
+        addItemModal.style.display = "none";
+      });
+
+      addNewItemButton.addEventListener("click", () => {
+        const newItemName = newItemNameInput.value.trim();
+        if (newItemName) {
+          // Find the correct accordion content to add to
+          const accordionId =
+            addNewItemButton.getAttribute("data-accordion-id");
+          const contentElement = document.getElementById(accordionId);
+
+          if (contentElement) {
+            const newButton = document.createElement("button");
+            newButton.className = "accordion-button";
+            newButton.textContent = newItemName;
+            newButton.addEventListener("click", () => {
+              accordionButtons.forEach((b) => b.classList.remove("selected"));
+              newButton.classList.add("selected");
+              updateMiddleColumn(newButton);
+            });
+            newButton.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === "Space") {
+                e.preventDefault();
+                accordionButtons.forEach((b) => b.classList.remove("selected"));
+                newButton.classList.add("selected");
+                updateMiddleColumn(newButton);
+              }
+            });
+            contentElement.appendChild(newButton);
+            addItemModal.style.display = "none";
+            // Show message with the accordion header text.
+            const headerText = document
+              .querySelector(`[aria-controls="${accordionId}"]`)
+              .textContent.trim();
+            showNotification(`Item "${newItemName}" added to ${headerText}`);
+          }
+        } else {
+          alert("Please enter an item name.");
+        }
+      });
+
+      // --- Drag and Drop Handlers ---
+      function handleDragStart(event) {
+        draggedItem = event.target;
+        draggedItem.classList.add("dragging");
+        event.dataTransfer.effectAllowed = "move";
+      }
+
+      function handleDragOver(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+      }
+
+      function handleDrop(event) {
+        event.preventDefault();
+        if (event.target.classList.contains("item-list")) {
+          const droppedItem = draggedItem.cloneNode(true);
+          // Remove the dragged item.
+          draggedItem.remove();
+          event.target.appendChild(droppedItem); // Add clone to the drop target
+          droppedItem.classList.remove("dragging");
+          const itemName = droppedItem.textContent;
+          showNotification(`Item "${itemName}" added to list`);
+          draggedItem = null;
+        }
+      }
+
+      // Attach drag and drop events to draggable items
+      document.addEventListener("dragstart", handleDragStart);
+      document.addEventListener("dragover", handleDragOver);
+      document.addEventListener("drop", handleDrop);
+
+      // --- Tab Handlers ---
+      function showTab(tabIndex) {
+        tabButtons.forEach((button, index) => {
+          button.classList.toggle("active", index === tabIndex);
+          button.setAttribute("aria-selected", String(index === tabIndex));
+        });
+        tabPanels.forEach((panel, index) => {
+          panel.classList.toggle("hidden", index !== tabIndex);
+        });
+        currentTab = tabIndex;
+      }
+
+      function nextTab() {
+        currentTab = (currentTab + 1) % numTabs;
+        showTab(currentTab);
+      }
+
+      function prevTab() {
+        currentTab = (currentTab - 1 + numTabs) % numTabs;
+        showTab(currentTab);
+      }
+
+      tabButtons.forEach((button, index) => {
+        button.addEventListener("click", () => showTab(index));
+        button.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === "Space") {
+            e.preventDefault();
+            showTab(index);
+          }
+        });
+      });
+
+      prevTabButton.addEventListener("click", prevTab);
+      nextTabButton.addEventListener("click", nextTab);
+
+      // Initialize the first tab
+      showTab(0);
+
+      // --- Middle Column Update ---
+      function updateMiddleColumn(selectedButton) {
+        const middleColumnContent = document.querySelector(".middle-column");
+        middleColumnContent.innerHTML =
+          '<h2>Selected Item</h2><ul class="item-list"  aria-label="Items dropped here"></ul>'; // Clear previous content
+        const selectedText = selectedButton.textContent;
+
+        if (selectedText) {
+          const h2 = document.createElement("h2");
+          h2.textContent = selectedText;
+          middleColumnContent.appendChild(h2);
+
+          const ul = document.createElement("ul");
+          ul.classList.add("item-list");
+          ul.setAttribute("aria-label", "Items related to " + selectedText);
+
+          // Get items from the selected tab and append to the list
+          const tabItems = document.querySelectorAll(
+            ".tab-panel:not(.hidden) .draggable-item"
+          );
+          tabItems.forEach((item) => {
+            const newItem = document.createElement("li");
+            newItem.textContent = item.textContent;
+            newItem.setAttribute(
+              "data-item-name",
+              item.getAttribute("data-item-name")
+            );
+            newItem.setAttribute(
+              "data-item-group",
+              item.getAttribute("data-item-group")
+            );
+            newItem.classList.add("draggable-item"); // Ensure it has the draggable class
+            newItem.setAttribute("draggable", "true");
+            newItem.setAttribute("tabindex", "0"); // Make it focusable
+            // Style the item
+            newItem.style.display = "flex";
+            newItem.style.alignItems = "center";
+            newItem.style.padding = "8px";
+            newItem.style.marginBottom = "5px";
+            newItem.style.border = "1px solid #ddd";
+            newItem.style.borderRadius = "3px";
+            newItem.style.backgroundColor = "#fff";
+            newItem.style.cursor = "grab";
+            newItem.addEventListener("dragstart", handleDragStart);
+            newItem.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === "Space") {
+                e.preventDefault();
+                handleDrop(e);
+              }
+            });
+            ul.appendChild(newItem);
+          });
+          middleColumnContent.appendChild(ul);
+        }
+      }
+    </script>
+  </body>
+</html>

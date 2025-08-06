@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bilingual Screen Reader Test Widget</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.6;
+        margin: 2em;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #f4f4f4;
+        padding: 2em;
+        border-radius: 8px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 1em;
+        font-size: 1.2em;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 1em;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      /* Visually hidden but accessible to screen readers */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        background-color: #e9ecef;
+        margin-bottom: 0.5em;
+        padding: 0.8em;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bilingual Screen Reader Test</h1>
+
+      <p>
+        Click the button below to trigger a random bilingual announcement. The
+        English and Spanish parts are now announced via separate,
+        language-specific live regions.
+      </p>
+
+      <button onclick="announcePhrase()">Announce Random Phrase</button>
+
+      <!-- English live region -->
+      <div
+        id="announcement-area-en"
+        class="sr-only"
+        role="status"
+        aria-live="polite"
+        lang="en"
+      ></div>
+      <!-- Spanish live region -->
+      <div
+        id="announcement-area-es"
+        class="sr-only"
+        role="status"
+        aria-live="polite"
+        lang="es"
+      ></div>
+
+      <hr />
+
+      <h2>Phrases List</h2>
+      <p>This list contains the phrases that will be randomly announced.</p>
+      <ul id="phrases-list">
+        <li>The sky is blue. <span lang="es">El cielo es azul.</span></li>
+        <li>
+          I am learning to code.
+          <span lang="es">Estoy aprendiendo a programar.</span>
+        </li>
+        <li>What time is it? <span lang="es">¿Qué hora es?</span></li>
+        <li>
+          The sun is shining. <span lang="es">El sol está brillando.</span>
+        </li>
+        <li>How are you? <span lang="es">¿Cómo estás?</span></li>
+        <li>
+          I love this website. <span lang="es">Me encanta este sitio web.</span>
+        </li>
+        <li>
+          The coffee is hot. <span lang="es">El café está caliente.</span>
+        </li>
+        <li>
+          Please close the door.
+          <span lang="es">Por favor, cierra la puerta.</span>
+        </li>
+        <li>
+          Where is the library?
+          <span lang="es">¿Dónde está la biblioteca?</span>
+        </li>
+        <li>Let's go for a walk. <span lang="es">Vamos a caminar.</span></li>
+      </ul>
+    </div>
+
+    <script>
+      // Store phrases as objects with separate English and Spanish parts
+      const phrases = [
+        { english: "The sky is blue.", spanish: "El cielo es azul." },
+        {
+          english: "I am learning to code.",
+          spanish: "Estoy aprendiendo a programar.",
+        },
+        { english: "What time is it?", spanish: "¿Qué hora es?" },
+        { english: "The sun is shining.", spanish: "El sol está brillando." },
+        { english: "How are you?", spanish: "¿Cómo estás?" },
+        {
+          english: "I love this website.",
+          spanish: "Me encanta este sitio web.",
+        },
+        { english: "The coffee is hot.", spanish: "El café está caliente." },
+        {
+          english: "Please close the door.",
+          spanish: "Por favor, cierra la puerta.",
+        },
+        {
+          english: "Where is the library?",
+          spanish: "¿Dónde está la biblioteca?",
+        },
+        { english: "Let's go for a walk.", spanish: "Vamos a caminar." },
+      ];
+
+      function announcePhrase() {
+        const randomIndex = Math.floor(Math.random() * phrases.length);
+        const selectedPhrase = phrases[randomIndex];
+
+        const announcementAreaEn = document.getElementById(
+          "announcement-area-en"
+        );
+        const announcementAreaEs = document.getElementById(
+          "announcement-area-es"
+        );
+
+        // Clear previous content from both areas
+        announcementAreaEn.textContent = "";
+        announcementAreaEs.textContent = "";
+
+        // Use a small delay for each announcement to ensure they are processed sequentially
+        // This helps screen readers announce each part distinctly and with the correct language.
+        setTimeout(() => {
+          announcementAreaEn.textContent = selectedPhrase.english;
+        }, 10); // Announce English first
+
+        setTimeout(() => {
+          announcementAreaEs.textContent = selectedPhrase.spanish;
+        }, 500); // Announce Spanish after a short pause (e.g., 500ms after English)
+      }
+    </script>
+  </body>
+</html>

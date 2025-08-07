@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARIA Random Announcer</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* A utility class to visually hide content but keep it accessible to screen readers */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center">
+      <h1 class="text-2xl font-bold mb-6 text-gray-800">
+        Random ARIA Announcer
+      </h1>
+
+      <!-- This is the ARIA live region. The content and language are set dynamically by the script. -->
+      <div
+        id="announcement-region"
+        aria-live="polite"
+        aria-atomic="true"
+        role="status"
+        class="sr-only"
+      ></div>
+
+      <div class="space-y-4">
+        <!-- Single button to trigger a random announcement -->
+        <button
+          id="announce-btn"
+          class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold shadow-md hover:bg-blue-600 transition-colors"
+        >
+          Announce Random Phrase
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Get references to the HTML elements
+      const announcementRegion = document.getElementById("announcement-region");
+      const announceBtn = document.getElementById("announce-btn");
+
+      // Define an array of phrases with their language codes
+      const phrases = [
+        { text: "Hello, this is a random English announcement.", lang: "en" },
+        { text: "Hola, este es un anuncio aleatorio en español.", lang: "es" },
+        { text: "The weather is great today.", lang: "en" },
+        { text: "¿Cómo estás?", lang: "es" },
+        { text: "Have a wonderful day!", lang: "en" },
+        { text: "¡Que tengas un día maravilloso!", lang: "es" },
+      ];
+
+      // Add event listener for the button click
+      announceBtn.addEventListener("click", () => {
+        // Get a random phrase from the array
+        const randomIndex = Math.floor(Math.random() * phrases.length);
+        const randomPhrase = phrases[randomIndex];
+
+        // To ensure the screen reader announces the new content,
+        // we first clear the live region before adding new content.
+        announcementRegion.textContent = "";
+
+        // Set the language and content of the live region
+        // Setting the lang attribute is crucial for correct pronunciation.
+        announcementRegion.lang = randomPhrase.lang;
+        announcementRegion.textContent = randomPhrase.text;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Canvas Widget with Hidden Mirror</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+  button {
+    cursor: pointer;
+  }
+  #canvasContainer {
+    position: relative;
+  }
+  canvas {
+    border: 1px solid #ccc;
+    display: block;
+    margin-top: 10px;
+    width: 100%;
+    height: auto;
+  }
+  /* Offscreen but accessible mirror inside the canvas container */
+  #mirror {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(100%);
+    border: 0;
+    white-space: nowrap;
+  }
+  /* Focus styles for mirror elements (for testing) */
+  #mirror h2:focus,
+  #mirror p:focus,
+  #mirror button:focus {
+    outline: 3px solid #007BFF;
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Accessible Canvas Widget with Hidden Mirror</h1>
+
+<div id="canvasContainer" aria-live="polite" aria-atomic="true">
+  <canvas id="myCanvas" width="560" height="320" role="img" aria-label="Interactive canvas with heading, text, photo, and button" tabindex="0"></canvas>
+
+  <!-- Offscreen mirror inside the canvas container -->
+  <div id="mirror" aria-hidden="false" tabindex="-1">
+    <h2 id="mirror-heading" tabindex="0">Canvas Heading</h2>
+    <p id="mirror-text" tabindex="0">This is a description of the canvas content.</p>
+    <img src="https://via.placeholder.com/150" alt="Placeholder image of a gray box with dimensions 150x150" />
+    <button id="mirror-button">Click Me</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const mirrorHeading = document.getElementById('mirror-heading');
+  const mirrorText = document.getElementById('mirror-text');
+  const mirrorButton = document.getElementById('mirror-button');
+
+  const focusItems = [mirrorHeading, mirrorText, mirrorButton];
+  let focusIndex = -1;
+
+function drawCanvas(focusIdx = -1) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw heading
+  ctx.font = '28px Arial';
+  ctx.fillStyle = focusIdx === 0 ? 'gold' : 'black';
+  ctx.fillText('Canvas Heading', 20, 50);
+
+  // Draw text
+  ctx.font = '18px Arial';
+  ctx.fillStyle = focusIdx === 1 ? 'gold' : 'black';
+  ctx.fillText('This is a description of the canvas content.', 20, 90);
+
+  // Draw image
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 20, 110, 150, 150);
+  };
+  img.src = 'https://via.placeholder.com/150';
+
+  // Draw button rectangle
+  ctx.fillStyle = focusIdx === 2 ? '#004a99' : '#007BFF';
+  ctx.fillRect(200, 230, 130, 50);
+  ctx.fillStyle = 'white';
+  ctx.font = '20px Arial';
+  ctx.fillText('Click Me', 225, 265);
+
+  // Draw focus outline on button if focused
+  if (focusIdx === 2) {
+    ctx.strokeStyle = 'yellow';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(200, 230, 130, 50);
+  }
+}
+
+  drawCanvas();
+
+  canvas.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const active = document.activeElement;
+      let idx = focusItems.indexOf(active);
+      if (e.shiftKey) {
+        idx = idx <= 0 ? focusItems.length - 1 : idx - 1;
+      } else {
+        idx = idx === -1 ? 0 : (idx + 1) % focusItems.length;
+      }
+      focusItems[idx].focus();
+    }
+  });
+
+  focusItems.forEach((el, idx) => {
+    el.addEventListener('focus', () => {
+      focusIndex = idx;
+      drawCanvas(focusIndex);
+    });
+  });
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (x >= 200 && x <= 330 && y >= 230 && y <= 280) {
+      mirrorButton.click();
+    }
+  });
+
+  mirrorButton.addEventListener('click', () => {
+    alert('You clicked the canvas button!');
+  });
+})();
+</script>
+
+</body>
+</html>

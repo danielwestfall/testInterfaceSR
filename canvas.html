@@ -92,7 +92,7 @@ function drawCanvas(focusIdx = -1) {
   img.onload = () => {
     ctx.drawImage(img, 20, 110, 150, 150);
   };
-  img.src = 'https://via.placeholder.com/150';
+  img.src = 'placeholder.png';
 
   // Draw button rectangle
   ctx.fillStyle = focusIdx === 2 ? '#004a99' : '#007BFF';

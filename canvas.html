@@ -87,16 +87,16 @@
 
     // Draw heading
     ctx.font = '28px Arial';
-    ctx.fillStyle = focusIdx === 0 ? 'gold' : 'black';
+    ctx.fillStyle = focusIdx === 0 ? 'purple' : 'black';
     ctx.fillText('Canvas Heading', 20, 50);
 
     // Draw translated text
     ctx.font = '18px Arial';
-    ctx.fillStyle = focusIdx === 1 ? 'gold' : 'black';
+    ctx.fillStyle = focusIdx === 1 ? 'purple' : 'black';
     ctx.fillText('Welcome to an accessible canvas element.', 20, 90);
 
     // Draw the new line of text
-    ctx.fillStyle = focusIdx === 2 ? 'gold' : 'black'; // New focus state
+    ctx.fillStyle = focusIdx === 2 ? 'purple' : 'black'; // New focus state
     ctx.fillText('Bienvenido a un elemento de lienzo accesible.', 20, 115);
 
     // Draw image
@@ -106,7 +106,7 @@
 
       // Draw focus outline on image if focused
       if (focusIdx === 3) {
-        ctx.strokeStyle = 'yellow';
+        ctx.strokeStyle = 'purple';
         ctx.lineWidth = 4;
         ctx.strokeRect(20, 140, 150, 150);
       }
@@ -122,7 +122,7 @@
 
     // Draw focus outline on button if focused
     if (focusIdx === 4) {
-      ctx.strokeStyle = 'yellow';
+      ctx.strokeStyle = 'purple';
       ctx.lineWidth = 4;
       ctx.strokeRect(200, 260, 130, 50);
     }

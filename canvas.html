@@ -58,12 +58,13 @@
   <canvas id="myCanvas" width="560" height="320" role="img" aria-label="Interactive canvas with heading, text, photo, and button" tabindex="0"></canvas>
 
   <!-- Offscreen mirror inside the canvas container -->
-  <div id="mirror" aria-hidden="false" tabindex="-1">
-    <h2 id="mirror-heading" tabindex="0">Canvas Heading</h2>
-    <p id="mirror-text" tabindex="0">This is a description of the canvas content.</p>
-    <img id="mirror-image" src="placeholder.png" alt="Placeholder image of a gray box with dimensions 150x150" tabindex="0" />
-    <button id="mirror-button">Click Me</button>
-  </div>
+<div id="mirror" aria-hidden="false" tabindex="-1">
+  <h2 id="mirror-heading" tabindex="0">Canvas Heading</h2>
+  <p id="mirror-text" tabindex="0" lang="es">Esto es una descripción del contenido del lienzo.</p>
+  <p id="mirror-new-text" tabindex="0">This is a new line of text.</p>
+  <img id="mirror-image" src="placeholder.png" alt="Placeholder image of a gray box with dimensions 150x150" tabindex="0" />
+  <button id="mirror-button">Click Me</button>
+</div>
 </div>
 
 <script>
@@ -73,10 +74,12 @@
 
   const mirrorHeading = document.getElementById('mirror-heading');
   const mirrorText = document.getElementById('mirror-text');
+  const mirrorNewText = document.getElementById('mirror-new-text'); // New variable for the new text
   const mirrorImage = document.getElementById('mirror-image');
   const mirrorButton = document.getElementById('mirror-button');
 
-  const focusItems = [mirrorHeading, mirrorText, mirrorImage, mirrorButton];
+  // Update the focusItems array to include the new text
+  const focusItems = [mirrorHeading, mirrorText, mirrorNewText, mirrorImage, mirrorButton];
   let focusIndex = -1;
 
   function drawCanvas(focusIdx = -1) {
@@ -84,40 +87,44 @@
 
     // Draw heading
     ctx.font = '28px Arial';
-    ctx.fillStyle = focusIdx === 0 ? 'purple' : 'black';
+    ctx.fillStyle = focusIdx === 0 ? 'gold' : 'black';
     ctx.fillText('Canvas Heading', 20, 50);
 
-    // Draw text
+    // Draw translated text
     ctx.font = '18px Arial';
-    ctx.fillStyle = focusIdx === 1 ? 'purple' : 'black';
-    ctx.fillText('This is a description of the canvas content.', 20, 90);
+    ctx.fillStyle = focusIdx === 1 ? 'gold' : 'black';
+    ctx.fillText('Esto es una descripción del contenido del lienzo.', 20, 90);
+
+    // Draw the new line of text
+    ctx.fillStyle = focusIdx === 2 ? 'gold' : 'black'; // New focus state
+    ctx.fillText('This is a new line of text.', 20, 115);
 
     // Draw image
     const img = new Image();
     img.onload = () => {
-      ctx.drawImage(img, 20, 110, 150, 150);
+      ctx.drawImage(img, 20, 140, 150, 150); // Adjust Y position for the new text
 
       // Draw focus outline on image if focused
-      if (focusIdx === 2) {
-        ctx.strokeStyle = 'purple';
+      if (focusIdx === 3) {
+        ctx.strokeStyle = 'yellow';
         ctx.lineWidth = 4;
-        ctx.strokeRect(20, 110, 150, 150);
+        ctx.strokeRect(20, 140, 150, 150);
       }
     };
     img.src = 'placeholder.png';
 
     // Draw button rectangle
-    ctx.fillStyle = focusIdx === 3 ? '#004a99' : '#007BFF';
-    ctx.fillRect(200, 230, 130, 50);
+    ctx.fillStyle = focusIdx === 4 ? '#004a99' : '#007BFF'; // Update index for button focus
+    ctx.fillRect(200, 260, 130, 50); // Adjust Y position
     ctx.fillStyle = 'white';
     ctx.font = '20px Arial';
-    ctx.fillText('Click Me', 225, 265);
+    ctx.fillText('Click Me', 225, 295); // Adjust Y position
 
     // Draw focus outline on button if focused
-    if (focusIdx === 3) {
-      ctx.strokeStyle = 'purple';
+    if (focusIdx === 4) {
+      ctx.strokeStyle = 'yellow';
       ctx.lineWidth = 4;
-      ctx.strokeRect(200, 230, 130, 50);
+      ctx.strokeRect(200, 260, 130, 50);
     }
   }
 
@@ -149,8 +156,8 @@
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Check if the click is within the button area
-    if (x >= 200 && x <= 330 && y >= 230 && y <= 280) {
+    // Update coordinates to match the button's new position
+    if (x >= 200 && x <= 330 && y >= 260 && y <= 310) {
       mirrorButton.click();
     }
   });

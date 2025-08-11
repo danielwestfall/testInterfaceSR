@@ -45,7 +45,7 @@
     outline-offset: 2px;
   }
   #mirror img:focus {
-  outline: 3px solid #000000;
+  outline: 3px solid #ff0000;
   outline-offset: 2px;
 }
 </style>
@@ -84,12 +84,12 @@
 
     // Draw heading
     ctx.font = '28px Arial';
-    ctx.fillStyle = focusIdx === 0 ? 'gold' : 'black';
+    ctx.fillStyle = focusIdx === 0 ? 'purple' : 'black';
     ctx.fillText('Canvas Heading', 20, 50);
 
     // Draw text
     ctx.font = '18px Arial';
-    ctx.fillStyle = focusIdx === 1 ? 'gold' : 'black';
+    ctx.fillStyle = focusIdx === 1 ? 'purple' : 'black';
     ctx.fillText('This is a description of the canvas content.', 20, 90);
 
     // Draw image
@@ -99,7 +99,7 @@
 
       // Draw focus outline on image if focused
       if (focusIdx === 2) {
-        ctx.strokeStyle = 'yellow';
+        ctx.strokeStyle = 'purple';
         ctx.lineWidth = 4;
         ctx.strokeRect(20, 110, 150, 150);
       }
@@ -115,7 +115,7 @@
 
     // Draw focus outline on button if focused
     if (focusIdx === 3) {
-      ctx.strokeStyle = 'yellow';
+      ctx.strokeStyle = 'purple';
       ctx.lineWidth = 4;
       ctx.strokeRect(200, 230, 130, 50);
     }

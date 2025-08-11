@@ -55,7 +55,7 @@
 <h1>Accessible Canvas Widget with Hidden Mirror</h1>
 
 <div id="canvasContainer" aria-live="polite" aria-atomic="true">
-  <canvas id="myCanvas" width="560" height="320" role="img" aria-label="Interactive canvas with heading, text, photo, and button" tabindex="0"></canvas>
+  <canvas id="myCanvas" width="560" height="320" role="region" aria-label="A11y canvas" tabindex="0"></canvas>
 
   <!-- Offscreen mirror inside the canvas container -->
 <div id="mirror" aria-hidden="false" tabindex="-1">
@@ -63,7 +63,7 @@
   <p id="mirror-new-text" tabindex="0">Welcome to an accessible canvas element.</p>
   <p id="mirror-text" tabindex="0" lang="es">Bienvenido a un elemento de lienzo accesible.</p>
   <img id="mirror-image" src="placeholder.png" alt="Placeholder image of a search file icon" tabindex="0" />
-  <button id="mirror-button">Click Me</button>
+  <button id="mirror-button" role="button">Click Me</button> <!-- Role=button needed for NVDA -->
 </div>
 </div>
 

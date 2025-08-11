@@ -57,7 +57,7 @@
   <div id="mirror" aria-hidden="false" tabindex="-1">
     <h2 id="mirror-heading" tabindex="0">Canvas Heading</h2>
     <p id="mirror-text" tabindex="0">This is a description of the canvas content.</p>
-    <img src="placeholder.png" alt="Placeholder image of a gray box with dimensions 150x150" tabindex="0" />
+    <img id="mirror-image" src="placeholder.png" alt="Placeholder image of a gray box with dimensions 150x150" tabindex="0" />
     <button id="mirror-button">Click Me</button>
   </div>
 </div>
@@ -69,9 +69,10 @@
 
   const mirrorHeading = document.getElementById('mirror-heading');
   const mirrorText = document.getElementById('mirror-text');
+  const mirrorImage = document.getElementById('mirror-image');
   const mirrorButton = document.getElementById('mirror-button');
 
-  const focusItems = [mirrorHeading, mirrorText, mirrorButton];
+  const focusItems = [mirrorHeading, mirrorText, mirrorImage, mirrorButton];
   let focusIndex = -1;
 
 function drawCanvas(focusIdx = -1) {

@@ -79,47 +79,47 @@
   const focusItems = [mirrorHeading, mirrorText, mirrorImage, mirrorButton];
   let focusIndex = -1;
 
-function drawCanvas(focusIdx = -1) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function drawCanvas(focusIdx = -1) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Draw heading
-  ctx.font = '28px Arial';
-  ctx.fillStyle = focusIdx === 0 ? 'gold' : 'black';
-  ctx.fillText('Canvas Heading', 20, 50);
+    // Draw heading
+    ctx.font = '28px Arial';
+    ctx.fillStyle = focusIdx === 0 ? 'gold' : 'black';
+    ctx.fillText('Canvas Heading', 20, 50);
 
-  // Draw text
-  ctx.font = '18px Arial';
-  ctx.fillStyle = focusIdx === 1 ? 'gold' : 'black';
-  ctx.fillText('This is a description of the canvas content.', 20, 90);
+    // Draw text
+    ctx.font = '18px Arial';
+    ctx.fillStyle = focusIdx === 1 ? 'gold' : 'black';
+    ctx.fillText('This is a description of the canvas content.', 20, 90);
 
-  // Draw image
-  const img = new Image();
-  img.onload = () => {
-    ctx.drawImage(img, 20, 110, 150, 150);
+    // Draw image
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 20, 110, 150, 150);
 
-    // Draw focus outline on image if focused
-    if (focusIdx === 2) {
+      // Draw focus outline on image if focused
+      if (focusIdx === 2) {
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(20, 110, 150, 150);
+      }
+    };
+    img.src = 'placeholder.png';
+
+    // Draw button rectangle
+    ctx.fillStyle = focusIdx === 3 ? '#004a99' : '#007BFF';
+    ctx.fillRect(200, 230, 130, 50);
+    ctx.fillStyle = 'white';
+    ctx.font = '20px Arial';
+    ctx.fillText('Click Me', 225, 265);
+
+    // Draw focus outline on button if focused
+    if (focusIdx === 3) {
       ctx.strokeStyle = 'yellow';
       ctx.lineWidth = 4;
-      ctx.strokeRect(20, 110, 150, 150);
+      ctx.strokeRect(200, 230, 130, 50);
     }
-  };
-  img.src = 'placeholder.png';
-
-  // Draw button rectangle
-  ctx.fillStyle = focusIdx === 3 ? '#004a99' : '#007BFF';
-  ctx.fillRect(200, 230, 130, 50);
-  ctx.fillStyle = 'white';
-  ctx.font = '20px Arial';
-  ctx.fillText('Click Me', 225, 265);
-
-  // Draw focus outline on button if focused
-  if (focusIdx === 2) {
-    ctx.strokeStyle = 'yellow';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(200, 230, 130, 50);
   }
-}
 
   drawCanvas();
 
@@ -149,6 +149,7 @@ function drawCanvas(focusIdx = -1) {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    // Check if the click is within the button area
     if (x >= 200 && x <= 330 && y >= 230 && y <= 280) {
       mirrorButton.click();
     }

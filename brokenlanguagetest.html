@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bilingual Phrases</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Custom styles for focus, showing a clear outline */
+      [tabindex]:focus {
+        outline: 2px solid #3b82f6; /* Blue-500 */
+        outline-offset: 2px;
+        border-radius: 0.5rem; /* Match the rounded corners of the elements */
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+    <!-- Main container for all phrases -->
+    <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl max-w-2xl w-full">
+      <h1
+        class="text-3xl md:text-4xl font-bold text-center text-slate-800 mb-8"
+        lang="en"
+        tabindex="0"
+      >
+        Bilingual Phrases
+      </h1>
+
+      <!-- Wrapper for a single phrase pair -->
+      <div class="space-y-4">
+        <!-- Phrase pair 1 -->
+        <div
+          class="bg-gray-50 p-6 rounded-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4"
+        >
+          <!-- Spanish phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            Hola, ¿cómo estás?
+          </p>
+          <!-- English phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            Hello, how are you?
+          </p>
+        </div>
+
+        <!-- Phrase pair 2 -->
+        <div
+          class="bg-gray-50 p-6 rounded-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4"
+        >
+          <!-- Spanish phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            ¡Gracias por tu ayuda!
+          </p>
+          <!-- English phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            Thank you for your help!
+          </p>
+        </div>
+
+        <!-- Phrase pair 3 -->
+        <div
+          class="bg-gray-50 p-6 rounded-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4"
+        >
+          <!-- Spanish phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            ¿Dónde está el baño?
+          </p>
+          <!-- English phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            Where is the bathroom?
+          </p>
+        </div>
+
+        <!-- Phrase pair 4 -->
+        <div
+          class="bg-gray-50 p-6 rounded-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4"
+        >
+          <!-- Spanish phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            Tengo hambre.
+          </p>
+          <!-- English phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            I am hungry.
+          </p>
+        </div>
+
+        <!-- Phrase pair 5 -->
+        <div
+          class="bg-gray-50 p-6 rounded-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4"
+        >
+          <!-- Spanish phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            ¿Cuánto cuesta esto?
+          </p>
+          <!-- English phrase -->
+          <p
+            tabindex="0"
+            class="text-lg text-gray-700 font-semibold w-full sm:w-1/2 focus:bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all p-2 rounded-lg"
+          >
+            How much does this cost?
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

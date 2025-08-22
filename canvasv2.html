@@ -1,279 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A11y Canvas Widget with Hidden Mirror & Pagination</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: Inter, Arial, sans-serif;
-    }
-
-    /* Offscreen but accessible mirror inside the canvas container */
-    #mirror {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      clip-path: inset(100%);
-      border: 0;
-      white-space: nowrap;
-    }
-
-    /* Visually hidden live region for aria announcements */
-    .visually-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      border: 0;
-      padding: 0;
-      white-space: nowrap;
-      clip-path: inset(100%);
-      clip: rect(0 0 0 0);
-      overflow: hidden;
-    }
-  </style>
-</head>
-
-<body class="bg-gray-100 p-4 min-h-screen flex items-center justify-center">
-
-  <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
-      <h1 class="text-3xl font-bold mb-4 text-center">Accessible Canvas Widget with Pagination</h1>
-
-      <div id="canvasContainer" class="relative flex items-center justify-center" aria-live="polite" aria-atomic="true">
-          <!-- Previous Button -->
-          <button id="prevButton"
-        class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-full shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-blue-300 mr-4"
-        aria-label="Previous Page">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-                 
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-               
-        </svg>
-            </button>
-
-          <!-- Canvas Element -->
-          <canvas id="myCanvas" width="560" height="320" class="border border-gray-300 rounded-lg shadow-inner"
-        role="img" aria-label="A canvas element with content that changes with pagination."></canvas>
-
-          <!-- Next Button -->
-          <button id="nextButton"
-        class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-full shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-blue-300 ml-4"
-        aria-label="Next Page">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-                 
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-               
-        </svg>
-            </button>
-
-          <!-- Offscreen mirror inside the canvas container -->
-          <div id="mirror" tabindex="-1" class="visually-hidden">
-              <h2 id="mirror-heading" tabindex="0" class="text-lg font-semibold"></h2>
-              <p id="mirror-english-text" tabindex="0" class="text-base"></p>
-              <p id="mirror-spanish-text" tabindex="0" lang="es" class="text-base"></p>
-              <img id="mirror-image" src="https://placehold.co/150x150/f0f0f0/333333?text=Placeholder+Image"
-          alt="A generic placeholder image" tabindex="0">
-              <button id="mirror-button" role="button" class="mt-2 p-2 bg-green-500 text-white rounded-md">Click
-          Me</button>
-            </div>
-        </div>
-
-      <!-- Visually hidden live region for announcements -->
-      <div class="visually-hidden" aria-live="polite" aria-atomic="true">
-          <p id="aria-announcement"></p>
-        </div>
-
-  </div>
-
-  <script>
-    (() => {
-      const canvas = document.getElementById('myCanvas');
-      const ctx = canvas.getContext('2d');
-      const prevButton = document.getElementById('prevButton');
-      const nextButton = document.getElementById('nextButton');
-      const ariaAnnouncement = document.getElementById('aria-announcement');
-
-      // Get mirror elements
-      const mirrorHeading = document.getElementById('mirror-heading');
-      const mirrorEnglishText = document.getElementById('mirror-english-text');
-      const mirrorSpanishText = document.getElementById('mirror-spanish-text');
-      const mirrorImage = document.getElementById('mirror-image');
-      const mirrorButton = document.getElementById('mirror-button');
-
-      // Define the content for each page
-      const pages = [
-        {
-          heading: 'Page One',
-          english: 'This is the first page of our accessible canvas.',
-          spanish: 'Esta es la primera página de nuestro lienzo accesible.',
-          imageAlt: 'A placeholder image representing the number one.'
-        },
-        {
-          heading: 'Page Two',
-          english: 'Now we are on the second page. Let\'s continue our journey.',
-          spanish: 'Ahora estamos en la segunda página. Continuemos nuestro viaje.',
-          imageAlt: 'A placeholder image representing the number two.'
-        },
-        {
-          heading: 'Page Three',
-          english: 'Welcome to the final page of this example.',
-          spanish: 'Bienvenidos a la última página de este ejemplo.',
-          imageAlt: 'A placeholder image representing the number three.'
-        }
-      ];
-
-      let currentPageIndex = 0;
-
-      // Combine all tabbable mirror elements into one array
-      const focusItems = [mirrorHeading, mirrorEnglishText, mirrorSpanishText, mirrorImage, mirrorButton];
-
-      // Helper function to draw the high-contrast focus ring
-      function drawFocusRing(x, y, width, height) {
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 6;
-        ctx.strokeRect(x, y, width, height);
-
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, width, height);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A11y Canvas Widget with Hidden Mirror & Pagination</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: Inter, Arial, sans-serif;
       }
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(100%);
+        border: 0;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 p-4 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-4 text-center">
+        Accessible Canvas Widget with Pagination
+      </h1>
 
-      // Function to draw the canvas content based on the current page
-      function drawCanvas(focusIdx = -1) {
-        const currentPage = pages[currentPageIndex];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      <div id="widgetContainer" class="flex flex-col items-center">
+        <div id="canvasContainer" class="relative">
+          <canvas
+            id="myCanvas"
+            width="560"
+            height="320"
+            class="border border-gray-300 rounded-lg shadow-inner"
+            role="img"
+            aria-labelledby="mirror-heading"
+          ></canvas>
 
-        // Reset text colors to black for unfocused state
-        ctx.fillStyle = 'black';
+          <div id="mirror" class="visually-hidden">
+            <h2 id="mirror-heading" tabindex="0"></h2>
+            <p id="mirror-english-text" tabindex="0"></p>
+            <p id="mirror-spanish-text" tabindex="0" lang="es"></p>
+            <img id="mirror-image" src="" alt="" tabindex="0" />
+            <button id="mirror-button">Click Me</button>
+          </div>
+        </div>
 
-        // Draw heading
-        ctx.font = '28px Arial';
-        ctx.fillText(currentPage.heading, 20, 50);
-        if (focusIdx === 0) {
-          const textWidth = ctx.measureText(currentPage.heading).width;
-          drawFocusRing(15, 25, textWidth + 10, 30);
-        }
+        <div id="paginationControls" class="mt-4 flex justify-center space-x-4">
+          <button
+            id="prevButton"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-full shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-blue-300"
+            aria-label="Previous Page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
+            </svg>
+          </button>
+          <button
+            id="nextButton"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-full shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-blue-300"
+            aria-label="Next Page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-        // Draw english text
-        ctx.font = '18px Arial';
-        ctx.fillText(currentPage.english, 20, 90);
-        if (focusIdx === 1) {
-          const textWidth = ctx.measureText(currentPage.english).width;
-          drawFocusRing(15, 70, textWidth + 10, 25);
-        }
+      <div
+        class="visually-hidden"
+        aria-live="polite"
+        id="aria-announcement"
+      ></div>
+    </div>
 
-        // Draw spanish text
-        ctx.fillText(currentPage.spanish, 20, 115);
-        if (focusIdx === 2) {
-          const textWidth = ctx.measureText(currentPage.spanish).width;
-          drawFocusRing(15, 95, textWidth + 10, 25);
-        }
+    <script>
+      (() => {
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        const widgetContainer = document.getElementById("widgetContainer");
+        const prevButton = document.getElementById("prevButton");
+        const nextButton = document.getElementById("nextButton");
+        const ariaAnnouncement = document.getElementById("aria-announcement");
 
-        // Draw image
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 20, 140, 150, 150);
-          if (focusIdx === 3) {
-            drawFocusRing(20, 140, 150, 150);
-          }
+        const mirrorHeading = document.getElementById("mirror-heading");
+        const mirrorEnglishText = document.getElementById(
+          "mirror-english-text"
+        );
+        const mirrorSpanishText = document.getElementById(
+          "mirror-spanish-text"
+        );
+        const mirrorImage = document.getElementById("mirror-image");
+        const mirrorButton = document.getElementById("mirror-button");
+
+        const pages = [
+          {
+            heading: "Page One",
+            english: "This is the first page.",
+            spanish: "Esta es la primera página.",
+            imageAlt: "Placeholder image for one.",
+          },
+          {
+            heading: "Page Two",
+            english: "Now we are on the second page.",
+            spanish: "Ahora en la segunda página.",
+            imageAlt: "Placeholder image for two.",
+          },
+          {
+            heading: "Page Three",
+            english: "Welcome to the final page.",
+            spanish: "Bienvenidos a la página final.",
+            imageAlt: "Placeholder image for three.",
+          },
+        ];
+
+        let currentPageIndex = 0;
+        const imageCache = {};
+        const focusItems = [
+          mirrorHeading,
+          mirrorEnglishText,
+          mirrorSpanishText,
+          mirrorImage,
+          mirrorButton,
+        ];
+
+        const layout = {
+          heading: { x: 20, y: 50, font: "28px Arial", height: 30 },
+          english: { x: 20, y: 90, font: "18px Arial", height: 25 },
+          spanish: { x: 20, y: 115, font: "18px Arial", height: 25 },
+          image: { x: 20, y: 140, width: 150, height: 150 },
+          button: {
+            x: 200,
+            y: 260,
+            width: 130,
+            height: 50,
+            font: "20px Arial",
+            text: "Click Me",
+            textX: 225,
+            textY: 295,
+          },
         };
-        img.src = `https://placehold.co/150x150/f0f0f0/333333?text=${encodeURIComponent(currentPage.imageAlt.split(' ')[5])}`;
 
-        // Draw button
-        ctx.fillStyle = '#007BFF';
-        ctx.fillRect(200, 260, 130, 50);
-        if (focusIdx === 4) {
-          drawFocusRing(200, 260, 130, 50);
+        function drawFocusRing(x, y, width, height) {
+          ctx.save();
+          ctx.strokeStyle = "#005fcc";
+          ctx.lineWidth = 3;
+          ctx.strokeRect(x - 4, y - 4, width + 8, height + 8);
+          ctx.restore();
         }
-        ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.fillText('Click Me', 225, 295);
-      }
 
-      // Function to update the mirror's content
-      function updateMirror() {
-        const currentPage = pages[currentPageIndex];
-        mirrorHeading.textContent = currentPage.heading;
-        mirrorEnglishText.textContent = currentPage.english;
-        mirrorSpanishText.textContent = currentPage.spanish;
-        mirrorImage.alt = currentPage.imageAlt;
-      }
+        function drawCanvas(focusIdx = -1) {
+          const page = pages[currentPageIndex];
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "black";
 
-      // Initial draw and mirror update
-      updateMirror();
-      drawCanvas();
-
-      // Event listener for the "Next" button
-      nextButton.addEventListener('click', () => {
-        currentPageIndex = (currentPageIndex + 1) % pages.length;
-        updateMirror();
-        drawCanvas();
-        // Announce the page change
-        ariaAnnouncement.textContent = `Moved to next page. You are on page ${currentPageIndex + 1} of ${pages.length}.`;
-      });
-
-      // Event listener for the "Previous" button
-      prevButton.addEventListener('click', () => {
-        currentPageIndex = (currentPageIndex - 1 + pages.length) % pages.length;
-        updateMirror();
-        drawCanvas();
-        // Announce the page change
-        ariaAnnouncement.textContent = `Moved to previous page. You are on page ${currentPageIndex + 1} of ${pages.length}.`;
-      });
-
-      // Keyboard navigation within the canvas mirror elements
-      canvas.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-          e.preventDefault();
-          const active = document.activeElement;
-          let idx = focusItems.indexOf(active);
-          if (e.shiftKey) {
-            idx = idx <= 0 ? focusItems.length - 1 : idx - 1;
-          } else {
-            idx = idx === -1 ? 0 : (idx + 1) % focusItems.length;
+          // Draw heading
+          const headingLayout = layout.heading;
+          ctx.font = headingLayout.font;
+          ctx.fillText(page.heading, headingLayout.x, headingLayout.y);
+          if (focusIdx === 0) {
+            const textMetrics = ctx.measureText(page.heading);
+            drawFocusRing(
+              headingLayout.x,
+              headingLayout.y - headingLayout.height,
+              textMetrics.width,
+              headingLayout.height + 5
+            );
           }
-          focusItems[idx].focus();
-        }
-      });
 
-      // Listen for focus changes on mirror elements to update the canvas
-      focusItems.forEach((el, idx) => {
-        el.addEventListener('focus', () => {
-          drawCanvas(idx);
+          // Draw English text
+          const englishLayout = layout.english;
+          ctx.font = englishLayout.font;
+          ctx.fillText(page.english, englishLayout.x, englishLayout.y);
+          if (focusIdx === 1) {
+            const textMetrics = ctx.measureText(page.english);
+            drawFocusRing(
+              englishLayout.x,
+              englishLayout.y - englishLayout.height + 5,
+              textMetrics.width,
+              englishLayout.height
+            );
+          }
+
+          // Draw Spanish text
+          const spanishLayout = layout.spanish;
+          ctx.font = spanishLayout.font;
+          ctx.fillText(page.spanish, spanishLayout.x, spanishLayout.y);
+          if (focusIdx === 2) {
+            const textMetrics = ctx.measureText(page.spanish);
+            drawFocusRing(
+              spanishLayout.x,
+              spanishLayout.y - spanishLayout.height + 5,
+              textMetrics.width,
+              spanishLayout.height
+            );
+          }
+
+          // Draw Image
+          const imageLayout = layout.image;
+          const imgSrc = `https://placehold.co/${imageLayout.width}x${
+            imageLayout.height
+          }/f0f0f0/333333?text=${encodeURIComponent(
+            page.imageAlt.split(" ").pop()
+          )}`;
+          if (imageCache[imgSrc]) {
+            ctx.drawImage(
+              imageCache[imgSrc],
+              imageLayout.x,
+              imageLayout.y,
+              imageLayout.width,
+              imageLayout.height
+            );
+            if (focusIdx === 3) {
+              drawFocusRing(
+                imageLayout.x,
+                imageLayout.y,
+                imageLayout.width,
+                imageLayout.height
+              );
+            }
+          } else {
+            const img = new Image();
+            img.onload = () => {
+              imageCache[imgSrc] = img;
+              drawCanvas(focusIdx);
+            };
+            img.src = imgSrc;
+          }
+
+          // Draw Button
+          const btnLayout = layout.button;
+          ctx.fillStyle = "#007BFF";
+          ctx.fillRect(
+            btnLayout.x,
+            btnLayout.y,
+            btnLayout.width,
+            btnLayout.height
+          );
+          if (focusIdx === 4) {
+            drawFocusRing(
+              btnLayout.x,
+              btnLayout.y,
+              btnLayout.width,
+              btnLayout.height
+            );
+          }
+          ctx.fillStyle = "white";
+          ctx.font = btnLayout.font;
+          ctx.fillText(btnLayout.text, btnLayout.textX, btnLayout.textY);
+        }
+
+        function updateMirror() {
+          const page = pages[currentPageIndex];
+          mirrorHeading.textContent = page.heading;
+          mirrorEnglishText.textContent = page.english;
+          mirrorSpanishText.textContent = page.spanish;
+          mirrorImage.alt = page.imageAlt;
+        }
+
+        function changePage(direction) {
+          currentPageIndex =
+            (currentPageIndex + direction + pages.length) % pages.length;
+          const page = pages[currentPageIndex];
+
+          updateMirror();
+          drawCanvas();
+
+          const fullAnnouncement = [
+            `Page ${currentPageIndex + 1} of ${pages.length}.`,
+            page.heading,
+            page.english,
+            page.spanish,
+            page.imageAlt,
+            "Button: Click Me",
+          ].join(". ");
+
+          ariaAnnouncement.textContent = fullAnnouncement;
+
+          // **NEW: Move focus to the first element (the heading) of the new page**
+          mirrorHeading.focus();
+        }
+
+        nextButton.addEventListener("click", () => changePage(1));
+        prevButton.addEventListener("click", () => changePage(-1));
+
+        focusItems.forEach((el, idx) => {
+          el.addEventListener("focus", () => drawCanvas(idx));
         });
-      });
 
-      // Click event on canvas to map to the button in the mirror
-      canvas.addEventListener('click', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        nextButton.addEventListener("blur", (e) => {
+          if (!widgetContainer.contains(e.relatedTarget)) {
+            drawCanvas(-1);
+          }
+        });
+        prevButton.addEventListener("blur", (e) => {
+          if (!widgetContainer.contains(e.relatedTarget)) {
+            drawCanvas(-1);
+          }
+        });
 
-        // Button coordinates
-        if (x >= 200 && x <= 330 && y >= 260 && y <= 310) {
-          mirrorButton.click();
-        }
-      });
+        canvas.addEventListener("click", (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const btn = layout.button;
+          if (
+            x >= btn.x &&
+            x <= btn.x + btn.width &&
+            y >= btn.y &&
+            y <= btn.y + btn.height
+          ) {
+            mirrorButton.click();
+          }
+        });
 
-      // Event listener for the mirror button
-      mirrorButton.addEventListener('click', () => {
-        const messageBox = document.createElement('div');
-        messageBox.textContent = 'You clicked the canvas button!';
-        messageBox.classList.add('absolute', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'bg-white', 'p-6', 'rounded-lg', 'shadow-xl', 'border', 'border-gray-200', 'z-50');
-        document.body.appendChild(messageBox);
-        setTimeout(() => messageBox.remove(), 2000);
-      });
-    })();
-  </script>
-</body>
+        mirrorButton.addEventListener("click", () => {
+          const messageBox = document.createElement("div");
+          messageBox.textContent = "You clicked the canvas button!";
+          messageBox.setAttribute("role", "alert");
+          messageBox.classList.add(
+            "absolute",
+            "top-1/2",
+            "left-1/2",
+            "-translate-x-1/2",
+            "-translate-y-1/2",
+            "bg-white",
+            "p-6",
+            "rounded-lg",
+            "shadow-xl",
+            "border",
+            "border-gray-200",
+            "z-50"
+          );
+          document.body.appendChild(messageBox);
+          setTimeout(() => messageBox.remove(), 2000);
+        });
 
+        // Initial setup
+        updateMirror();
+        drawCanvas();
+      })();
+    </script>
+  </body>
 </html>

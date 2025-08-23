@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Accessible Canvas Widget</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: Inter, Arial, sans-serif; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0,0,0,0); clip-path: inset(100%);
+    border: 0; white-space: nowrap;
+  }
+  #canvasContainer { width: 100%; max-width: 800px; }
+  canvas { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body class="bg-gray-100 p-4 min-h-screen flex items-center justify-center">
+<div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-5xl mx-auto">
+  <div id="widgetContainer" class="flex items-center justify-center space-x-4">
+    <button id="prevButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-full shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300" aria-label="Previous Page">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+    <div id="canvasContainer" class="relative">
+      <canvas id="myCanvas" width="800" height="450" role="img" aria-labelledby="main-heading mirror-heading"></canvas>
+      <div id="mirror" class="visually-hidden">
+        <h1 id="main-heading" tabindex="0"></h1>
+        <h2 id="mirror-heading" tabindex="0"></h2>
+        <p id="mirror-english-text" tabindex="0"></p>
+        <p id="mirror-spanish-text" tabindex="0" lang="es"></p>
+        <img id="mirror-image" src="" alt="" tabindex="0" />
+        <button id="mirror-button" tabindex="0"></button>
+      </div>
+    </div>
+    <button id="nextButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-full shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300" aria-label="Next Page">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="visually-hidden" aria-live="polite" id="aria-announcement"></div>
+</div>
+
+<script>
+(() => {
+    const config = { 
+        focusColor: "#000000", 
+        focusPadding: 5, 
+        pulseSpeed: 0.05, 
+        pulseRange: 0.5
+    };
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    const widgetContainer = document.getElementById("widgetContainer");
+    const mirrorElements = {
+        mainHeading: document.getElementById("main-heading"),
+        heading: document.getElementById("mirror-heading"),
+        english: document.getElementById("mirror-english-text"),
+        spanish: document.getElementById("mirror-spanish-text"),
+        image: document.getElementById("mirror-image"),
+        button: document.getElementById("mirror-button")
+    };
+    const prevButton = document.getElementById("prevButton");
+    const nextButton = document.getElementById("nextButton");
+    const ariaAnnouncement = document.getElementById("aria-announcement");
+    let currentlyFocusedKey = null;
+    let pulseOffset = 0;
+
+    const baseWidth = 800, baseHeight = 450;
+    
+    const widgetConfig = {
+        mainHeading: { type: 'text', data: { text: "Accessible Canvas Widget", x: baseWidth / 2, y: 50, font: "bold 32px Arial", textAlign: "center" } }
+    };
+
+    const pages = {
+        page1: { content: {
+            heading: { type: 'text', data: { text: "Page One", x: 40, y: 100, font: "28px Arial" } },
+            english: { type: 'text', data: { text: "This is the first page.", x: 40, y: 140, font: "18px Arial" } },
+            spanish: { type: 'text', data: { text: "Esta es la primera página.", x: 40, y: 165, font: "18px Arial" } },
+            image: { type: 'image', data: { alt: "Placeholder image one", x: 40, y: 200, width: 200, height: 200 } },
+            button: { type: 'button', data: { text: "Click Me", x: 300, y: 360, width: 150, height: 50, font: "20px Arial" } }
+        }},
+        page2: { content: {
+            heading: { type: 'text', data: { text: "Image on the Right", x: 40, y: 100, font: "28px Arial" } },
+            english: { type: 'text', data: { text: "This page has a different layout.", x: 40, y: 140, font: "18px Arial" } },
+            image: { type: 'image', data: { alt: "Image is on the right", x: 560, y: 120, width: 200, height: 200 } },
+            button: { type: 'button', data: { text: "Try It", x: 40, y: 360, width: 150, height: 50, font: "20px Arial" } }
+        }},
+        page3: { content: {
+            heading: { type: 'text', data: { text: "Minimal Content Page", x: 400, y: 120, font: "bold 40px Arial", textAlign: "center" } },
+            image: { type: 'image', data: { alt: "A centered image", x: 300, y: 180, width: 200, height: 200 } }
+        }},
+        page4: { content: {
+            heading: { type: 'text', data: { text: "Page Four", x: 40, y: 100, font: "28px Arial" } },
+            english: { type: 'text', data: { text: "What's going on?", x: 40, y: 140, font: "18px Arial" } },
+            spanish: { type: 'text', data: { text: "¿Qué onda?", x: 240, y: 140, font: "18px Arial" } },
+            image: { type: 'image', data: { alt: "Placeholder image", x: 240, y: 180, width: 150, height: 150 } },
+            button: { type: 'button', data: { text: "Click Me", x: 300, y: 360, width: 150, height: 50, font: "20px Arial" } }
+        }}
+    };
+
+    const pageKeys = Object.keys(pages);
+    let currentPageIndex = 0;
+    const imageCache = {};
+    
+    function getFontSize(fontString) {
+        const match = fontString.match(/(\d+)px/);
+        return match ? parseInt(match[1], 10) : 16;
+    }
+
+    function drawFocusRing(x, y, w, h) {
+        pulseOffset += config.pulseSpeed;
+        const padding = config.focusPadding + Math.sin(pulseOffset) * config.pulseRange;
+        ctx.save();
+        ctx.strokeStyle = config.focusColor;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = config.focusColor;
+        ctx.shadowBlur = 10;
+        ctx.strokeRect(x - padding, y - padding, w + 2 * padding, h + 2 * padding);
+        ctx.restore();
+    }
+
+    function drawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const scaleX = canvas.width / baseWidth;
+        const scaleY = canvas.height / baseHeight;
+        const pageContent = pages[pageKeys[currentPageIndex]].content;
+        const renderList = { mainHeading: widgetConfig.mainHeading, ...pageContent };
+
+        for (const key in renderList) {
+            const item = renderList[key];
+            const data = { ...item.data }; 
+            let x = data.x * scaleX, y = data.y * scaleY, w = (data.width || 0) * scaleX, h = (data.height || 0) * scaleY;
+
+            if (item.type === 'text') {
+                const originalFontSize = getFontSize(item.data.font);
+                const scaledFontSize = originalFontSize * scaleY;
+                const finalFont = item.data.font.replace(/\d+px/, `${scaledFontSize.toFixed(2)}px`);
+
+                ctx.fillStyle = "black";
+                ctx.font = finalFont;
+                ctx.textAlign = data.textAlign || "left";
+                
+                const metrics = ctx.measureText(data.text);
+                const actualX = data.textAlign === 'center' ? x - metrics.width / 2 : x;
+                
+                ctx.fillText(data.text, data.textAlign === 'center' ? x : actualX, y); 
+                
+                if (key === currentlyFocusedKey) {
+                    drawFocusRing(actualX, y - scaledFontSize, metrics.width, scaledFontSize + 5);
+                }
+            } else if (item.type === 'image') {
+                const imgSrc = `https://placehold.co/${data.width}x${data.height}/f0f0f0/333333?text=${encodeURIComponent(data.alt.split(" ").pop())}`;
+                if (imageCache[imgSrc]) {
+                    ctx.drawImage(imageCache[imgSrc], x, y, w, h);
+                    if (key === currentlyFocusedKey) drawFocusRing(x, y, w, h);
+                } else {
+                    const img = new Image();
+                    img.onload = () => { imageCache[imgSrc] = img; };
+                    img.src = imgSrc;
+                }
+            } else if (item.type === 'button') {
+                const originalFontSize = getFontSize(item.data.font);
+                const scaledFontSize = originalFontSize * scaleY;
+                ctx.fillStyle = "#007BFF";
+                ctx.fillRect(x, y, w, h);
+                ctx.fillStyle = "white";
+                ctx.font = `${scaledFontSize.toFixed(2)}px Arial`;
+                ctx.textAlign = "center";
+                ctx.fillText(data.text, x + w / 2, y + h / 2 + scaledFontSize / 3);
+                if (key === currentlyFocusedKey) drawFocusRing(x, y, w, h);
+            }
+        }
+        if (currentlyFocusedKey) requestAnimationFrame(drawCanvas);
+    }
+
+    function updateMirror(content) {
+        const parts = [`Page ${currentPageIndex + 1} of ${pageKeys.length}`];
+        for (const key in mirrorElements) {
+            const el = mirrorElements[key];
+            const def = key === 'mainHeading' ? widgetConfig.mainHeading : content[key];
+            if (def) {
+                el.style.display = '';
+                el.setAttribute('tabindex', '0');
+                if (el.tagName === 'IMG') {
+                    el.alt = def.data.alt || '';
+                    if (def.data.alt) parts.push(def.data.alt);
+                } else {
+                    el.textContent = def.data.text || '';
+                    if (def.data.text) parts.push(def.data.text);
+                }
+            } else {
+                el.style.display = 'none';
+                el.setAttribute('tabindex', '-1');
+            }
+        }
+        ariaAnnouncement.textContent = parts.join('. ');
+    }
+    
+    function changePage(dir) {
+        currentPageIndex = (currentPageIndex + dir + pageKeys.length) % pageKeys.length;
+        updateMirror(pages[pageKeys[currentPageIndex]].content);
+    }
+
+    // --- EVENT LISTENERS ---
+    prevButton.addEventListener('click', () => {
+        changePage(-1);
+        mirrorElements.mainHeading.focus();
+    });
+    nextButton.addEventListener('click', () => {
+        changePage(1);
+        mirrorElements.mainHeading.focus();
+    });
+
+    const allFocusableElements = { ...mirrorElements, prevButton, nextButton };
+    for (const key in allFocusableElements) {
+        const el = allFocusableElements[key];
+        el.addEventListener('focus', () => {
+            const wasFocused = !!currentlyFocusedKey;
+            currentlyFocusedKey = mirrorElements[key] ? key : 'externalControl';
+            pulseOffset = 0;
+            if (!wasFocused && currentlyFocusedKey) {
+                requestAnimationFrame(drawCanvas);
+            }
+        });
+    }
+
+    // FIX: This listener reliably stops the animation when focus leaves the widget.
+    widgetContainer.addEventListener('focusout', (e) => {
+        if (!widgetContainer.contains(e.relatedTarget)) {
+            currentlyFocusedKey = null;
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && currentlyFocusedKey === 'button') {
+        mirrorElements.button.click();
+      }
+    });
+
+    canvas.addEventListener("click", (e) => {
+        const content = pages[pageKeys[currentPageIndex]].content;
+        if (!content.button) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / baseWidth;
+        const scaleY = canvas.height / baseHeight;
+        const btn = content.button.data;
+        const btnRect = {
+          x: btn.x * scaleX, y: btn.y * scaleY,
+          w: btn.width * scaleX, h: btn.height * scaleY
+        };
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        if (clickX >= btnRect.x && clickX <= btnRect.x + btnRect.w &&
+            clickY >= btnRect.y && clickY <= btnRect.y + btnRect.h) {
+            mirrorElements.button.click();
+        }
+    });
+
+    mirrorElements.button.addEventListener("click", () => {
+        const msg = document.createElement("div");
+        msg.textContent = "You clicked the canvas button!";
+        msg.setAttribute("role", "alert");
+        msg.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl border z-50";
+        document.body.appendChild(msg);
+        setTimeout(() => msg.remove(), 2000);
+    });
+
+    function resizeCanvas() {
+        const container = document.getElementById("canvasContainer");
+        const aspectRatio = baseHeight / baseWidth;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientWidth * aspectRatio;
+        requestAnimationFrame(drawCanvas);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function init() {
+        updateMirror(pages[pageKeys[0]].content);
+        resizeCanvas();
+        mirrorElements.mainHeading.focus();
+    }
+    init();
+})();
+</script>
+</body>
+</html>
